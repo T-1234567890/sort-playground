@@ -6,4 +6,6 @@ dist
 .env.*
 .idea
 .playwright-cli
+.vscode
+*.log
 .vite
