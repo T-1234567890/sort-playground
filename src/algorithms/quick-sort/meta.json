@@ -1,0 +1,13 @@
+{
+  "name": "Quick Sort",
+  "category": "classic",
+  "complexity": "O(n log n) average, O(n^2) worst",
+  "spaceComplexity": "O(log n)",
+  "stability": "Unstable",
+  "description": "Partitions around a pivot, then recursively sorts the smaller problems on each side.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-19",
+  "keywords": ["classic", "fast", "partition", "recursive"],
+  "funRank": 3
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Bogo Sort",
+  "category": "meme",
+  "complexity": "O((n + 1)!) expected",
+  "spaceComplexity": "O(1)",
+  "stability": "Unstable",
+  "description": "Shuffles the array until luck accidentally creates sorted order.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-19",
+  "keywords": ["meme", "slow", "chaos", "random"],
+  "funRank": 4
+}

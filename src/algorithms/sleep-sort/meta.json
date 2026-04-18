@@ -1,0 +1,13 @@
+{
+  "name": "Sleep Sort",
+  "category": "weird",
+  "complexity": "O(max value) wall-clock-ish",
+  "spaceComplexity": "O(n)",
+  "stability": "Depends on timing",
+  "description": "Schedules each number with a delay and lets smaller values wake up first.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-19",
+  "keywords": ["weird", "slow", "timing", "fun"],
+  "funRank": 4
+}

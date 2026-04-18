@@ -1,0 +1,159 @@
+{
+  "nav": {
+    "home": "Sort Playground",
+    "language": "语言",
+    "toggleTheme": "切换深色模式"
+  },
+  "hero": {
+    "eyebrow": "Sort Playground",
+    "title": "Sort Playground",
+    "subtitle": "可视化。理解。交付。",
+    "description": "探索真实、奇怪和荒诞的排序算法。观看每一步，复制真实实现，并贡献你自己的算法。",
+    "explore": "探索算法",
+    "github": "查看 GitHub"
+  },
+  "explorer": {
+    "eyebrow": "探索器",
+    "title": "选择一个算法",
+    "description": "浏览排序算法，查看可视步骤、实用信息和可复制实现。",
+    "search": "搜索算法...",
+    "sortLabel": "排序算法",
+    "empty": "没有匹配的算法。",
+    "loadMore": "加载更多",
+    "continue": "前往完整探索器",
+    "tags": {
+      "All": "全部",
+      "Classic": "经典",
+      "Weird": "奇怪",
+      "Meme": "梗图",
+      "Fast": "快速",
+      "Slow": "缓慢",
+      "Chaos": "混乱"
+    },
+    "sort": {
+      "name": "名称",
+      "complexity": "复杂度",
+      "newest": "最新",
+      "fun": "最有趣"
+    }
+  },
+  "allAlgorithms": {
+    "eyebrow": "全部算法",
+    "title": "全部算法",
+    "description": "通过搜索、筛选和清晰的实现信息浏览完整算法集合。",
+    "count": "{{count}} 个算法"
+  },
+  "homeAlgorithms": {
+    "eyebrow": "最新",
+    "title": "最新算法",
+    "description": "首页只保留较短列表。打开完整探索器可使用搜索、筛选并查看全部算法。"
+  },
+  "pagination": {
+    "page": "第 {{current}} 页，共 {{total}} 页",
+    "previous": "上一页",
+    "next": "下一页"
+  },
+  "controls": {
+    "title": "控制",
+    "random": "随机数组",
+    "customInput": "自定义输入",
+    "apply": "应用输入",
+    "speed": "速度",
+    "sound": "声音",
+    "on": "开",
+    "off": "关",
+    "start": "开始",
+    "pause": "暂停",
+    "reset": "恢复"
+  },
+  "visualizer": {
+    "title": "步骤查看器",
+    "progress": "进度",
+    "visualMode": "可视模式",
+    "explainMode": "解释模式",
+    "stepExplanation": "步骤说明",
+    "targetResult": "目标结果",
+    "sortedResult": "排序结果",
+    "hoverToShow": "悬停查看",
+    "step": "第",
+    "of": "步，共",
+    "actions": {
+      "compare": "比较",
+      "swap": "交换",
+      "delete": "删除",
+      "sorted": "已排序"
+    }
+  },
+  "export": {
+    "title": "导出",
+    "hint": "动画运行时不可导出。",
+    "ready": "已准备",
+    "png": "导出 PNG",
+    "share": "导出分享卡片",
+    "gif": "导出 GIF",
+    "buildingGif": "正在生成 GIF"
+  },
+  "code": {
+    "sectionEyebrow": "实现代码",
+    "sectionTitle": "复制并使用",
+    "sectionDescription": "把这些实现作为参考、起点，或直接复制使用。",
+    "copy": "复制 {{language}}",
+    "copied": "已复制 ✓",
+    "lines": "{{count}} 行",
+    "download": "下载 {{language}}",
+    "downloadAll": "全部下载",
+    "showFull": "显示完整实现",
+    "collapse": "收起实现"
+  },
+  "algorithm": {
+    "back": "算法",
+    "createdBy": "由 @{{name}} 创建",
+    "addedOn": "添加于 {{date}}",
+    "contributors": "贡献者",
+    "info": "算法信息",
+    "details": "详情",
+    "time": "时间",
+    "space": "空间",
+    "stability": "稳定性",
+    "category": "类别",
+    "contributeHint": "通过 PR 添加新的排序算法",
+    "contribute": "贡献"
+  },
+  "about": {
+    "back": "Sort Playground",
+    "eyebrow": "关于我们",
+    "title": "为通过观察代码运动来学习的人而构建。",
+    "description": "Sort Playground 是一个开放的排序实验室，包含经典算法、奇怪实验和梗排序。",
+    "maintainer": "官方维护者",
+    "githubProfile": "GitHub 主页",
+    "staticTitle": "便携优先",
+    "staticDescription": "打开页面，运行排序，导出结果。工具保持快速、便携，并且容易分享。",
+    "concept": "概念",
+    "conceptBody": "让算法以运动、数据和代码的形式被理解。",
+    "design": "设计",
+    "designBody": "克制的玻璃质感、紧凑的开发者元数据，以及可导出的视觉内容。",
+    "build": "构建",
+    "buildBody": "快速页面、清晰步骤、浏览器导出，以及保持简单的贡献流程。"
+  },
+  "legal": {
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "back": "返回首页"
+  },
+  "footer": {
+    "copyright": "© 2026 Tony Hu",
+    "license": "MIT 许可",
+    "tagline": "探索 · 可视化 · 贡献",
+    "groups": {
+      "explore": "探索",
+      "project": "项目",
+      "legal": "法律"
+    },
+    "about": "关于",
+    "allAlgorithms": "全部算法",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "github": "GitHub",
+    "site": "1234567890.dev"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Stalin Sort",
+  "category": "meme",
+  "complexity": "O(n)",
+  "spaceComplexity": "O(1)",
+  "stability": "Stable among survivors",
+  "description": "Marches left to right and removes every element that refuses to stay in nondecreasing order.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-19",
+  "keywords": ["meme", "delete", "chaos", "fun"],
+  "funRank": 5
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Merge Sort",
+  "category": "classic",
+  "complexity": "O(n log n)",
+  "spaceComplexity": "O(n)",
+  "stability": "Stable",
+  "description": "Splits the list into halves, sorts each half, then merges them back in order.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-19",
+  "keywords": ["classic", "fast", "stable", "divide and conquer"],
+  "funRank": 2
+}

@@ -1,0 +1,159 @@
+{
+  "nav": {
+    "home": "Sort Playground",
+    "language": "Language",
+    "toggleTheme": "Toggle dark mode"
+  },
+  "hero": {
+    "eyebrow": "Sort Playground",
+    "title": "Sort Playground",
+    "subtitle": "Visualize. Understand. Ship.",
+    "description": "Explore real, weird, and absurd sorting algorithms. Watch every step, copy real implementations, and contribute your own.",
+    "explore": "Explore Algorithms",
+    "github": "View on GitHub"
+  },
+  "explorer": {
+    "eyebrow": "Explorer",
+    "title": "Pick an algorithm",
+    "description": "Browse sorting algorithms with visual steps, practical details, and copyable implementations.",
+    "search": "Search algorithms...",
+    "sortLabel": "Sort algorithms",
+    "empty": "No algorithms match this search.",
+    "loadMore": "Load more",
+    "continue": "Continue to the full explorer",
+    "tags": {
+      "All": "All",
+      "Classic": "Classic",
+      "Weird": "Weird",
+      "Meme": "Meme",
+      "Fast": "Fast",
+      "Slow": "Slow",
+      "Chaos": "Chaos"
+    },
+    "sort": {
+      "name": "Name",
+      "complexity": "Complexity",
+      "newest": "Newest",
+      "fun": "Most Fun"
+    }
+  },
+  "allAlgorithms": {
+    "eyebrow": "All algorithms",
+    "title": "All algorithms",
+    "description": "Browse the full algorithm collection with search, filters, and clear implementation details.",
+    "count": "{{count}} algorithms"
+  },
+  "homeAlgorithms": {
+    "eyebrow": "Latest",
+    "title": "Newest algorithms",
+    "description": "The homepage keeps the list short. Open the full explorer for search, filters, and every algorithm."
+  },
+  "pagination": {
+    "page": "Page {{current}} of {{total}}",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "controls": {
+    "title": "Controls",
+    "random": "Random array",
+    "customInput": "Custom input",
+    "apply": "Apply input",
+    "speed": "Speed",
+    "sound": "Sound",
+    "on": "On",
+    "off": "Off",
+    "start": "Start",
+    "pause": "Pause",
+    "reset": "Recover"
+  },
+  "visualizer": {
+    "title": "Step viewer",
+    "progress": "Progress",
+    "visualMode": "Visual Mode",
+    "explainMode": "Explain Mode",
+    "stepExplanation": "Step explanation",
+    "targetResult": "Target result",
+    "sortedResult": "Sorted result",
+    "hoverToShow": "Hover to show",
+    "step": "step",
+    "of": "of",
+    "actions": {
+      "compare": "Compare",
+      "swap": "Swap",
+      "delete": "Delete",
+      "sorted": "Sorted"
+    }
+  },
+  "export": {
+    "title": "Export",
+    "hint": "Disabled while animation is running.",
+    "ready": "Ready",
+    "png": "Export PNG",
+    "share": "Export Share Card",
+    "gif": "Export GIF",
+    "buildingGif": "Building GIF"
+  },
+  "code": {
+    "sectionEyebrow": "Implementations",
+    "sectionTitle": "Copy and ship",
+    "sectionDescription": "Use these implementations as a reference, starting point, or quick copy target.",
+    "copy": "Copy {{language}}",
+    "copied": "Copied ✓",
+    "lines": "{{count}} lines",
+    "download": "Download {{language}}",
+    "downloadAll": "Download All",
+    "showFull": "Show full implementation",
+    "collapse": "Collapse implementation"
+  },
+  "algorithm": {
+    "back": "Algorithms",
+    "createdBy": "Created by @{{name}}",
+    "addedOn": "Added on {{date}}",
+    "contributors": "Contributors",
+    "info": "Algorithm info",
+    "details": "Details",
+    "time": "Time",
+    "space": "Space",
+    "stability": "Stability",
+    "category": "Category",
+    "contributeHint": "Add a new sort by opening a PR",
+    "contribute": "Contribute"
+  },
+  "about": {
+    "back": "Sort Playground",
+    "eyebrow": "About us",
+    "title": "Built for people who learn by watching code move.",
+    "description": "Sort Playground is an open sorting lab for classic algorithms, weird experiments, and meme sorts.",
+    "maintainer": "Official maintainer",
+    "githubProfile": "GitHub profile",
+    "staticTitle": "Portable by design",
+    "staticDescription": "Open the page, run a sort, and export the result. The tool stays fast, portable, and easy to share.",
+    "concept": "Concept",
+    "conceptBody": "A playground where algorithms are understandable as motion, data, and code.",
+    "design": "Design",
+    "designBody": "Calm glass surfaces, compact developer metadata, and exportable visual artifacts.",
+    "build": "Build",
+    "buildBody": "Fast pages, clear steps, browser exports, and a contribution flow that stays simple."
+  },
+  "legal": {
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "back": "Back to home"
+  },
+  "footer": {
+    "copyright": "© 2026 Tony Hu",
+    "license": "MIT Licensed",
+    "tagline": "Explore · Visualize · Contribute",
+    "groups": {
+      "explore": "Explore",
+      "project": "Project",
+      "legal": "Legal"
+    },
+    "about": "About",
+    "allAlgorithms": "All Algorithms",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "github": "GitHub",
+    "site": "1234567890.dev"
+  }
+}

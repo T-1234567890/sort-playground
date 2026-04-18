@@ -1,0 +1,100 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - link "Sort Playground" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - button "Toggle dark mode" [ref=e7] [cursor=pointer]:
+        - img [ref=e8]
+  - main [ref=e10]:
+    - link "Algorithms" [ref=e11] [cursor=pointer]:
+      - /url: /
+      - img [ref=e12]
+      - text: Algorithms
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - paragraph [ref=e16]: classic
+        - heading "Quick Sort" [level=1] [ref=e17]
+        - paragraph [ref=e18]: Partitions around a pivot, then recursively sorts the smaller problems on each side.
+      - generic [ref=e19]:
+        - paragraph [ref=e20]: Time complexity
+        - paragraph [ref=e21]: O(n log n) average, O(n^2) worst
+        - paragraph [ref=e22]: Add a new sort by opening a PR with meta.json, steps.ts, and three implementation files.
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - heading "Step viewer" [level=2] [ref=e28]
+            - paragraph [ref=e29]: Compare · step 1 of 33
+          - generic [ref=e30]: compare
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - generic "Value 42" [ref=e34]
+            - generic [ref=e35]: "42"
+          - generic [ref=e36]:
+            - generic "Value 18" [ref=e38]
+            - generic [ref=e39]: "18"
+          - generic [ref=e40]:
+            - generic "Value 73" [ref=e42]
+            - generic [ref=e43]: "73"
+          - generic [ref=e44]:
+            - generic "Value 9" [ref=e46]
+            - generic [ref=e47]: "9"
+          - generic [ref=e48]:
+            - generic "Value 55" [ref=e50]
+            - generic [ref=e51]: "55"
+          - generic [ref=e52]:
+            - generic "Value 31" [ref=e54]
+            - generic [ref=e55]: "31"
+          - generic [ref=e56]:
+            - generic "Value 88" [ref=e58]
+            - generic [ref=e59]: "88"
+          - generic [ref=e60]:
+            - generic "Value 64" [ref=e62]
+            - generic [ref=e63]: "64"
+          - generic [ref=e64]:
+            - generic "Value 27" [ref=e66]
+            - generic [ref=e67]: "27"
+          - generic [ref=e68]:
+            - generic "Value 50" [ref=e70]
+            - generic [ref=e71]: "50"
+      - complementary [ref=e72]:
+        - heading "Controls" [level=2] [ref=e73]
+        - generic [ref=e74]:
+          - button "Random array" [ref=e75] [cursor=pointer]:
+            - img [ref=e76]
+            - text: Random array
+          - generic [ref=e82]:
+            - text: Custom input
+            - textbox "Custom input" [ref=e83]: 42, 18, 73, 9, 55, 31, 88, 64, 27, 50
+            - button "Apply input" [ref=e84] [cursor=pointer]
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - generic [ref=e87]: Speed
+              - generic [ref=e88]: 1.5x
+            - slider "Speed" [ref=e89]: "1.5"
+          - generic [ref=e90]:
+            - button "Start" [ref=e91] [cursor=pointer]:
+              - img [ref=e92]
+              - text: Start
+            - button "Pause" [disabled] [ref=e94]:
+              - img [ref=e95]
+              - text: Pause
+            - button "Reset" [ref=e98] [cursor=pointer]:
+              - img [ref=e99]
+              - text: Reset
+    - generic [ref=e102]:
+      - generic [ref=e103]:
+        - generic [ref=e104]:
+          - paragraph [ref=e105]: Implementations
+          - heading "Copy and ship" [level=2] [ref=e106]
+        - paragraph [ref=e107]: Snippets are loaded as raw static files from the algorithm folder.
+      - generic [ref=e108]:
+        - generic [ref=e109]:
+          - generic [ref=e110]:
+            - button "Python" [ref=e111] [cursor=pointer]
+            - button "Rust" [ref=e112] [cursor=pointer]
+            - button "C" [ref=e113] [cursor=pointer]
+          - button "Copy Python" [ref=e114] [cursor=pointer]:
+            - img [ref=e115]
+            - text: Copy Python
+        - code [ref=e119]: "def quick_sort(values): items = values[:] def partition(low, high): pivot = items[high] i = low for j in range(low, high): if items[j] <= pivot: items[i], items[j] = items[j], items[i] i += 1 items[i], items[high] = items[high], items[i] return i def sort(low, high): if low < high: pivot_index = partition(low, high) sort(low, pivot_index - 1) sort(pivot_index + 1, high) sort(0, len(items) - 1) return items"
