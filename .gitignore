@@ -5,3 +5,4 @@ dist
 .env
 .env.*
 .idea
+.playwright-cli
