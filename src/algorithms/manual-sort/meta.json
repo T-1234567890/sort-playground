@@ -1,0 +1,12 @@
+{
+  "name": "Manual Sort",
+  "category": "weird",
+  "complexity": "Depends on you",
+  "space": "O(1)",
+  "stability": "Depends on your moves",
+  "description": "Lets you sort the array yourself by dragging values into the order you want.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-19",
+  "visualization": "custom"
+}

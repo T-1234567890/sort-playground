@@ -61,6 +61,17 @@ function explainStep(step: Step, stepIndex: number) {
   return `Preparing comparison step ${stepIndex + 1}.`;
 }
 
+function isSorted(array: number[]) {
+  return array.every((value, index) => index === 0 || array[index - 1] <= value);
+}
+
+function moveItem(array: number[], fromIndex: number, toIndex: number) {
+  const next = [...array];
+  const [item] = next.splice(fromIndex, 1);
+  next.splice(toIndex, 0, item);
+  return next;
+}
+
 export function Visualizer({ algorithm }: VisualizerProps) {
   const { t } = useTranslation();
   const [baseArray, setBaseArray] = useState(DEFAULT_ARRAY);
@@ -74,19 +85,39 @@ export function Visualizer({ algorithm }: VisualizerProps) {
   const [volume, setVolume] = useState(0.55);
   const [exportStatus, setExportStatus] = useState<"idle" | "png" | "share" | "gif">("idle");
   const [isGifExporting, setIsGifExporting] = useState(false);
+  const [manualArray, setManualArray] = useState(DEFAULT_ARRAY);
+  const [manualStep, setManualStep] = useState<Step>({ array: DEFAULT_ARRAY, action: "compare", indices: [] });
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const frameRef = useRef<number | null>(null);
   const timerRef = useRef(0);
   const audioRef = useRef<SortAudioContext | null>(null);
+  const isManualSort = algorithm.slug === "manual-sort";
 
-  const steps = useMemo(() => algorithm.steps(baseArray), [algorithm, baseArray]);
+  const steps = useMemo(() => (isManualSort ? [manualStep] : algorithm.steps(baseArray)), [algorithm, baseArray, isManualSort, manualStep]);
   const activeStep: Step = steps[Math.min(stepIndex, steps.length - 1)] ?? {
     array: baseArray,
     action: "compare",
   };
-  const sortedResult = useMemo(() => sortAscending(baseArray), [baseArray]);
-  const maxValue = Math.max(...baseArray.map((value) => Math.max(value, 0)), 1);
-  const isFinished = stepIndex >= steps.length - 1;
-  const progress = steps.length > 1 ? (stepIndex / (steps.length - 1)) * 100 : 100;
+  const sortedResult = useMemo(() => sortAscending(isManualSort ? manualArray : baseArray), [baseArray, isManualSort, manualArray]);
+  const maxValue = Math.max(...(isManualSort ? manualArray : baseArray).map((value) => Math.max(value, 0)), 1);
+  const manualProgress = useMemo(() => {
+    if (manualArray.length <= 1) {
+      return 100;
+    }
+
+    const orderedPairs = manualArray.reduce((count, value, index) => {
+      if (index === 0) {
+        return count;
+      }
+
+      return count + (manualArray[index - 1] <= value ? 1 : 0);
+    }, 0);
+
+    return (orderedPairs / (manualArray.length - 1)) * 100;
+  }, [manualArray]);
+  const isFinished = isManualSort ? isSorted(manualArray) : stepIndex >= steps.length - 1;
+  const progress = isManualSort ? manualProgress : steps.length > 1 ? (stepIndex / (steps.length - 1)) * 100 : 100;
   const stepExplanation = explainStep(activeStep, stepIndex);
 
   const stopAnimation = useCallback(() => {
@@ -112,7 +143,23 @@ export function Visualizer({ algorithm }: VisualizerProps) {
   }, [algorithm.slug, baseArray, stopAnimation]);
 
   useEffect(() => {
-    if (!isRunning || isPaused) {
+    if (!isManualSort) {
+      return;
+    }
+
+    const nextStep: Step = {
+      array: [...baseArray],
+      action: isSorted(baseArray) ? "sorted" : "compare",
+      indices: isSorted(baseArray) ? baseArray.map((_, index) => index) : [],
+    };
+    setManualArray(baseArray);
+    setManualStep(nextStep);
+    setDragIndex(null);
+    setHoverIndex(null);
+  }, [baseArray, isManualSort]);
+
+  useEffect(() => {
+    if (isManualSort || !isRunning || isPaused) {
       return;
     }
 
@@ -138,23 +185,27 @@ export function Visualizer({ algorithm }: VisualizerProps) {
     frameRef.current = requestAnimationFrame(tick);
 
     return stopAnimation;
-  }, [isPaused, isRunning, speed, steps.length, stopAnimation]);
+  }, [isManualSort, isPaused, isRunning, speed, steps.length, stopAnimation]);
 
   useEffect(() => {
-    if (isRunning && stepIndex >= steps.length - 1) {
+    if (!isManualSort && isRunning && stepIndex >= steps.length - 1) {
       setIsRunning(false);
     }
-  }, [isRunning, stepIndex, steps.length]);
+  }, [isManualSort, isRunning, stepIndex, steps.length]);
 
   useEffect(() => {
-    if (!isRunning || isPaused || !soundEnabled || stepIndex === 0) {
+    if (isManualSort || !isRunning || isPaused || !soundEnabled || stepIndex === 0) {
       return;
     }
 
     playStepSound(audioRef.current, activeStep, maxValue, volume, speed);
-  }, [activeStep, isPaused, isRunning, maxValue, soundEnabled, speed, stepIndex, volume]);
+  }, [activeStep, isManualSort, isPaused, isRunning, maxValue, soundEnabled, speed, stepIndex, volume]);
 
   async function start() {
+    if (isManualSort) {
+      return;
+    }
+
     if (isFinished) {
       setStepIndex(0);
     }
@@ -170,6 +221,10 @@ export function Visualizer({ algorithm }: VisualizerProps) {
   }
 
   function pause() {
+    if (isManualSort) {
+      return;
+    }
+
     setIsPaused(true);
     setIsRunning(false);
     stopAnimation();
@@ -181,10 +236,20 @@ export function Visualizer({ algorithm }: VisualizerProps) {
     setIsRunning(false);
     setIsPaused(false);
     stopAnimation();
+    if (isManualSort) {
+      setManualArray(baseArray);
+      setManualStep({
+        array: [...baseArray],
+        action: isSorted(baseArray) ? "sorted" : "compare",
+        indices: isSorted(baseArray) ? baseArray.map((_, index) => index) : [],
+      });
+      setDragIndex(null);
+      setHoverIndex(null);
+    }
   }
 
   function generate() {
-    const next = randomArray(algorithm.slug === "bogo-sort" ? 6 : 12);
+    const next = randomArray(algorithm.slug === "bogo-sort" ? 6 : isManualSort ? 10 : 12);
     setBaseArray(next);
     setInput(next.join(", "));
   }
@@ -227,6 +292,33 @@ export function Visualizer({ algorithm }: VisualizerProps) {
       setIsGifExporting(false);
       flashExportStatus("gif");
     }, 40);
+  }
+
+  function handleManualDrop(targetIndex: number) {
+    if (dragIndex === null || dragIndex === targetIndex) {
+      setDragIndex(null);
+      setHoverIndex(null);
+      return;
+    }
+
+    const nextArray = moveItem(manualArray, dragIndex, targetIndex);
+    const nextStep: Step = {
+      array: nextArray,
+      action: isSorted(nextArray) ? "sorted" : "swap",
+      indices: [dragIndex, targetIndex],
+    };
+
+    setManualArray(nextArray);
+    setManualStep(nextStep);
+    setDragIndex(null);
+    setHoverIndex(null);
+
+    if (soundEnabled) {
+      audioRef.current ??= createAudioContext();
+      void resumeAudioContext(audioRef.current).then(() => {
+        playStepSound(audioRef.current, nextStep, Math.max(...nextArray.map((value) => Math.max(value, 0)), 1), volume, speed);
+      });
+    }
   }
 
   return (
@@ -292,6 +384,7 @@ export function Visualizer({ algorithm }: VisualizerProps) {
             const isActive = activeStep.indices?.includes(index);
             const isSorted = activeStep.action === "sorted";
             const height = `${(Math.max(value, 0) / maxValue) * 100}%`;
+            const isHoverTarget = isManualSort && hoverIndex === index;
             const color = isSorted
               ? "bg-emerald-400 animate-sorted"
               : isActive && activeStep.action === "compare"
@@ -303,10 +396,36 @@ export function Visualizer({ algorithm }: VisualizerProps) {
                   : "bg-zinc-400 dark:bg-zinc-600";
 
             return (
-              <div key={`${algorithm.slug}-${index}`} className="flex h-full min-w-0 flex-1 flex-col items-center gap-2">
+              <div
+                key={`${algorithm.slug}-${index}`}
+                className={`flex h-full min-w-0 flex-1 flex-col items-center gap-2 ${isManualSort ? "cursor-grab" : ""}`}
+                draggable={isManualSort}
+                onDragStart={() => {
+                  setDragIndex(index);
+                  setHoverIndex(index);
+                }}
+                onDragOver={(event) => {
+                  if (!isManualSort) {
+                    return;
+                  }
+                  event.preventDefault();
+                  setHoverIndex(index);
+                }}
+                onDrop={(event) => {
+                  if (!isManualSort) {
+                    return;
+                  }
+                  event.preventDefault();
+                  handleManualDrop(index);
+                }}
+                onDragEnd={() => {
+                  setDragIndex(null);
+                  setHoverIndex(null);
+                }}
+              >
                 <div className="flex min-h-0 w-full flex-1 items-end">
                   <div
-                    className={`min-h-px w-full rounded-t-lg transition-all duration-300 ease-out ${color}`}
+                    className={`min-h-px w-full rounded-t-lg transition-all duration-300 ease-out ${color} ${isHoverTarget ? "ring-2 ring-teal-500/60 ring-offset-2 ring-offset-zinc-100 dark:ring-offset-zinc-900" : ""}`}
                     style={{ height }}
                     title={`${value}`}
                     aria-label={`Value ${value}`}
@@ -319,6 +438,12 @@ export function Visualizer({ algorithm }: VisualizerProps) {
             );
           })}
         </div>
+        {isManualSort ? (
+          <div className="mt-4 rounded-lg border border-teal-500/20 bg-teal-50 p-4 text-sm leading-6 text-teal-950 dark:border-teal-300/20 dark:bg-teal-300/10 dark:text-teal-100">
+            <p className="font-semibold">{t("visualizer.manualTitle")}</p>
+            <p className="mt-1">{t("visualizer.manualDescription")}</p>
+          </div>
+        ) : null}
         {mode === "explain" ? (
           <div className="mt-4 rounded-lg border border-teal-500/20 bg-teal-50 p-4 text-sm leading-6 text-teal-950 dark:border-teal-300/20 dark:bg-teal-300/10 dark:text-teal-100">
             <p className="font-semibold">{t("visualizer.stepExplanation")}</p>
@@ -349,9 +474,9 @@ export function Visualizer({ algorithm }: VisualizerProps) {
             <button
               type="button"
               onClick={generate}
-              disabled={isRunning}
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-950 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 dark:bg-white dark:text-zinc-950"
-            >
+                disabled={isRunning}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-950 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 dark:bg-white dark:text-zinc-950"
+              >
               <Shuffle size={16} />
               {t("controls.random")}
             </button>
@@ -391,7 +516,8 @@ export function Visualizer({ algorithm }: VisualizerProps) {
                 step="0.5"
                 value={speed}
                 onChange={(event) => setSpeed(Number(event.target.value))}
-                className="mt-3 w-full accent-teal-500"
+                disabled={isManualSort}
+                className="mt-3 w-full accent-teal-500 disabled:opacity-45"
               />
             </div>
             <div className="rounded-lg border border-zinc-950/10 p-3 dark:border-white/10">
@@ -425,7 +551,7 @@ export function Visualizer({ algorithm }: VisualizerProps) {
               <button
                 type="button"
                 onClick={start}
-                disabled={isRunning}
+                disabled={isRunning || isManualSort}
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-teal-500 px-3 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-teal-400 disabled:cursor-not-allowed disabled:opacity-45"
               >
                 <Play size={15} />
@@ -434,7 +560,7 @@ export function Visualizer({ algorithm }: VisualizerProps) {
               <button
                 type="button"
                 onClick={pause}
-                disabled={!isRunning}
+                disabled={!isRunning || isManualSort}
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-3 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
               >
                 <Pause size={15} />

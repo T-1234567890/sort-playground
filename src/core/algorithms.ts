@@ -12,6 +12,7 @@ import { bozoSortSteps } from "../algorithms/bozo-sort/steps";
 import { slowsortSteps } from "../algorithms/slowsort/steps";
 import { miracleSortSteps } from "../algorithms/miracle-sort/steps";
 import { beadSortSteps } from "../algorithms/bead-sort/steps";
+import { manualSortSteps } from "../algorithms/manual-sort/steps";
 
 const metaModules = import.meta.glob<AlgorithmMeta>("../algorithms/*/meta.json", {
   eager: true,
@@ -50,6 +51,7 @@ const stepModules = {
   slowsort: slowsortSteps,
   "miracle-sort": miracleSortSteps,
   "bead-sort": beadSortSteps,
+  "manual-sort": manualSortSteps,
 };
 
 function slugFromPath(path: string) {

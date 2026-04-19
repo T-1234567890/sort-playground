@@ -118,6 +118,8 @@
     "targetResult": "Target result",
     "sortedResult": "Sorted result",
     "hoverToShow": "Hover to show",
+    "manualTitle": "Manual sort",
+    "manualDescription": "Drag a bar and drop it on another position to sort the array yourself.",
     "step": "step",
     "of": "of",
     "actions": {

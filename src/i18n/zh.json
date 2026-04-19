@@ -118,6 +118,8 @@
     "targetResult": "目标结果",
     "sortedResult": "排序结果",
     "hoverToShow": "悬停查看",
+    "manualTitle": "手动排序",
+    "manualDescription": "拖动一个柱子并将它放到另一个位置，自己把数组排好。",
     "step": "第",
     "of": "步，共",
     "actions": {
