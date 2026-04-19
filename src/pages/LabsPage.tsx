@@ -484,7 +484,6 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
       .filter((entry) =>
         entry.mode === "automated" &&
         entry.status === "benchmarked" &&
-        entry.metadata?.source === "github-actions" &&
         typeof entry.average === "number",
       )
       .sort((left, right) => (left.average ?? Number.POSITIVE_INFINITY) - (right.average ?? Number.POSITIVE_INFINITY));

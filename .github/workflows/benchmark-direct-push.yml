@@ -11,6 +11,10 @@ on:
       - ".github/workflows/benchmark-direct-push.yml"
   workflow_dispatch:
 
+concurrency:
+  group: benchmark-direct-push
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -21,6 +25,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -41,5 +47,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add public/data/benchmark-ranking.json
-          git diff --cached --quiet || git commit -m "chore: refresh benchmark ranking data"
-          git push
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "chore: refresh benchmark ranking data"
+          git pull --rebase origin main
+          git push origin HEAD:main
