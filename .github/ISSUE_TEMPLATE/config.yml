@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security report
+    url: https://github.com/T-1234567890/sort-playground/security/advisories/new
+    about: Please report security issues privately.

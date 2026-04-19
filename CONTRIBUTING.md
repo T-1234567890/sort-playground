@@ -91,12 +91,14 @@ If you add a custom visualization, keep it small, static-friendly, and easy to r
 
 ## Pull Requests
 
-Use the matching pull request template:
+Use the matching pull request template when opening a PR:
 
-- Add algorithm
-- Core update
-- Bug fix
-- Maintenance
+- [Add algorithm](https://github.com/T-1234567890/sort-playground/compare/main...main?quick_pull=1&template=add_algorithm.md)
+- [Core update](https://github.com/T-1234567890/sort-playground/compare/main...main?quick_pull=1&template=core_update.md)
+- [Bug fix](https://github.com/T-1234567890/sort-playground/compare/main...main?quick_pull=1&template=bug_fix.md)
+- [Maintenance](https://github.com/T-1234567890/sort-playground/compare/main...main?quick_pull=1&template=maintenance.md)
+
+GitHub pull request templates are Markdown-based. Unlike issue forms, GitHub does not currently render PR templates as separate form fields.
 
 Good pull requests are:
 

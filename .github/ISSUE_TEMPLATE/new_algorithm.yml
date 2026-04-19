@@ -1,0 +1,57 @@
+name: New algorithm
+description: Suggest a new sorting algorithm
+title: "[Algorithm] "
+labels: ["algorithm"]
+body:
+  - type: input
+    id: algorithm-name
+    attributes:
+      label: Algorithm Name
+      description: Name of the algorithm.
+      placeholder: Cocktail Shaker Sort
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Classic
+        - Weird
+        - Meme
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Short explanation of the algorithm.
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why add this?
+      description: Why is it interesting, useful, funny, or educational?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: visualization-type
+    attributes:
+      label: Visualization Type
+      options:
+        - Default bar-based visualization
+        - Custom visualization
+    validations:
+      required: true
+
+  - type: textarea
+    id: visualization-idea
+    attributes:
+      label: Visualization Idea
+      description: How should it look visually?
+      placeholder: Use the default bars, but highlight the moving window...
