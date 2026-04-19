@@ -5,5 +5,8 @@
   "space": "O(1)",
   "stability": "Stable",
   "description": "Builds a sorted list one element at a time by inserting each new value into its correct position.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-19",
   "visualization": "default"
 }

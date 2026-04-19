@@ -5,5 +5,8 @@
   "space": "O(1)",
   "stability": "Unstable",
   "description": "Randomly swaps two elements until the array happens to be sorted.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-19",
   "visualization": "default"
 }
