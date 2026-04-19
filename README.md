@@ -149,6 +149,7 @@ Project docs live in [`docs/`](./docs/):
 - [Adding Algorithms](./docs/adding-algorithms.md)
 - [Export Features](./docs/exports.md)
 - [Contributor Guide](./docs/contributors.md)
+- [Public Roadmap](./docs/roadmap.md)
 
 Contributor and repository docs:
 
