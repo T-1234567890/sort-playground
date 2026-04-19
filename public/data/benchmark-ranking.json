@@ -3,44 +3,44 @@
     "name": "Insertion Sort",
     "slug": "insertion-sort",
     "mode": "automated",
-    "average": 0.196,
+    "average": 0.2,
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
-      "source": "auto-scan",
+      "source": "github-actions",
       "benchmarkMode": "automated"
     },
     "runs": [
-      0.328,
+      0.3,
       0.244,
-      0.015
+      0.057
     ],
     "datasets": {
       "small": 0.001,
-      "medium": 0.009,
-      "large": 0.033
+      "medium": 0.006,
+      "large": 0.02
     }
   },
   {
     "name": "Bubble Sort",
     "slug": "bubble-sort",
     "mode": "automated",
-    "average": 0.608,
+    "average": 0.663,
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
-      "source": "auto-scan",
+      "source": "github-actions",
       "benchmarkMode": "automated"
     },
     "runs": [
-      1.44,
-      0.314,
-      0.071
+      1.747,
+      0.127,
+      0.116
     ],
     "datasets": {
-      "small": 0.002,
-      "medium": 0.047,
-      "large": 0.179
+      "small": 0.012,
+      "medium": 0.032,
+      "large": 0.15
     }
   },
   {
