@@ -3,110 +3,44 @@
     "name": "Insertion Sort",
     "slug": "insertion-sort",
     "mode": "automated",
-    "average": 0.174,
+    "average": 0.196,
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
-      "source": "github-actions",
+      "source": "auto-scan",
       "benchmarkMode": "automated"
     },
     "runs": [
-      0.291,
-      0.221,
-      0.01
+      0.328,
+      0.244,
+      0.015
     ],
     "datasets": {
       "small": 0.001,
-      "medium": 0.006,
-      "large": 0.032
-    }
-  },
-  {
-    "name": "Gnome Sort",
-    "slug": "gnome-sort",
-    "mode": "automated",
-    "average": 0.385,
-    "unit": "ms",
-    "status": "benchmarked",
-    "metadata": {
-      "source": "github-actions",
-      "benchmarkMode": "automated"
-    },
-    "runs": [
-      0.986,
-      0.11,
-      0.06
-    ],
-    "datasets": {
-      "small": 0.002,
-      "medium": 0.035,
-      "large": 0.183
+      "medium": 0.009,
+      "large": 0.033
     }
   },
   {
     "name": "Bubble Sort",
     "slug": "bubble-sort",
     "mode": "automated",
-    "average": 0.615,
+    "average": 0.608,
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
-      "source": "github-actions",
+      "source": "auto-scan",
       "benchmarkMode": "automated"
     },
     "runs": [
-      1.138,
-      0.512,
-      0.194
+      1.44,
+      0.314,
+      0.071
     ],
     "datasets": {
-      "small": 0.003,
-      "medium": 0.103,
-      "large": 0.128
-    }
-  },
-  {
-    "name": "Bead Sort",
-    "slug": "bead-sort",
-    "mode": "automated",
-    "average": 3.25,
-    "unit": "ms",
-    "status": "benchmarked",
-    "metadata": {
-      "source": "github-actions",
-      "benchmarkMode": "automated"
-    },
-    "runs": [
-      4.255,
-      4.009,
-      1.486
-    ],
-    "datasets": {
-      "small": 0.255,
-      "medium": 1.278,
-      "large": 2.716
-    }
-  },
-  {
-    "name": "Stooge Sort",
-    "slug": "stooge-sort",
-    "mode": "automated",
-    "average": 6.688,
-    "unit": "ms",
-    "status": "benchmarked",
-    "metadata": {
-      "source": "github-actions",
-      "benchmarkMode": "automated"
-    },
-    "runs": [
-      7.313,
-      6.368,
-      6.384
-    ],
-    "datasets": {
-      "small": 0.027,
-      "medium": 1.943,
-      "large": 17.33
+      "small": 0.002,
+      "medium": 0.047,
+      "large": 0.179
     }
   },
   {
@@ -136,6 +70,18 @@
     "runs": []
   },
   {
+    "name": "Bead Sort",
+    "slug": "bead-sort",
+    "mode": "none",
+    "status": "exempt",
+    "reason": "auto-excluded-unusual",
+    "metadata": {
+      "source": "auto-scan",
+      "benchmarkMode": "none"
+    },
+    "runs": []
+  },
+  {
     "name": "Bogo Sort",
     "slug": "bogo-sort",
     "mode": "none",
@@ -155,6 +101,18 @@
     "reason": "no-benchmark",
     "metadata": {
       "source": "algorithm-meta",
+      "benchmarkMode": "none"
+    },
+    "runs": []
+  },
+  {
+    "name": "Gnome Sort",
+    "slug": "gnome-sort",
+    "mode": "none",
+    "status": "exempt",
+    "reason": "auto-excluded-unusual",
+    "metadata": {
+      "source": "auto-scan",
       "benchmarkMode": "none"
     },
     "runs": []
@@ -215,6 +173,18 @@
     "reason": "no-benchmark",
     "metadata": {
       "source": "algorithm-meta",
+      "benchmarkMode": "none"
+    },
+    "runs": []
+  },
+  {
+    "name": "Stooge Sort",
+    "slug": "stooge-sort",
+    "mode": "none",
+    "status": "exempt",
+    "reason": "auto-excluded-unusual",
+    "metadata": {
+      "source": "auto-scan",
       "benchmarkMode": "none"
     },
     "runs": []
