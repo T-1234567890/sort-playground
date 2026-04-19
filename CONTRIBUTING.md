@@ -107,6 +107,22 @@ Good pull requests are:
 - easy to test
 - free of unrelated formatting churn
 
+## Sort Labs References
+
+If you are contributing through Sort Labs, read these first:
+
+- [Sort Labs: How to Join](./docs/labs-how-to-join.md)
+- [Sort Labs: How It Works](./docs/labs-how-it-works.md)
+- [Sort Labs: Special Cases](./docs/labs-special-cases.md)
+- [Public Roadmap](./docs/roadmap.md)
+
+GitHub entry points:
+
+- New algorithm issue: `https://github.com/T-1234567890/sort-playground/issues/new?template=new_algorithm.yml`
+- Feature request: `https://github.com/T-1234567890/sort-playground/issues/new?template=feature_request.md`
+- Bug report: `https://github.com/T-1234567890/sort-playground/issues/new?template=bug_report.md`
+- Discussions: `https://github.com/T-1234567890/sort-playground/discussions`
+
 ## Code Style
 
 - Follow the existing React, TypeScript, and Tailwind patterns.

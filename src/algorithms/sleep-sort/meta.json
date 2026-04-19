@@ -9,5 +9,8 @@
   "contributors": ["T-1234567890"],
   "added": "2026-04-19",
   "keywords": ["weird", "slow", "timing", "fun"],
-  "funRank": 4
+  "funRank": 4,
+  "benchmark": false,
+  "special": "no-benchmark",
+  "eventEligible": true
 }

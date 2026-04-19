@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Sort Playground",
+    "labs": "Sort Labs",
     "language": "语言",
     "toggleTheme": "切换深色模式"
   },
@@ -11,6 +12,11 @@
     "description": "探索真实、奇怪和荒诞的排序算法。观看每一步，复制真实实现，并贡献你自己的算法。",
     "explore": "探索算法",
     "github": "查看 GitHub"
+  },
+  "launchBanner": {
+    "text": "Sort Labs 已上线 — 去看看排名、基准测试和挑战",
+    "explore": "探索",
+    "close": "关闭 Sort Labs 横幅"
   },
   "heroShowcase": {
     "previous": "上一个功能",
@@ -90,6 +96,29 @@
     "eyebrow": "最新",
     "title": "最新算法",
     "description": "首页只保留较短列表。打开完整探索器可使用搜索、筛选并查看全部算法。"
+  },
+  "homeLabs": {
+    "label": "实验中",
+    "title": "Sort Labs",
+    "subtitle": "围绕排序算法的社区排名、基准测试和活动。",
+    "explore": "打开 Labs",
+    "community": {
+      "title": "社区排名",
+      "description": "看看社区觉得哪些算法最有意思，从有创意的点子到完全没有必要的作品。"
+    },
+    "benchmark": {
+      "title": "基准测试",
+      "description": "在受控环境中比较算法表现。结果会通过 GitHub Actions 自动生成。"
+    },
+    "challenges": {
+      "title": "挑战活动",
+      "description": "参与 Sort Labs Challenge Season 2026-1 这样的赛季活动，并提交你自己的算法。"
+    }
+  },
+  "homeExplorer": {
+    "eyebrow": "探索器",
+    "title": "需要完整视图时，再进入全量网格。",
+    "description": "浏览全部算法，切换到对比或竞速模式，并使用完整的搜索和筛选能力，而不用把首页堆得太满。"
   },
   "pagination": {
     "page": "第 {{current}} 页，共 {{total}} 页",
@@ -198,6 +227,136 @@
       "description": "提出想法、询问问题，并讨论奇怪的排序算法。"
     }
   },
+  "labs": {
+    "label": "实验中",
+    "eyebrow": "Sort Labs",
+    "title": "Sort Labs",
+    "subtitle": "看看算法是怎么表现的，而不只是怎么工作的。",
+    "back": "返回 Labs",
+    "description": "Sort Labs 是 Sort Playground 的实验层，核心内容就是社区排名、基准测试和活动。",
+    "descriptionSecondary": "它把社区反馈、基准准备和赛季挑战放在一起，从不同角度观察算法，同时避免把尚未完成的数据假装成最终结果。",
+    "nav": {
+      "overview": "概览",
+      "community": "社区排名",
+      "benchmark": "基准测试",
+      "events": "活动"
+    },
+    "section": {
+      "communityEyebrow": "社区信号",
+      "communityDescription": "社区排名最终会以列表形式展示最有意思的算法，依据会来自 GitHub 点赞反应、讨论内容和活动参与情况。",
+      "benchmarkEyebrow": "实测结果",
+      "benchmarkDescription": "基准页最终会比较那些能在相同受控环境下被公平、稳定测量的算法。",
+      "eventsEyebrow": "赛季挑战",
+      "eventsDescription": "活动页围绕一个主题组织提交，先说明这个赛季要做什么、怎么参加，再逐步形成后续内容。",
+      "eventsExtendedDescription": "这里的介绍区域会比排名区域更宽、更长，因为活动页首先应该解释主题、时间范围、评分类别和参与方式。只有在确实收集到足够真实的数据后，才应该展示榜单。",
+      "activeEvent": "当前活动",
+      "eventRankingTitle": "活动排名",
+      "eventsRankingDescription": "当真实投稿被收集并审核后，本赛季的榜单会显示在这里。",
+      "collectingTitle": "正在收集数据",
+      "communityPlaceholder": "社区信号仍在收集中。稍后再来看真实的排名列表。",
+      "benchmarkPlaceholder": "基准运行结果仍在收集中。稍后再来看实测结果。",
+      "eventsPlaceholder": "活动投稿仍在收集中。稍后再来看赛季列表。"
+    },
+    "labels": {
+      "dates": "日期",
+      "theme": "主题",
+      "categories": "类别"
+    },
+    "resources": {
+      "docsTitle": "文档",
+      "docsDescription": "在提交 issue 或 pull request 之前，先阅读项目文档。",
+      "githubTitle": "GitHub",
+      "githubDescription": "为提交、讨论和路线图使用正确的 GitHub 入口。",
+      "communityDocsDescription": "这些文档解释了社区排名应该如何运作，以及应该去哪里提交。",
+      "communityGithubDescription": "使用 GitHub Discussions 和 issue 模板，而不是自己猜入口。",
+      "benchmarkDocsDescription": "这些文档说明了基准测试的预期、豁免情况和无数据状态。",
+      "benchmarkGithubDescription": "如果你要提议基准规则、报告缺口或添加可测量算法，请使用 GitHub。",
+      "eventsDocsDescription": "在参加赛季活动之前，先阅读活动流程、参与步骤和特殊情况说明。",
+      "eventsGithubDescription": "使用 GitHub 讨论赛季想法、跟踪路线图项目，并提交适合活动的算法。"
+    },
+    "guides": {
+      "join": {
+        "title": "如何参与",
+        "description": "从这里开始了解提交流程、必需文件，以及算法应该提交到哪里。"
+      },
+      "howItWorks": {
+        "title": "它如何工作",
+        "description": "了解社区排名、基准收集和活动机制原本打算如何运行。"
+      },
+      "specialCases": {
+        "title": "特殊情况",
+        "description": "了解哪些算法会被豁免、自定义可视化会带来什么变化，以及无数据状态应该如何表现。"
+      },
+      "community": {
+        "title": "社区排名文档",
+        "description": "阅读社区排名应如何运作，以及什么才算真实有效的社区信号。"
+      },
+      "benchmark": {
+        "title": "基准测试文档",
+        "description": "阅读哪些算法适合进入基准、哪些可能被排除，以及为什么要使用占位状态。"
+      },
+      "events": {
+        "title": "活动文档",
+        "description": "阅读赛季活动页面应如何说明主题、参与方式和排名规则。"
+      }
+    },
+    "github": {
+      "contributing": {
+        "title": "贡献指南",
+        "description": "打开 GitHub 主贡献指南，查看本地启动、PR 和评审要求。"
+      },
+      "algorithmIssue": {
+        "title": "新算法 Issue",
+        "description": "如果你想先提出一个新排序点子，再开 PR，请使用算法模板。"
+      },
+      "discussions": {
+        "title": "GitHub Discussions",
+        "description": "想法、问题和活动讨论更适合放在 Discussions，而不是直接开 bug。"
+      },
+      "roadmap": {
+        "title": "路线图",
+        "description": "查看 Labs 的计划工作、数据收集阶段和后续排名逻辑。"
+      }
+    },
+    "blocks": {
+      "community": {
+        "title": "社区排名",
+        "description": "一个按列表展示的排名，用来呈现社区觉得最有意思、最有创意或最好玩的算法。",
+        "cta": "查看排名"
+      },
+      "benchmark": {
+        "title": "基准测试",
+        "description": "一个面向可公平比较算法的实测列表，基于统一且可重复的基准环境。",
+        "cta": "查看基准"
+      },
+      "events": {
+        "title": "挑战活动",
+        "description": "围绕奇怪、可视化、适合贡献的算法而设计的赛季主题活动。",
+        "cta": "查看活动"
+      }
+    },
+    "philosophy": {
+      "eyebrow": "快速理念",
+      "title": "关于这些动画的几个想法。",
+      "description": "在 Sort Labs 里，动画不是贴在代码上的装饰，而是用来暴露行为本身。",
+      "motion": {
+        "title": "先看运动",
+        "description": "一次动画应该说明变了什么、在哪里变了，以及为什么下一步值得看。"
+      },
+      "context": {
+        "title": "上下文比热闹更重要",
+        "description": "基准、排名和挑战只有在能帮助解释算法行为时，才真正有价值。"
+      },
+      "play": {
+        "title": "好玩也有意义",
+        "description": "奇怪、好笑、甚至没有必要的排序，只要表达诚实，依然能教会人东西。"
+      }
+    },
+    "finalCta": {
+      "description": "当你想从另一个角度看这些算法，并获得一条更清晰的贡献路径时，就来 Sort Labs。",
+      "label": "打开贡献向导"
+    }
+  },
   "code": {
     "sectionEyebrow": "实现代码",
     "sectionTitle": "复制并使用",
@@ -256,6 +415,7 @@
     },
     "about": "关于",
     "allAlgorithms": "全部算法",
+    "labs": "Sort Labs",
     "compare": "对比",
     "race": "竞速",
     "contribute": "贡献",

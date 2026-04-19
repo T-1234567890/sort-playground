@@ -5,6 +5,8 @@
   "spaceComplexity": "O(log n)",
   "stability": "Unstable",
   "description": "Partitions around a pivot, then recursively sorts the smaller problems on each side.",
+  "benchmarkMode": "estimated",
+  "benchmarkRelativeRank": "high",
   "author": "T-1234567890",
   "contributors": ["T-1234567890"],
   "added": "2026-04-19",

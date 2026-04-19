@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Stalin Sort",
+    "slug": "stalin-sort",
+    "score": 18,
+    "url": "https://github.com/T-1234567890/sort-playground/discussions",
+    "author": "T-1234567890",
+    "category": "Most Fun",
+    "event": "Sort Labs Challenge Season 2026-1",
+    "why": "The delete-heavy visualization is instant and memorable.",
+    "source": "discussion"
+  },
+  {
+    "name": "Bead Sort",
+    "slug": "bead-sort",
+    "score": 14,
+    "url": "https://github.com/T-1234567890/sort-playground/discussions",
+    "author": "T-1234567890",
+    "category": "Best Visualization",
+    "event": "Sort Labs Challenge Season 2026-1",
+    "why": "The gravity metaphor makes the bars feel physical instead of abstract.",
+    "source": "discussion"
+  },
+  {
+    "name": "Miracle Sort",
+    "slug": "miracle-sort",
+    "score": 9,
+    "url": "https://github.com/T-1234567890/sort-playground/issues",
+    "author": "T-1234567890",
+    "category": "Most Creative",
+    "event": "Sort Labs Challenge Season 2026-1",
+    "why": "It turns the idea of an algorithm into a joke with a clean visual loop.",
+    "source": "issue"
+  }
+]

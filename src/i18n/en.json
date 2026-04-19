@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Sort Playground",
+    "labs": "Sort Labs",
     "language": "Language",
     "toggleTheme": "Toggle dark mode"
   },
@@ -11,6 +12,11 @@
     "description": "Explore real, weird, and absurd sorting algorithms. Watch every step, copy real implementations, and contribute your own.",
     "explore": "Explore Algorithms",
     "github": "View on GitHub"
+  },
+  "launchBanner": {
+    "text": "Sort Labs is now live — explore rankings, benchmarks, and challenges",
+    "explore": "Explore",
+    "close": "Dismiss Sort Labs banner"
   },
   "heroShowcase": {
     "previous": "Previous feature",
@@ -90,6 +96,29 @@
     "eyebrow": "Latest",
     "title": "Newest algorithms",
     "description": "The homepage keeps the list short. Open the full explorer for search, filters, and every algorithm."
+  },
+  "homeLabs": {
+    "label": "Experimental",
+    "title": "Sort Labs",
+    "subtitle": "Community Ranking, Benchmark, and Events for sorting algorithms.",
+    "explore": "Open Labs",
+    "community": {
+      "title": "Community Ranking",
+      "description": "See which algorithms the community finds most interesting — from creative ideas to completely unnecessary ones."
+    },
+    "benchmark": {
+      "title": "Benchmark",
+      "description": "Compare algorithm performance in a controlled environment. Results are generated automatically using GitHub Actions."
+    },
+    "challenges": {
+      "title": "Challenges",
+      "description": "Participate in seasonal events like Sort Labs Challenge Season 2026-1 and submit your own algorithms."
+    }
+  },
+  "homeExplorer": {
+    "eyebrow": "Explorer",
+    "title": "Go deeper when you want the full grid.",
+    "description": "Browse every algorithm, switch into compare or race mode, and use the full search and filter system without overloading the homepage."
   },
   "pagination": {
     "page": "Page {{current}} of {{total}}",
@@ -198,6 +227,136 @@
       "description": "Suggest ideas, ask questions, and talk about weird sorting algorithms."
     }
   },
+  "labs": {
+    "label": "Labs",
+    "eyebrow": "Sort Labs",
+    "title": "Sort Labs",
+    "subtitle": "Explore how algorithms behave — not just how they work.",
+    "back": "Back to Labs",
+    "description": "Sort Labs is the experimental layer of Sort Playground built around Community Ranking, Benchmark, and Events.",
+    "descriptionSecondary": "It combines community input, benchmark preparation, and seasonal challenges to explore algorithms from different perspectives without pretending unfinished data is final.",
+    "nav": {
+      "overview": "Overview",
+      "community": "Community Ranking",
+      "benchmark": "Benchmark",
+      "events": "Events"
+    },
+    "section": {
+      "communityEyebrow": "Community signal",
+      "communityDescription": "Community Ranking will eventually surface the most interesting algorithms as a clean list, based on GitHub reactions, discussions, and event participation.",
+      "benchmarkEyebrow": "Measured runs",
+      "benchmarkDescription": "Benchmark will eventually compare algorithms that can be measured fairly and repeatably under the same controlled setup.",
+      "eventsEyebrow": "Seasonal challenges",
+      "eventsDescription": "Events group submissions around a theme, explain what the season is asking for, and give contributors one place to understand how to join.",
+      "eventsExtendedDescription": "This introduction is intentionally wider and more descriptive than the ranking area because the event page should first explain the brief, the time window, the categories, and the contribution path. Standings can wait until there is enough real data to publish something trustworthy.",
+      "activeEvent": "Active event",
+      "eventRankingTitle": "Event Ranking",
+      "eventsRankingDescription": "Season standings will appear here once real submissions have been collected and reviewed.",
+      "collectingTitle": "Collecting data",
+      "communityPlaceholder": "Community signals are still being collected. Come back later for a real ranked list.",
+      "benchmarkPlaceholder": "Benchmark runs are still being collected. Come back later for measured results.",
+      "eventsPlaceholder": "Event submissions are still being collected. Come back later for the season list."
+    },
+    "labels": {
+      "dates": "Dates",
+      "theme": "Theme",
+      "categories": "Categories"
+    },
+    "resources": {
+      "docsTitle": "Documentation",
+      "docsDescription": "Read the project docs before opening issues or pull requests.",
+      "githubTitle": "GitHub",
+      "githubDescription": "Use the right GitHub entry point for submissions, discussions, and roadmap context.",
+      "communityDocsDescription": "These docs explain how community ranking is supposed to work and where to submit.",
+      "communityGithubDescription": "Use GitHub Discussions and issue templates instead of guessing the intake path.",
+      "benchmarkDocsDescription": "These docs explain benchmark expectations, exemptions, and no-data states.",
+      "benchmarkGithubDescription": "Use GitHub when you want to propose benchmark rules, report gaps, or add measurable algorithms.",
+      "eventsDocsDescription": "Read the event flow, join steps, and special cases before submitting to a season.",
+      "eventsGithubDescription": "Use GitHub to discuss season ideas, track roadmap items, and submit an event-ready algorithm."
+    },
+    "guides": {
+      "join": {
+        "title": "How to Join",
+        "description": "Start here for submission flow, required files, and where to send an algorithm."
+      },
+      "howItWorks": {
+        "title": "How It Works",
+        "description": "Read how community ranking, benchmark collection, and events are intended to operate."
+      },
+      "specialCases": {
+        "title": "Special Cases",
+        "description": "Read which algorithms are exempt, what custom visualization changes, and how no-data states should behave."
+      },
+      "community": {
+        "title": "Community Ranking Doc",
+        "description": "Read how Community Ranking is intended to work and what counts as real signal."
+      },
+      "benchmark": {
+        "title": "Benchmark Doc",
+        "description": "Read what belongs in benchmark runs, what may be excluded, and why placeholders are used."
+      },
+      "events": {
+        "title": "Events Doc",
+        "description": "Read how seasonal event pages should explain the theme, participation, and ranking policy."
+      }
+    },
+    "github": {
+      "contributing": {
+        "title": "Contribution Guide",
+        "description": "Open the main GitHub contribution guide for setup, pull requests, and review expectations."
+      },
+      "algorithmIssue": {
+        "title": "New Algorithm Issue",
+        "description": "Use the algorithm template when you want to pitch a new sort before opening a pull request."
+      },
+      "discussions": {
+        "title": "GitHub Discussions",
+        "description": "Use discussions for ideas, questions, and event talk that should not start as a bug."
+      },
+      "roadmap": {
+        "title": "Roadmap",
+        "description": "Check the roadmap for planned Labs work, collection phases, and future ranking logic."
+      }
+    },
+    "blocks": {
+      "community": {
+        "title": "Community Ranking",
+        "description": "A ranked list for algorithms the community finds most interesting, creative, or entertaining.",
+        "cta": "View Rankings"
+      },
+      "benchmark": {
+        "title": "Benchmark",
+        "description": "A measured list for algorithms that can be compared fairly under one repeatable benchmark setup.",
+        "cta": "View Benchmark"
+      },
+      "events": {
+        "title": "Challenges",
+        "description": "Seasonal prompts for weird, visual, and contribution-friendly algorithms.",
+        "cta": "View Events"
+      }
+    },
+    "philosophy": {
+      "eyebrow": "Quick Philosophy",
+      "title": "A few ideas behind the motion.",
+      "description": "Sort Labs treats animations as a way to expose behavior, not as decoration on top of code.",
+      "motion": {
+        "title": "Motion First",
+        "description": "An animation should reveal what changed, where it changed, and why the next step matters."
+      },
+      "context": {
+        "title": "Context Over Noise",
+        "description": "Benchmarks, rankings, and challenges only matter if they help explain the behavior around the algorithm."
+      },
+      "play": {
+        "title": "Play Has Value",
+        "description": "Weird, funny, and unnecessary sorts still teach something when the interaction is honest about what they are."
+      }
+    },
+    "finalCta": {
+      "description": "Use Sort Labs when you want another angle on the same algorithms and a clearer path into contribution.",
+      "label": "Open Contribution Wizard"
+    }
+  },
   "code": {
     "sectionEyebrow": "Implementations",
     "sectionTitle": "Copy and ship",
@@ -256,6 +415,7 @@
     },
     "about": "About",
     "allAlgorithms": "All Algorithms",
+    "labs": "Sort Labs",
     "compare": "Compare",
     "race": "Race",
     "contribute": "Contribute",

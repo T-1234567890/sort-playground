@@ -149,6 +149,12 @@ Project docs live in [`docs/`](./docs/):
 - [Adding Algorithms](./docs/adding-algorithms.md)
 - [Export Features](./docs/exports.md)
 - [Contributor Guide](./docs/contributors.md)
+- [Sort Labs: How to Join](./docs/labs-how-to-join.md)
+- [Sort Labs: How It Works](./docs/labs-how-it-works.md)
+- [Sort Labs: Special Cases](./docs/labs-special-cases.md)
+- [Community Ranking](./docs/community-ranking.md)
+- [Benchmark](./docs/benchmark.md)
+- [Events](./docs/events.md)
 - [Public Roadmap](./docs/roadmap.md)
 
 Contributor and repository docs:

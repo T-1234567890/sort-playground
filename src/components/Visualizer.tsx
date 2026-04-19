@@ -89,6 +89,7 @@ export function Visualizer({ algorithm }: VisualizerProps) {
   const [manualStep, setManualStep] = useState<Step>({ array: DEFAULT_ARRAY, action: "compare", indices: [] });
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+  const [scrubHover, setScrubHover] = useState<{ index: number; x: number } | null>(null);
   const frameRef = useRef<number | null>(null);
   const timerRef = useRef(0);
   const audioRef = useRef<SortAudioContext | null>(null);
@@ -294,6 +295,24 @@ export function Visualizer({ algorithm }: VisualizerProps) {
     }, 40);
   }
 
+  function handleScrub(nextIndex: number) {
+    timerRef.current = 0;
+    setStepIndex(nextIndex);
+    setIsRunning(false);
+    setIsPaused(false);
+    stopAnimation();
+  }
+
+  function handleProgressPointer(clientX: number, bounds: DOMRect) {
+    const ratio = Math.min(1, Math.max(0, (clientX - bounds.left) / Math.max(bounds.width, 1)));
+    const maxIndex = Math.max(steps.length - 1, 0);
+    const index = Math.round(ratio * maxIndex);
+    const x = ratio * bounds.width;
+
+    setScrubHover({ index, x });
+    return index;
+  }
+
   function handleManualDrop(targetIndex: number) {
     if (dragIndex === null || dragIndex === targetIndex) {
       setDragIndex(null);
@@ -365,17 +384,39 @@ export function Visualizer({ algorithm }: VisualizerProps) {
             <span className="font-mono">{Math.round(progress)}%</span>
           </div>
           <div
-            className="mt-2 h-2 overflow-hidden rounded-lg bg-zinc-200 dark:bg-zinc-800"
+            className="relative mt-2 h-2 overflow-visible rounded-lg bg-zinc-200 dark:bg-zinc-800"
             role="progressbar"
             aria-label="Sorting progress"
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={Math.round(progress)}
+            onMouseLeave={() => setScrubHover(null)}
+            onMouseMove={(event) => {
+              if (isManualSort) {
+                return;
+              }
+              handleProgressPointer(event.clientX, event.currentTarget.getBoundingClientRect());
+            }}
+            onClick={(event) => {
+              if (isManualSort) {
+                return;
+              }
+              const index = handleProgressPointer(event.clientX, event.currentTarget.getBoundingClientRect());
+              handleScrub(index);
+            }}
           >
             <div
               className="h-full rounded-lg bg-teal-500 transition-[width] duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
+            {!isManualSort && scrubHover ? (
+              <div
+                className="pointer-events-none absolute bottom-4 -translate-x-1/2 rounded-lg bg-zinc-950 px-2 py-1 text-[11px] font-semibold text-white shadow-lg dark:bg-white dark:text-zinc-950"
+                style={{ left: scrubHover.x }}
+              >
+                {t("visualizer.step")} {Math.min(scrubHover.index + 1, steps.length)}
+              </div>
+            ) : null}
           </div>
         </div>
 

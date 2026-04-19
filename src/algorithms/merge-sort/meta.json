@@ -5,6 +5,8 @@
   "spaceComplexity": "O(n)",
   "stability": "Stable",
   "description": "Splits the list into halves, sorts each half, then merges them back in order.",
+  "benchmarkMode": "estimated",
+  "benchmarkRelativeRank": "high",
   "author": "T-1234567890",
   "contributors": ["T-1234567890"],
   "added": "2026-04-19",

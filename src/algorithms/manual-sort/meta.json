@@ -8,5 +8,7 @@
   "author": "T-1234567890",
   "contributors": ["T-1234567890"],
   "added": "2026-04-19",
-  "visualization": "custom"
+  "visualization": "custom",
+  "benchmark": false,
+  "special": "no-benchmark"
 }

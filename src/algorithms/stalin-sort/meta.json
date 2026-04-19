@@ -9,5 +9,8 @@
   "contributors": ["T-1234567890"],
   "added": "2026-04-19",
   "keywords": ["meme", "delete", "chaos", "fun"],
-  "funRank": 5
+  "funRank": 5,
+  "benchmark": false,
+  "special": "no-benchmark",
+  "eventEligible": true
 }

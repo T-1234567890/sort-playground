@@ -8,6 +8,7 @@ import { ComparePage } from "./pages/ComparePage";
 import { EmbedPage } from "./pages/EmbedPage";
 import { HomePage } from "./pages/HomePage";
 import { LegalPage } from "./pages/LegalPage";
+import { LabsPage } from "./pages/LabsPage";
 import { RacePage } from "./pages/RacePage";
 
 function getRoute() {
@@ -31,6 +32,10 @@ function getRoute() {
 
   if (path === "/race") {
     return { name: null, page: "race" };
+  }
+
+  if (path === "/labs" || path.startsWith("/labs/")) {
+    return { name: null, page: "labs" };
   }
 
   if (path === "/privacy") {
@@ -119,6 +124,8 @@ export default function App() {
         <ComparePage algorithms={algorithms} dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "race" ? (
         <RacePage algorithms={algorithms} dark={dark} onToggleDark={() => setDark((value) => !value)} />
+      ) : route.page === "labs" ? (
+        <LabsPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "privacy" || route.page === "terms" ? (
         <LegalPage type={route.page} dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : (
