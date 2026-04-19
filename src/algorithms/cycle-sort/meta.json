@@ -10,5 +10,7 @@
   "added": "2026-04-19",
   "keywords": ["in-place", "minimal writes", "cycle", "selection"],
   "benchmarkRelativeRank": "medium",
-  "funRank": 2
+  "funRank": 2,
+  "benchmark": false,
+  "special": "no-benchmark"
 }

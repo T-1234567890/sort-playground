@@ -20,17 +20,14 @@ const toolchain = {
   rust: "rustc",
   c: "cc",
 };
-const BENCHMARK_RUN_MODE = process.env.BENCHMARK_RUN_MODE === "full" ? "full" : "small";
-const BENCHMARK_RELEVANT_FILES = new Set(["meta.json", "python.py", "rust.rs", "c.c"]);
-const BENCHMARK_INFRASTRUCTURE_PREFIXES = [
-  "scripts/benchmark/",
-  "scripts/generate-benchmark-ranking.mjs",
-  ".github/workflows/benchmark.yml",
-  ".github/workflows/benchmark-direct-push.yml",
-];
+const BENCHMARK_RUN_MODE = "small";
 
 function isPublishedBenchmarkEntry(entry) {
   return entry?.mode === "automated" || entry?.mode === "estimated";
+}
+
+function logBenchmark(message) {
+  console.log(`[benchmark] ${message}`);
 }
 
 function runCommand(command, args, options = {}) {
@@ -90,102 +87,6 @@ async function readOptional(filePath) {
   } catch {
     return undefined;
   }
-}
-
-async function readGitHubEventPayload() {
-  if (!process.env.GITHUB_EVENT_PATH) {
-    return undefined;
-  }
-
-  try {
-    return JSON.parse(await readFile(process.env.GITHUB_EVENT_PATH, "utf8"));
-  } catch {
-    return undefined;
-  }
-}
-
-async function changedFilesForSmallRun() {
-  if (BENCHMARK_RUN_MODE !== "small") {
-    return undefined;
-  }
-
-  const eventName = process.env.GITHUB_EVENT_NAME;
-  const eventPayload = await readGitHubEventPayload();
-
-  try {
-    if (eventName === "workflow_dispatch") {
-      return undefined;
-    }
-
-    if (eventName === "pull_request" && eventPayload?.pull_request?.base?.sha && eventPayload?.pull_request?.head?.sha) {
-      return runCommand("git", ["diff", "--name-only", eventPayload.pull_request.base.sha, eventPayload.pull_request.head.sha])
-        .split("\n")
-        .map((file) => file.trim())
-        .filter(Boolean);
-    }
-
-    if (eventName === "push" && eventPayload?.before && eventPayload?.after && !/^0+$/.test(eventPayload.before)) {
-      return runCommand("git", ["diff", "--name-only", eventPayload.before, eventPayload.after])
-        .split("\n")
-        .map((file) => file.trim())
-        .filter(Boolean);
-    }
-  } catch {
-    return undefined;
-  }
-
-  return [];
-}
-
-async function detectSmallRunChanges(existingBySlug) {
-  if (process.env.GITHUB_EVENT_NAME === "workflow_dispatch") {
-    return {
-      rerunAll: true,
-      changedSlugs: undefined,
-      reason: "manual-dispatch",
-    };
-  }
-
-  const changedFiles = await changedFilesForSmallRun();
-
-  if (!changedFiles) {
-    return {
-      rerunAll: false,
-      changedSlugs: undefined,
-      reason: "diff-unavailable",
-    };
-  }
-
-  if (changedFiles.some((file) => BENCHMARK_INFRASTRUCTURE_PREFIXES.some((prefix) => file === prefix || file.startsWith(prefix)))) {
-    return {
-      rerunAll: true,
-      changedSlugs: undefined,
-      reason: "benchmark-infrastructure-changed",
-    };
-  }
-
-  const changedSlugs = new Set(
-    changedFiles.flatMap((file) => {
-      const match = file.match(/^src\/algorithms\/([^/]+)\/([^/]+)$/);
-
-      if (!match) {
-        return [];
-      }
-
-      const [, slug, basename] = match;
-      return BENCHMARK_RELEVANT_FILES.has(basename) ? [slug] : [];
-    }),
-  );
-
-  const addedSlugs = new Set(
-    [...changedSlugs].filter((slug) => !existingBySlug.has(slug)),
-  );
-
-  return {
-    rerunAll: false,
-    changedSlugs: addedSlugs,
-    reason: addedSlugs.size > 0 ? "new-algorithms-added" : "no-new-algorithms",
-  };
 }
 
 async function createAlgorithmHash(slug) {
@@ -303,12 +204,8 @@ function automatedEntryHasCurrentData(entry) {
   );
 }
 
-function shouldReuseCachedEntry(existingEntry, algorithmHash, benchmarkDecision) {
-  if (BENCHMARK_RUN_MODE === "full" || !existingEntry) {
-    return false;
-  }
-
-  if (existingEntry.metadata?.algorithmHash !== algorithmHash || existingEntry.mode !== benchmarkDecision.mode) {
+function shouldReuseCachedEntry(existingEntry, benchmarkDecision) {
+  if (!existingEntry || existingEntry.mode !== benchmarkDecision.mode) {
     return false;
   }
 
@@ -324,6 +221,8 @@ function createCachedEntry(existingEntry) {
 }
 
 async function benchmarkAutomatedAlgorithm(algorithm, datasetPaths, tempDir) {
+  logBenchmark(`starting automated benchmark for ${algorithm.name} (${algorithm.slug})`);
+
   const runners = {
     python: await createPythonRunner({ root, tempDir, algorithmsDir, slug: algorithm.slug, pythonCommand: toolchain.python }),
     rust: await createRustRunner({ root, tempDir, algorithmsDir, slug: algorithm.slug, rustCommand: toolchain.rust }),
@@ -337,6 +236,7 @@ async function benchmarkAutomatedAlgorithm(algorithm, datasetPaths, tempDir) {
     for (const size of benchmarkSizes) {
       const datasetPath = datasetPaths[profile][size];
       const languageResults = {};
+      logBenchmark(`${algorithm.slug}: validating ${profile}/${size}`);
 
       for (const language of benchmarkLanguages) {
         const validatedRun = await runners[language].runWithResult(datasetPath);
@@ -350,6 +250,7 @@ async function benchmarkAutomatedAlgorithm(algorithm, datasetPaths, tempDir) {
         const benchmarked = await benchmarkIterations({
           runner: runners[language],
           datasetPath,
+          label: `${algorithm.slug} ${profile}/${size}/${language}`,
         });
 
         if (!workloadProfiles[profile][language]) {
@@ -380,56 +281,88 @@ async function main() {
   const storedRanking = await loadReferenceRanking(root);
   const existingRanking = storedRanking.filter(isPublishedBenchmarkEntry);
   const existingBySlug = new Map(existingRanking.map((entry) => [entry.slug, entry]));
-  const datasets = createDatasets();
   const algorithms = await loadAlgorithms();
-  const ranking = [];
-  const tempDir = await mkdtemp(path.join(os.tmpdir(), "sort-playground-bench-"));
-  const environmentSnapshot = buildEnvironmentSnapshot({ toolchain, tryRunCommand });
-  const harnessSnapshot = buildHarnessSnapshot();
   const lastRunAt = new Date().toISOString();
-  const smallRunChangeSet = await detectSmallRunChanges(existingBySlug);
+  logBenchmark(`mode=${BENCHMARK_RUN_MODE}`);
+  logBenchmark(`loaded ${algorithms.length} algorithms and ${existingRanking.length} cached benchmark entries`);
+  logBenchmark("small run will reuse existing benchmark entries and only test missing benchmarkable algorithms");
 
-  if (BENCHMARK_RUN_MODE === "small" && existingRanking.length > 0 && !smallRunChangeSet.rerunAll && smallRunChangeSet.changedSlugs?.size === 0) {
-    if (storedRanking.length !== existingRanking.length) {
-      computeScoreSnapshots(existingRanking);
-      sortRanking(existingRanking);
-      await writeRanking(root, existingRanking);
-      console.log("Removed non-benchmark entries from published benchmark data.");
-      return;
+  const plans = [];
+
+  for (const algorithm of algorithms) {
+    const automatedSupport = await hasThreeLanguageSupport(algorithm.slug);
+    const benchmarkDecision = inferBenchmarkDecision(algorithm, automatedSupport);
+    const existingEntry = existingBySlug.get(algorithm.slug);
+
+    if (benchmarkDecision.mode === "none") {
+      plans.push({ algorithm, benchmarkDecision, existingEntry, action: "skip" });
+      continue;
     }
-    console.log("No benchmark-relevant changes detected for small run. Reusing existing benchmark data.");
+
+    if (shouldReuseCachedEntry(existingEntry, benchmarkDecision)) {
+      plans.push({ algorithm, benchmarkDecision, existingEntry, action: "reuse" });
+      continue;
+    }
+
+    if (benchmarkDecision.mode === "estimated") {
+      plans.push({ algorithm, benchmarkDecision, existingEntry, action: "estimate" });
+      continue;
+    }
+
+    plans.push({ algorithm, benchmarkDecision, existingEntry, action: "benchmark" });
+  }
+
+  const benchmarkTargets = plans.filter((plan) => plan.action === "benchmark").map((plan) => plan.algorithm.slug);
+  const estimatedTargets = plans.filter((plan) => plan.action === "estimate").map((plan) => plan.algorithm.slug);
+  const reusedCount = plans.filter((plan) => plan.action === "reuse").length;
+  const skippedCount = plans.filter((plan) => plan.action === "skip").length;
+
+  logBenchmark(
+    `small-plan: ${benchmarkTargets.length} automated benchmark(s), ${estimatedTargets.length} estimated entry refresh(es), ${reusedCount} reused entry(ies), ${skippedCount} excluded entry(ies)`,
+  );
+
+  if (benchmarkTargets.length === 0 && estimatedTargets.length === 0 && storedRanking.length === existingRanking.length) {
+    logBenchmark("no missing benchmark entries detected; reusing existing benchmark data");
     return;
   }
 
+  if (benchmarkTargets.length > 0) {
+    logBenchmark(`small automated targets: ${benchmarkTargets.join(", ")}`);
+  }
+  if (estimatedTargets.length > 0) {
+    logBenchmark(`small estimated targets: ${estimatedTargets.join(", ")}`);
+  }
+
+  const ranking = [];
+  const environmentSnapshot = buildEnvironmentSnapshot({ toolchain, tryRunCommand });
+  const harnessSnapshot = buildHarnessSnapshot();
+  let tempDir;
+  let datasetPaths;
+
   try {
-    const datasetPaths = await writeDatasets(tempDir, datasets);
+    if (benchmarkTargets.length > 0) {
+      tempDir = await mkdtemp(path.join(os.tmpdir(), "sort-playground-bench-"));
+      const datasets = createDatasets();
+      datasetPaths = await writeDatasets(tempDir, datasets);
+      logBenchmark("wrote deterministic datasets to temporary workspace");
+    }
 
-    for (const algorithm of algorithms) {
-      const automatedSupport = await hasThreeLanguageSupport(algorithm.slug);
-      const benchmarkDecision = inferBenchmarkDecision(algorithm, automatedSupport);
-      const existingEntry = existingBySlug.get(algorithm.slug);
+    for (const plan of plans) {
+      const { algorithm, benchmarkDecision, existingEntry, action } = plan;
 
-       if (
-        BENCHMARK_RUN_MODE === "small" &&
-        existingEntry &&
-        !smallRunChangeSet.rerunAll &&
-        smallRunChangeSet.changedSlugs &&
-        !smallRunChangeSet.changedSlugs.has(algorithm.slug)
-      ) {
+      if (action === "skip") {
+        logBenchmark(`${algorithm.slug}: excluded from benchmark (${benchmarkDecision.reason})`);
+        continue;
+      }
+
+      if (action === "reuse") {
+        logBenchmark(`${algorithm.slug}: reusing cached benchmark entry`);
         ranking.push(createCachedEntry(existingEntry));
         continue;
       }
 
-      if (shouldReuseCachedEntry(existingEntry, algorithm.algorithmHash, benchmarkDecision)) {
-        ranking.push(createCachedEntry(existingEntry));
-        continue;
-      }
-
-      if (benchmarkDecision.mode === "none") {
-        continue;
-      }
-
-      if (benchmarkDecision.mode === "estimated") {
+      if (action === "estimate") {
+        logBenchmark(`${algorithm.slug}: keeping estimated benchmark entry`);
         ranking.push({
           name: algorithm.name,
           slug: algorithm.slug,
@@ -449,6 +382,7 @@ async function main() {
       }
 
       const benchmarked = await benchmarkAutomatedAlgorithm(algorithm, datasetPaths, tempDir);
+      logBenchmark(`${algorithm.slug}: automated benchmark complete`);
 
       ranking.push({
         name: algorithm.name,
@@ -477,9 +411,12 @@ async function main() {
     computeScoreSnapshots(ranking);
     sortRanking(ranking);
     await writeRanking(root, ranking);
-    console.log(`Wrote ${ranking.length} benchmark entries in ${BENCHMARK_RUN_MODE} mode.`);
+    logBenchmark(`wrote ${ranking.length} benchmark entries in ${BENCHMARK_RUN_MODE} mode`);
   } finally {
-    await rm(tempDir, { recursive: true, force: true });
+    if (tempDir) {
+      await rm(tempDir, { recursive: true, force: true });
+      logBenchmark("cleaned up temporary benchmark workspace");
+    }
   }
 }
 

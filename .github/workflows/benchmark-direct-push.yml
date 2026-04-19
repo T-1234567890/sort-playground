@@ -10,7 +10,7 @@ on:
       - "scripts/generate-benchmark-ranking.mjs"
       - ".github/workflows/benchmark.yml"
       - ".github/workflows/benchmark-direct-push.yml"
-      - ".github/workflows/benchmark-weekly.yml"
+  workflow_dispatch:
 
 concurrency:
   group: benchmark-direct-push
