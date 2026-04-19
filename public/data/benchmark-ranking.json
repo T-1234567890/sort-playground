@@ -1,0 +1,372 @@
+[
+  {
+    "name": "Quick Sort",
+    "slug": "quick-sort",
+    "mode": "automated",
+    "results": {
+      "python": {
+        "small": 0.056,
+        "medium": 0.96,
+        "large": 15.876
+      },
+      "rust": {
+        "small": 0.001,
+        "medium": 0.019,
+        "large": 0.414
+      },
+      "c": {
+        "small": 0.001,
+        "medium": 0.012,
+        "large": 0.403
+      }
+    },
+    "unit": "ms",
+    "status": "benchmarked",
+    "metadata": {
+      "source": "github-actions",
+      "benchmarkMode": "automated"
+    },
+    "snapshot": {
+      "workloadProfiles": {},
+      "tiers": {},
+      "environment": {
+        "benchmarkSpecVersion": "draft-v1",
+        "runnerOs": "Linux",
+        "workflowRunId": "24626578043"
+      },
+      "harness": {
+        "datasetGenerator": "deterministic-seeded",
+        "warmupPolicy": "2 warm-up runs",
+        "runCountPolicy": "adaptive 2-10 measured runs",
+        "timeoutPolicy": "CI-managed",
+        "memoryConstraints": "runner-default",
+        "correctnessValidation": "sorted-output verification",
+        "languageRunnerContract": "python.py, rust.rs, c.c"
+      },
+      "score": {}
+    }
+  },
+  {
+    "name": "Merge Sort",
+    "slug": "merge-sort",
+    "mode": "automated",
+    "results": {
+      "python": {
+        "small": 0.137,
+        "medium": 1.806,
+        "large": 23.351
+      },
+      "rust": {
+        "small": 0.004,
+        "medium": 0.09,
+        "large": 0.94
+      },
+      "c": {
+        "small": 0.004,
+        "medium": 0.047,
+        "large": 0.782
+      }
+    },
+    "unit": "ms",
+    "status": "benchmarked",
+    "metadata": {
+      "source": "github-actions",
+      "benchmarkMode": "automated"
+    },
+    "snapshot": {
+      "workloadProfiles": {},
+      "tiers": {},
+      "environment": {
+        "benchmarkSpecVersion": "draft-v1",
+        "runnerOs": "Linux",
+        "workflowRunId": "24626578043"
+      },
+      "harness": {
+        "datasetGenerator": "deterministic-seeded",
+        "warmupPolicy": "2 warm-up runs",
+        "runCountPolicy": "adaptive 2-10 measured runs",
+        "timeoutPolicy": "CI-managed",
+        "memoryConstraints": "runner-default",
+        "correctnessValidation": "sorted-output verification",
+        "languageRunnerContract": "python.py, rust.rs, c.c"
+      },
+      "score": {}
+    }
+  },
+  {
+    "name": "Insertion Sort",
+    "slug": "insertion-sort",
+    "mode": "automated",
+    "results": {
+      "python": {
+        "small": 0.144,
+        "medium": 17.78,
+        "large": 1910.987
+      },
+      "rust": {
+        "small": 0.002,
+        "medium": 0.154,
+        "large": 8.07
+      },
+      "c": {
+        "small": 0.001,
+        "medium": 0.086,
+        "large": 8.009
+      }
+    },
+    "unit": "ms",
+    "status": "benchmarked",
+    "metadata": {
+      "source": "github-actions",
+      "benchmarkMode": "automated"
+    },
+    "snapshot": {
+      "workloadProfiles": {},
+      "tiers": {},
+      "environment": {
+        "benchmarkSpecVersion": "draft-v1",
+        "runnerOs": "Linux",
+        "workflowRunId": "24626578043"
+      },
+      "harness": {
+        "datasetGenerator": "deterministic-seeded",
+        "warmupPolicy": "2 warm-up runs",
+        "runCountPolicy": "adaptive 2-10 measured runs",
+        "timeoutPolicy": "CI-managed",
+        "memoryConstraints": "runner-default",
+        "correctnessValidation": "sorted-output verification",
+        "languageRunnerContract": "python.py, rust.rs, c.c"
+      },
+      "score": {}
+    }
+  },
+  {
+    "name": "Bubble Sort",
+    "slug": "bubble-sort",
+    "mode": "automated",
+    "results": {
+      "python": {
+        "small": 0.315,
+        "medium": 40.699,
+        "large": 4469.865
+      },
+      "rust": {
+        "small": 0.005,
+        "medium": 0.759,
+        "large": 53.831
+      },
+      "c": {
+        "small": 0.022,
+        "medium": 2.205,
+        "large": 209.477
+      }
+    },
+    "unit": "ms",
+    "status": "benchmarked",
+    "metadata": {
+      "source": "github-actions",
+      "benchmarkMode": "automated"
+    },
+    "snapshot": {
+      "workloadProfiles": {},
+      "tiers": {},
+      "environment": {
+        "benchmarkSpecVersion": "draft-v1",
+        "runnerOs": "Linux",
+        "workflowRunId": "24626578043"
+      },
+      "harness": {
+        "datasetGenerator": "deterministic-seeded",
+        "warmupPolicy": "2 warm-up runs",
+        "runCountPolicy": "adaptive 2-10 measured runs",
+        "timeoutPolicy": "CI-managed",
+        "memoryConstraints": "runner-default",
+        "correctnessValidation": "sorted-output verification",
+        "languageRunnerContract": "python.py, rust.rs, c.c"
+      },
+      "score": {}
+    }
+  },
+  {
+    "name": "Bead Sort",
+    "slug": "bead-sort",
+    "mode": "automated",
+    "results": {
+      "python": {
+        "small": 7.575,
+        "medium": 90.1,
+        "large": 947.296
+      },
+      "rust": {
+        "small": 0.061,
+        "medium": 0.636,
+        "large": 6.282
+      },
+      "c": {
+        "small": 0.073,
+        "medium": 0.824,
+        "large": 7.594
+      }
+    },
+    "unit": "ms",
+    "status": "benchmarked",
+    "metadata": {
+      "source": "github-actions",
+      "benchmarkMode": "automated"
+    },
+    "snapshot": {
+      "workloadProfiles": {},
+      "tiers": {},
+      "environment": {
+        "benchmarkSpecVersion": "draft-v1",
+        "runnerOs": "Linux",
+        "workflowRunId": "24626578043"
+      },
+      "harness": {
+        "datasetGenerator": "deterministic-seeded",
+        "warmupPolicy": "2 warm-up runs",
+        "runCountPolicy": "adaptive 2-10 measured runs",
+        "timeoutPolicy": "CI-managed",
+        "memoryConstraints": "runner-default",
+        "correctnessValidation": "sorted-output verification",
+        "languageRunnerContract": "python.py, rust.rs, c.c"
+      },
+      "score": {}
+    }
+  },
+  {
+    "name": "Gnome Sort",
+    "slug": "gnome-sort",
+    "mode": "automated",
+    "results": {
+      "python": {
+        "small": 0.759,
+        "medium": 95.505,
+        "large": 9646.506
+      },
+      "rust": {
+        "small": 0.005,
+        "medium": 0.413,
+        "large": 39.144
+      },
+      "c": {
+        "small": 0.023,
+        "medium": 2.243,
+        "large": 220.88
+      }
+    },
+    "unit": "ms",
+    "status": "benchmarked",
+    "metadata": {
+      "source": "github-actions",
+      "benchmarkMode": "automated"
+    },
+    "snapshot": {
+      "workloadProfiles": {},
+      "tiers": {},
+      "environment": {
+        "benchmarkSpecVersion": "draft-v1",
+        "runnerOs": "Linux",
+        "workflowRunId": "24626578043"
+      },
+      "harness": {
+        "datasetGenerator": "deterministic-seeded",
+        "warmupPolicy": "2 warm-up runs",
+        "runCountPolicy": "adaptive 2-10 measured runs",
+        "timeoutPolicy": "CI-managed",
+        "memoryConstraints": "runner-default",
+        "correctnessValidation": "sorted-output verification",
+        "languageRunnerContract": "python.py, rust.rs, c.c"
+      },
+      "score": {}
+    }
+  },
+  {
+    "name": "Bogo Sort",
+    "slug": "bogo-sort",
+    "mode": "none",
+    "status": "exempt",
+    "reason": "no-benchmark",
+    "metadata": {
+      "source": "algorithm-meta",
+      "benchmarkMode": "none"
+    }
+  },
+  {
+    "name": "Bozo Sort",
+    "slug": "bozo-sort",
+    "mode": "none",
+    "status": "exempt",
+    "reason": "no-benchmark",
+    "metadata": {
+      "source": "algorithm-meta",
+      "benchmarkMode": "none"
+    }
+  },
+  {
+    "name": "Manual Sort",
+    "slug": "manual-sort",
+    "mode": "none",
+    "status": "exempt",
+    "reason": "no-benchmark",
+    "metadata": {
+      "source": "algorithm-meta",
+      "benchmarkMode": "none"
+    }
+  },
+  {
+    "name": "Miracle Sort",
+    "slug": "miracle-sort",
+    "mode": "none",
+    "status": "exempt",
+    "reason": "no-benchmark",
+    "metadata": {
+      "source": "algorithm-meta",
+      "benchmarkMode": "none"
+    }
+  },
+  {
+    "name": "Sleep Sort",
+    "slug": "sleep-sort",
+    "mode": "none",
+    "status": "exempt",
+    "reason": "no-benchmark",
+    "metadata": {
+      "source": "algorithm-meta",
+      "benchmarkMode": "none"
+    }
+  },
+  {
+    "name": "Slowsort",
+    "slug": "slowsort",
+    "mode": "none",
+    "status": "exempt",
+    "reason": "no-benchmark",
+    "metadata": {
+      "source": "algorithm-meta",
+      "benchmarkMode": "none"
+    }
+  },
+  {
+    "name": "Stalin Sort",
+    "slug": "stalin-sort",
+    "mode": "none",
+    "status": "exempt",
+    "reason": "no-benchmark",
+    "metadata": {
+      "source": "algorithm-meta",
+      "benchmarkMode": "none"
+    }
+  },
+  {
+    "name": "Stooge Sort",
+    "slug": "stooge-sort",
+    "mode": "none",
+    "status": "exempt",
+    "reason": "auto-excluded-unusual",
+    "metadata": {
+      "source": "auto-scan",
+      "benchmarkMode": "none"
+    }
+  }
+]
