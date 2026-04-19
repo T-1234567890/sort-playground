@@ -275,6 +275,9 @@
       "communityDescription": "Community Ranking will eventually surface the most interesting algorithms as a clean list, based on GitHub reactions, discussions, and event participation.",
       "benchmarkEyebrow": "Measured runs",
       "benchmarkDescription": "Benchmark will eventually compare algorithms that can be measured fairly and repeatably under the same controlled setup.",
+      "benchmarkEnvironment": "Approximate benchmark in controlled Node.js environment",
+      "benchmarkAverageNote": "Results are averaged over multiple runs.",
+      "benchmarkNoPoints": "No points or composite score yet.",
       "eventsEyebrow": "Seasonal challenges",
       "eventsDescription": "Events group submissions around a theme, explain what the season is asking for, and give contributors one place to understand how to join.",
       "eventsExtendedDescription": "This introduction is intentionally wider and more descriptive than the ranking area because the event page should first explain the brief, the time window, the categories, and the contribution path. Standings can wait until there is enough real data to publish something trustworthy.",
@@ -283,8 +286,8 @@
       "eventsRankingDescription": "Season standings will appear here once real submissions have been collected and reviewed.",
       "collectingTitle": "Collecting data",
       "communityPlaceholder": "Data is calculating and processing.",
-      "benchmarkPlaceholder": "Benchmark runs are still being collected. Come back later for measured results.",
-      "benchmarkTestedEmpty": "No tested benchmark results are available yet.",
+      "benchmarkPlaceholder": "Benchmark data will be available after CI runs.",
+      "benchmarkUnavailable": "No benchmark results yet. Run will be generated after next commit.",
       "eventsPlaceholder": "Data is calculating and processing.",
       "moreComing": "More algorithms coming soon"
     },
@@ -335,6 +338,16 @@
       "automated": "Automated benchmark",
       "estimated": "Estimated benchmark",
       "none": "No benchmark"
+    },
+    "benchmarkLanguages": {
+      "python": "Python",
+      "rust": "Rust",
+      "c": "C"
+    },
+    "benchmarkSizes": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
     },
     "relativeRanks": {
       "high": "High relative rank",
@@ -398,6 +411,34 @@
       "label": "Open Contribution Wizard"
     }
   },
+  "benchmarkDetail": {
+    "back": "Back to Benchmark",
+    "eyebrow": "Benchmark Detail",
+    "slug": "Slug",
+    "mode": "Mode",
+    "status": "Status",
+    "summary": "This page shows the currently stored benchmark dataset for one algorithm. It exposes raw timing data by language and input size, plus any benchmark snapshot metadata published by CI.",
+    "resultsTitle": "Results",
+    "resultsDescription": "Select a language and input size to inspect the current stored benchmark timing for this algorithm.",
+    "selectedRanking": "Selected benchmark set",
+    "selectedRankingDescription": "Current ranking on the benchmark overview is based on raw time for {{language}} at {{size}} size. Lower is better.",
+    "noPoints": "No points or composite score are available yet.",
+    "dataTitle": "Benchmark Data",
+    "snapshotTitle": "System Snapshot",
+    "missingTitle": "Benchmark entry not found",
+    "none": "Not available",
+    "fields": {
+      "mode": "Benchmark mode",
+      "status": "Benchmark status",
+      "unit": "Unit",
+      "source": "Data source",
+      "reason": "Exemption reason",
+      "specVersion": "Benchmark spec version",
+      "runnerOs": "Runner OS",
+      "workflowRun": "Workflow run id",
+      "harness": "Harness policy"
+    }
+  },
   "code": {
     "sectionEyebrow": "Implementations",
     "sectionTitle": "Copy and ship",
@@ -446,6 +487,81 @@
     "designBody": "Calm glass surfaces, compact developer metadata, and exportable visual artifacts.",
     "build": "Build",
     "buildBody": "Fast pages, clear steps, browser exports, and a contribution flow that stays simple."
+  },
+  "benchmark": {
+    "back": "Sort Playground",
+    "eyebrow": "BENCHMARK",
+    "title": "Sort Benchmark",
+    "subtitle": "A reproducible benchmark for sorting algorithms across languages.",
+    "intro": {
+      "body1": "This benchmark focuses on consistent, reproducible measurements of sorting algorithms.",
+      "body2": "It is designed to compare behavior across different implementations and languages under controlled conditions."
+    },
+    "methodology": {
+      "label": "Methodology",
+      "title": "How the benchmark works",
+      "points": {
+        "datasets": "Fixed datasets are used so every implementation runs against the same inputs.",
+        "sizes": "Multiple input sizes are included to reflect small, medium, and large sorting workloads.",
+        "repeats": "Warm-up passes and repeated runs are used to reduce one-off timing noise.",
+        "environment": "Execution happens in a controlled environment so published results stay comparable."
+      }
+    },
+    "scope": {
+      "label": "Scope",
+      "title": "What is covered",
+      "description": "The benchmark is intended for direct, cross-language comparison of supported sorting implementations.",
+      "included": {
+        "python": "Python implementations",
+        "rust": "Rust implementations",
+        "c": "C implementations",
+        "deterministic": "Deterministic algorithms",
+        "comparable": "Comparable implementations across languages"
+      }
+    },
+    "exclusions": {
+      "label": "Exclusions",
+      "title": "What is excluded",
+      "description": "Some entries are intentionally excluded so the benchmark remains comparable and credible.",
+      "excluded": {
+        "nondeterministic": "Non-deterministic algorithms",
+        "visualOnly": "Visualization-only or manual sorting workflows",
+        "noBenchmark": "Algorithms explicitly marked as no benchmark"
+      }
+    },
+    "navigation": {
+      "label": "Navigation",
+      "title": "Where to go next",
+      "description": "This page defines the benchmark. The benchmark results themselves live separately in Sort Labs.",
+      "primary": {
+        "title": "View Benchmark Results →",
+        "description": "Open the Labs benchmark view to inspect the current published benchmark data."
+      },
+      "secondary": {
+        "source": {
+          "title": "View Source → GitHub repository",
+          "description": "Inspect the project repository and benchmark pipeline."
+        },
+        "docs": {
+          "title": "View Documentation → /docs",
+          "description": "Browse project documentation and benchmark notes."
+        },
+        "algorithms": {
+          "title": "View Algorithms → /",
+          "description": "Return to the main algorithm explorer."
+        }
+      },
+      "crosslink": "Benchmark results are displayed in the Labs section."
+    },
+    "notes": {
+      "label": "Notes",
+      "title": "Notes",
+      "items": {
+        "approximate": "Results are approximate and environment-dependent.",
+        "ci": "Benchmarks are run in a controlled CI environment.",
+        "variance": "Performance may vary across systems and implementations."
+      }
+    }
   },
   "legal": {
     "privacy": "Privacy Policy",

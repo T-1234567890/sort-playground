@@ -4,7 +4,10 @@ Benchmark is the Labs area for algorithms that can be compared under controlled 
 
 ## What It Is
 
-This page is meant to become a measured list of algorithms that can be run fairly on the same datasets and with the same rules.
+This page is a measured list of algorithms that can be run fairly on the same datasets and with the same rules.
+
+Benchmark data comes from `/public/data/benchmark-ranking.json`.
+That file is generated only in GitHub Actions and then published back through CI.
 
 ## Requirements
 
@@ -27,11 +30,16 @@ Used for:
 Rules:
 
 - fixed dataset
-- run multiple times
-- compute average
+- standard dataset profile: small `100`, medium `1000`, large `10000`
+- run a few warm-up iterations before measurement
+- run multiple measured iterations per dataset
+- adapt the measured run count to stay lightweight for slower algorithms
+- compute per-size average
+- benchmark Python, Rust, and C implementations separately
 - runs in GitHub Actions
+- is not generated during local dev or local build
 - existing algorithms already on the website are scanned from `src/algorithms/**`
-- classic algorithms without an explicit exclusion are included automatically
+- all deterministic algorithms without an explicit exclusion are included automatically
 
 ## Mode B - Estimated Benchmark
 
@@ -93,8 +101,14 @@ Only one path should be chosen for an algorithm submission.
 - `name`
 - `slug`
 - `mode` (`automated` / `estimated` / `none`)
-- `average` or `complexity`
+- `results.python`, `results.rust`, `results.c` with `small`, `medium`, `large` or `complexity`
 - `metadata`
+- optional future placeholders inside `snapshot`
+  `workloadProfiles`
+  `environment`
+  `tiers`
+  `harness`
+  `score`
 
 ## Auto-Scan Behavior
 
@@ -102,11 +116,15 @@ The benchmark generator scans all algorithms already present in `src/algorithms/
 
 Default behavior:
 
-- classic algorithms: included automatically
-- explicit `benchmarkMode: "estimated"`: included as estimated
+- deterministic algorithms with Python, Rust, and C implementations: included automatically
+- explicit `benchmarkMode: "estimated"`: fallback only when automated three-language benchmark is unavailable
 - explicit `special: "no-benchmark"`: excluded
-- weird, meme, randomized, manual, custom-visualization, or otherwise unusual methods: excluded automatically
+- random, impossible, or manual methods: excluded automatically
 
 ## No-Data Rule
 
-If benchmark data is not ready, the page should not show made-up results. It should show a clear placeholder that says data is still being collected.
+If benchmark data is not ready, the page should not show made-up results.
+It should say:
+
+- `Benchmark data will be available after CI runs`
+- `No benchmark results yet. Run will be generated after next commit.`

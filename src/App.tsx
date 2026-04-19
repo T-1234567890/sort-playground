@@ -7,6 +7,8 @@ import { ContributePage } from "./pages/ContributePage";
 import { ComparePage } from "./pages/ComparePage";
 import { EmbedPage } from "./pages/EmbedPage";
 import { HomePage } from "./pages/HomePage";
+import { BenchmarkDetailPage } from "./pages/BenchmarkDetailPage";
+import { BenchmarkLandingPage } from "./pages/BenchmarkLandingPage";
 import { LegalPage } from "./pages/LegalPage";
 import { LabsPage } from "./pages/LabsPage";
 import { RacePage } from "./pages/RacePage";
@@ -30,8 +32,16 @@ function getRoute() {
     return { name: null, page: "compare" };
   }
 
+  if (path === "/benchmark") {
+    return { name: null, page: "benchmark" };
+  }
+
   if (path === "/race") {
     return { name: null, page: "race" };
+  }
+
+  if (path.startsWith("/labs/benchmark/")) {
+    return { name: decodeURIComponent(path.replace("/labs/benchmark/", "")), page: "benchmark-detail" };
   }
 
   if (path === "/labs" || path.startsWith("/labs/")) {
@@ -122,8 +132,12 @@ export default function App() {
         <ContributePage dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "compare" ? (
         <ComparePage algorithms={algorithms} dark={dark} onToggleDark={() => setDark((value) => !value)} />
+      ) : route.page === "benchmark" ? (
+        <BenchmarkLandingPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "race" ? (
         <RacePage algorithms={algorithms} dark={dark} onToggleDark={() => setDark((value) => !value)} />
+      ) : route.page === "benchmark-detail" ? (
+        <BenchmarkDetailPage slug={route.name ?? ""} dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "labs" ? (
         <LabsPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "privacy" || route.page === "terms" ? (

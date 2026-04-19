@@ -79,11 +79,63 @@ export type CommunityRankingEntry = {
   source?: "discussion";
 };
 
+export type BenchmarkSize = "small" | "medium" | "large";
+export type BenchmarkLanguage = "python" | "rust" | "c";
+export type BenchmarkWorkloadProfile =
+  | "random-uniform"
+  | "nearly-sorted"
+  | "reverse-sorted"
+  | "many-duplicates"
+  | "low-value-range"
+  | "high-value-range"
+  | "adversarial-pivot"
+  | "stable-sensitive";
+export type BenchmarkTier = "lite" | "standard" | "extreme";
+
+export type BenchmarkResults = Record<BenchmarkSize, number>;
+export type BenchmarkLanguageResults = Record<BenchmarkLanguage, BenchmarkResults>;
+
+export type BenchmarkEnvironmentMetadata = {
+  benchmarkSpecVersion?: string;
+  runnerOs?: string;
+  cpu?: string;
+  nodeVersion?: string;
+  pythonVersion?: string;
+  rustVersion?: string;
+  compilerVersion?: string;
+  workflowRunId?: string;
+};
+
+export type BenchmarkHarnessSnapshot = {
+  datasetGenerator?: string;
+  warmupPolicy?: string;
+  runCountPolicy?: string;
+  timeoutPolicy?: string;
+  memoryConstraints?: string;
+  correctnessValidation?: string;
+  languageRunnerContract?: string;
+};
+
+export type BenchmarkScoreSnapshot = {
+  normalized?: number;
+  composite?: number;
+  percentile?: number;
+  badges?: string[];
+};
+
+export type BenchmarkSystemSnapshot = {
+  workloadProfiles?: Partial<Record<BenchmarkWorkloadProfile, BenchmarkLanguageResults>>;
+  tiers?: Partial<Record<BenchmarkTier, BenchmarkLanguageResults>>;
+  environment?: BenchmarkEnvironmentMetadata;
+  harness?: BenchmarkHarnessSnapshot;
+  score?: BenchmarkScoreSnapshot;
+};
+
 export type BenchmarkRankingEntry = {
   name: string;
   slug: string;
   mode: "automated" | "estimated" | "none";
-  average?: number | null;
+  results?: BenchmarkLanguageResults;
   complexity?: string;
   relativeRank?: "high" | "medium" | "low";
   unit?: string;
@@ -93,10 +145,5 @@ export type BenchmarkRankingEntry = {
     source?: string;
     benchmarkMode?: "automated" | "estimated" | "none";
   };
-  runs: number[];
-  datasets?: {
-    small: number;
-    medium: number;
-    large: number;
-  };
+  snapshot?: BenchmarkSystemSnapshot;
 };

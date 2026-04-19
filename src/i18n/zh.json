@@ -275,6 +275,9 @@
       "communityDescription": "社区排名最终会以列表形式展示最有意思的算法，依据会来自 GitHub 点赞反应、讨论内容和活动参与情况。",
       "benchmarkEyebrow": "实测结果",
       "benchmarkDescription": "基准页最终会比较那些能在相同受控环境下被公平、稳定测量的算法。",
+      "benchmarkEnvironment": "受控 Node.js 环境下的近似基准结果",
+      "benchmarkAverageNote": "结果来自多次运行后的平均值。",
+      "benchmarkNoPoints": "目前还没有积分或综合评分。",
       "eventsEyebrow": "赛季挑战",
       "eventsDescription": "活动页围绕一个主题组织提交，先说明这个赛季要做什么、怎么参加，再逐步形成后续内容。",
       "eventsExtendedDescription": "这里的介绍区域会比排名区域更宽、更长，因为活动页首先应该解释主题、时间范围、评分类别和参与方式。只有在确实收集到足够真实的数据后，才应该展示榜单。",
@@ -283,8 +286,8 @@
       "eventsRankingDescription": "当真实投稿被收集并审核后，本赛季的榜单会显示在这里。",
       "collectingTitle": "正在收集数据",
       "communityPlaceholder": "数据正在计算和处理中。",
-      "benchmarkPlaceholder": "基准运行结果仍在收集中。稍后再来看实测结果。",
-      "benchmarkTestedEmpty": "目前还没有可用的实测基准结果。",
+      "benchmarkPlaceholder": "基准数据会在 CI 运行完成后可用。",
+      "benchmarkUnavailable": "还没有基准结果。下一次提交后会生成本次运行结果。",
       "eventsPlaceholder": "数据正在计算和处理中。",
       "moreComing": "更多算法即将加入"
     },
@@ -335,6 +338,16 @@
       "automated": "自动基准",
       "estimated": "估算基准",
       "none": "不参与基准"
+    },
+    "benchmarkLanguages": {
+      "python": "Python",
+      "rust": "Rust",
+      "c": "C"
+    },
+    "benchmarkSizes": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
     },
     "relativeRanks": {
       "high": "高相对等级",
@@ -398,6 +411,34 @@
       "label": "打开贡献向导"
     }
   },
+  "benchmarkDetail": {
+    "back": "返回基准页",
+    "eyebrow": "Benchmark Detail",
+    "slug": "Slug",
+    "mode": "模式",
+    "status": "状态",
+    "summary": "这个页面展示某个算法当前保存下来的基准数据，包括按语言和输入规模区分的原始计时结果，以及 CI 发布的快照元数据。",
+    "resultsTitle": "结果",
+    "resultsDescription": "选择语言和输入规模，查看这个算法当前保存的基准时间。",
+    "selectedRanking": "当前选择的基准集合",
+    "selectedRankingDescription": "基准总览页目前按 {{language}} 在 {{size}} 规模下的原始耗时排序。数值越低越好。",
+    "noPoints": "目前还没有积分或综合评分。",
+    "dataTitle": "基准数据",
+    "snapshotTitle": "系统快照",
+    "missingTitle": "没有找到这个算法的基准条目",
+    "none": "暂无",
+    "fields": {
+      "mode": "基准模式",
+      "status": "基准状态",
+      "unit": "单位",
+      "source": "数据来源",
+      "reason": "豁免原因",
+      "specVersion": "基准规范版本",
+      "runnerOs": "运行环境系统",
+      "workflowRun": "Workflow 运行 ID",
+      "harness": "执行策略"
+    }
+  },
   "code": {
     "sectionEyebrow": "实现代码",
     "sectionTitle": "复制并使用",
@@ -446,6 +487,81 @@
     "designBody": "克制的玻璃质感、紧凑的开发者元数据，以及可导出的视觉内容。",
     "build": "构建",
     "buildBody": "快速页面、清晰步骤、浏览器导出，以及保持简单的贡献流程。"
+  },
+  "benchmark": {
+    "back": "Sort Playground",
+    "eyebrow": "BENCHMARK",
+    "title": "Sort Benchmark",
+    "subtitle": "一个用于跨语言排序算法比较的可复现实验基准。",
+    "intro": {
+      "body1": "这个基准专注于对排序算法进行一致、可复现的测量。",
+      "body2": "它用于在受控条件下，对不同实现和不同语言之间的行为进行比较。"
+    },
+    "methodology": {
+      "label": "方法",
+      "title": "基准如何工作",
+      "points": {
+        "datasets": "使用固定数据集，确保每个实现面对完全相同的输入。",
+        "sizes": "包含多种输入规模，以覆盖小型、中型和大型排序负载。",
+        "repeats": "通过预热和重复运行来降低单次计时噪声。",
+        "environment": "在受控环境中执行，以保证发布结果具备可比性。"
+      }
+    },
+    "scope": {
+      "label": "范围",
+      "title": "包含什么",
+      "description": "这个基准面向受支持排序实现的直接跨语言比较。",
+      "included": {
+        "python": "Python 实现",
+        "rust": "Rust 实现",
+        "c": "C 实现",
+        "deterministic": "确定性算法",
+        "comparable": "跨语言可对比的实现"
+      }
+    },
+    "exclusions": {
+      "label": "排除项",
+      "title": "不包含什么",
+      "description": "有些条目会被刻意排除，以保证基准结果仍然具有可比性和可信度。",
+      "excluded": {
+        "nondeterministic": "非确定性算法",
+        "visualOnly": "仅用于可视化或需要人工参与的排序流程",
+        "noBenchmark": "被显式标记为 no benchmark 的算法"
+      }
+    },
+    "navigation": {
+      "label": "导航",
+      "title": "接下来去哪里",
+      "description": "这个页面定义基准系统本身。真正的基准结果则单独展示在 Sort Labs 中。",
+      "primary": {
+        "title": "查看基准结果 →",
+        "description": "打开 Labs 基准页面，查看当前发布的基准数据。"
+      },
+      "secondary": {
+        "source": {
+          "title": "查看源码 → GitHub 仓库",
+          "description": "查看项目仓库和基准流水线。"
+        },
+        "docs": {
+          "title": "查看文档 → /docs",
+          "description": "浏览项目文档和基准说明。"
+        },
+        "algorithms": {
+          "title": "查看算法 → /",
+          "description": "返回主算法浏览页。"
+        }
+      },
+      "crosslink": "基准结果显示在 Labs 分区中。"
+    },
+    "notes": {
+      "label": "说明",
+      "title": "Notes",
+      "items": {
+        "approximate": "结果是近似值，并且会受到环境影响。",
+        "ci": "基准在受控的 CI 环境中运行。",
+        "variance": "不同系统和不同实现上的性能可能会有差异。"
+      }
+    }
   },
   "legal": {
     "privacy": "隐私政策",

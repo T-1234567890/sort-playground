@@ -25,6 +25,14 @@ jobs:
         with:
           node-version: 20
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
       - name: Run benchmark generation
         run: node scripts/generate-benchmark-ranking.mjs
 

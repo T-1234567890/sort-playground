@@ -70,18 +70,22 @@ There are two benchmark modes:
 
 #### Automated Benchmark
 
-Used for most algorithms and deterministic implementations.
+Used for deterministic algorithms that have Python, Rust, and C implementations.
 
 Rules:
 
-- fixed dataset
-- run multiple times
-- compute average
+- fixed dataset profile
+  small: 100
+  medium: 1000
+  large: 10000
+- run multiple times in each language
+- compute per-size averages for Python, Rust, and C separately
 - runs in GitHub Actions
+- does not generate benchmark data during local dev or local build
 
 #### Estimated Benchmark
 
-Used for trusted classic algorithms with well-known theoretical complexity.
+Used only when automated three-language benchmarking is not available and theoretical complexity is still useful.
 
 Examples:
 
@@ -149,8 +153,9 @@ Event ranking should stay hidden until real submissions are collected.
 - `name`
 - `slug`
 - `mode` (`automated` / `estimated` / `none`)
-- `average` or `complexity`
+- `results.python`, `results.rust`, `results.c` or `complexity`
 - `metadata`
+- optional `snapshot` placeholders for future benchmark spec work
 
 ### Events
 

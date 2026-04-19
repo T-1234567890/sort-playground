@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
-import type { BenchmarkRankingEntry, CommunityRankingEntry, SortLabsEvent } from "../core/types";
+import type { BenchmarkLanguage, BenchmarkRankingEntry, BenchmarkSize, CommunityRankingEntry, SortLabsEvent } from "../core/types";
 import events from "../data/events.json";
 
 type LabsPageProps = {
@@ -189,6 +189,8 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
   const [eventLoading, setEventLoading] = useState(true);
   const [benchmarkEntries, setBenchmarkEntries] = useState<BenchmarkRankingEntry[]>([]);
   const [benchmarkLoading, setBenchmarkLoading] = useState(true);
+  const [benchmarkLanguage, setBenchmarkLanguage] = useState<BenchmarkLanguage>("python");
+  const [benchmarkSize, setBenchmarkSize] = useState<BenchmarkSize>("medium");
 
   useEffect(() => {
     let cancelled = false;
@@ -197,31 +199,22 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
       setBenchmarkLoading(true);
       setCommunityLoading(true);
       setEventLoading(true);
-      try {
-        const [benchmarkData, communityData, eventData] = await Promise.all([
-          readJson<BenchmarkRankingEntry[]>("/data/benchmark-ranking.json"),
-          readJson<CommunityRankingEntry[]>("/data/community-ranking.json"),
-          readJson<CommunityRankingEntry[]>(`/data/event-ranking-${activeEvent.id}.json`),
-        ]);
+      const [benchmarkResult, communityResult, eventResult] = await Promise.allSettled([
+        readJson<BenchmarkRankingEntry[]>("/data/benchmark-ranking.json"),
+        readJson<CommunityRankingEntry[]>("/data/community-ranking.json"),
+        readJson<CommunityRankingEntry[]>(`/data/event-ranking-${activeEvent.id}.json`),
+      ]);
 
-        if (!cancelled) {
-          setBenchmarkEntries(benchmarkData);
-          setCommunityEntries(communityData);
-          setEventEntries(eventData);
-        }
-      } catch {
-        if (!cancelled) {
-          setBenchmarkEntries([]);
-          setCommunityEntries([]);
-          setEventEntries([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setBenchmarkLoading(false);
-          setCommunityLoading(false);
-          setEventLoading(false);
-        }
+      if (cancelled) {
+        return;
       }
+
+      setBenchmarkEntries(benchmarkResult.status === "fulfilled" ? benchmarkResult.value : []);
+      setCommunityEntries(communityResult.status === "fulfilled" ? communityResult.value : []);
+      setEventEntries(eventResult.status === "fulfilled" ? eventResult.value : []);
+      setBenchmarkLoading(false);
+      setCommunityLoading(false);
+      setEventLoading(false);
     }
 
     void loadData();
@@ -480,13 +473,20 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
   function renderBenchmark() {
     const benchmarkDoc = benchmarkDocsLinks[0];
     const sourceEntries = hasAlgorithmQuery ? filteredBenchmarkEntries : benchmarkEntries;
+    const languageLabels: BenchmarkLanguage[] = ["python", "rust", "c"];
+    const sizeLabels: BenchmarkSize[] = ["small", "medium", "large"];
     const sortedEntries = [...sourceEntries]
       .filter((entry) =>
         entry.mode === "automated" &&
         entry.status === "benchmarked" &&
-        typeof entry.average === "number",
+        typeof entry.results?.[benchmarkLanguage]?.[benchmarkSize] === "number",
       )
-      .sort((left, right) => (left.average ?? Number.POSITIVE_INFINITY) - (right.average ?? Number.POSITIVE_INFINITY));
+      .sort(
+        (left, right) =>
+          (left.results?.[benchmarkLanguage]?.[benchmarkSize] ?? Number.POSITIVE_INFINITY) -
+            (right.results?.[benchmarkLanguage]?.[benchmarkSize] ?? Number.POSITIVE_INFINITY) ||
+          left.name.localeCompare(right.name),
+      );
 
     return (
       <>
@@ -494,6 +494,42 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
           <div className="max-w-3xl">
             <h3 className="text-3xl font-semibold tracking-tight">{t("labs.blocks.benchmark.title")}</h3>
             <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("labs.section.benchmarkDescription")}</p>
+            <p className="mt-4 text-sm font-medium text-zinc-700 dark:text-zinc-200">{t("labs.section.benchmarkEnvironment")}</p>
+            <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{t("labs.section.benchmarkAverageNote")}</p>
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-2">
+            {languageLabels.map((language) => (
+              <button
+                key={language}
+                type="button"
+                onClick={() => setBenchmarkLanguage(language)}
+                className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                  benchmarkLanguage === language
+                    ? "bg-zinc-950 text-white dark:bg-white dark:text-zinc-950"
+                    : "border border-zinc-950/10 bg-white/70 text-zinc-700 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15"
+                }`}
+              >
+                {t(`labs.benchmarkLanguages.${language}`)}
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            {sizeLabels.map((size) => (
+              <button
+                key={size}
+                type="button"
+                onClick={() => setBenchmarkSize(size)}
+                className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                  benchmarkSize === size
+                    ? "bg-zinc-950 text-white dark:bg-white dark:text-zinc-950"
+                    : "border border-zinc-950/10 bg-white/70 text-zinc-700 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15"
+                }`}
+              >
+                {t(`labs.benchmarkSizes.${size}`)}
+              </button>
+            ))}
           </div>
 
           {benchmarkLoading ? (
@@ -517,7 +553,7 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
                           #{index + 1}
                         </span>
                         <div>
-                          <a data-route href={`/algo/${entry.slug}`} className="text-lg font-semibold hover:text-teal-600 dark:hover:text-teal-300">
+                          <a data-route href={`/labs/benchmark/${entry.slug}`} className="text-lg font-semibold hover:text-teal-600 dark:hover:text-teal-300">
                             {entry.name}
                           </a>
                           <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t("labs.benchmarkModes.automated")}</p>
@@ -525,9 +561,16 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
                       </div>
 
                       <div className="grid gap-1 text-sm sm:text-right">
-                        <p className="font-mono font-semibold">{entry.average} {entry.unit}</p>
+                        <p className="font-mono font-semibold">{entry.results?.[benchmarkLanguage]?.[benchmarkSize]?.toFixed(3)} {entry.unit}</p>
+                        <p className="text-zinc-500 dark:text-zinc-400">{t("labs.section.benchmarkNoPoints")}</p>
                         <p className="text-zinc-500 dark:text-zinc-400">
-                          S {entry.datasets?.small ?? "-"} · M {entry.datasets?.medium ?? "-"} · L {entry.datasets?.large ?? "-"}
+                          {t("labs.benchmarkSizes.small")}: {entry.results?.[benchmarkLanguage]?.small?.toFixed(3) ?? "-"} {entry.unit}
+                        </p>
+                        <p className="text-zinc-500 dark:text-zinc-400">
+                          {t("labs.benchmarkSizes.medium")}: {entry.results?.[benchmarkLanguage]?.medium?.toFixed(3) ?? "-"} {entry.unit}
+                        </p>
+                        <p className="text-zinc-500 dark:text-zinc-400">
+                          {t("labs.benchmarkSizes.large")}: {entry.results?.[benchmarkLanguage]?.large?.toFixed(3) ?? "-"} {entry.unit}
                         </p>
                       </div>
                     </li>
@@ -541,7 +584,7 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
                 </ol>
               ) : (
                 <div className="px-5 py-6 text-sm text-zinc-500 dark:text-zinc-400">
-                  {hasAlgorithmQuery ? t("labs.search.noAlgorithms") : t("labs.section.benchmarkTestedEmpty")}
+                  {hasAlgorithmQuery ? t("labs.search.noAlgorithms") : t("labs.section.benchmarkUnavailable")}
                 </div>
               )}
             </div>

@@ -1,195 +1,148 @@
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import process from "node:process";
-import { performance } from "node:perf_hooks";
+import { execFileSync, spawnSync } from "node:child_process";
 
 const root = process.cwd();
 const algorithmsDir = path.join(root, "src/algorithms");
 const outputDir = path.join(root, "public/data");
 const outputPath = path.join(outputDir, "benchmark-ranking.json");
+const WARMUP_RUNS = 2;
+const MAX_MEASURED_RUNS = 10;
+const MIN_MEASURED_RUNS = 2;
+const TARGET_MEASURED_WINDOW_MS = 100.0;
+const TARGET_MEASURED_WINDOW_MS_LITERAL = TARGET_MEASURED_WINDOW_MS.toFixed(1);
 
-function isSorted(array) {
-  for (let index = 1; index < array.length; index += 1) {
-    if (array[index - 1] > array[index]) {
-      return false;
-    }
-  }
+const datasetSizes = {
+  small: 100,
+  medium: 1000,
+  large: 10000,
+};
 
-  return true;
-}
+const datasetSeeds = {
+  small: 7,
+  medium: 13,
+  large: 29,
+};
+const MAX_DATASET_VALUE = 1024;
 
-function swap(array, left, right) {
-  [array[left], array[right]] = [array[right], array[left]];
-}
+const toolchain = {
+  python: "python3",
+  rust: "rustc",
+  c: "cc",
+};
+const BENCHMARK_SPEC_VERSION = "draft-v1";
+const BENCHMARK_WORKLOAD_PROFILES = [
+  "random-uniform",
+  "nearly-sorted",
+  "reverse-sorted",
+  "many-duplicates",
+  "low-value-range",
+  "high-value-range",
+  "adversarial-pivot",
+  "stable-sensitive",
+];
+const BENCHMARK_TIERS = ["lite", "standard", "extreme"];
 
-function quickSort(values) {
-  const array = [...values];
+const rustCallConfig = {
+  "merge-sort": { mode: "return-vec", type: "i32" },
+  "bead-sort": { mode: "return-vec", type: "usize" },
+};
 
-  function sort(low, high) {
-    if (low >= high) {
-      return;
-    }
-
-    const pivot = array[high];
-    let pointer = low;
-
-    for (let index = low; index < high; index += 1) {
-      if (array[index] <= pivot) {
-        swap(array, pointer, index);
-        pointer += 1;
-      }
-    }
-
-    swap(array, pointer, high);
-    sort(low, pointer - 1);
-    sort(pointer + 1, high);
-  }
-
-  sort(0, array.length - 1);
-  return array;
-}
-
-function mergeSort(values) {
-  if (values.length <= 1) {
-    return [...values];
-  }
-
-  const middle = Math.floor(values.length / 2);
-  const left = mergeSort(values.slice(0, middle));
-  const right = mergeSort(values.slice(middle));
-  const merged = [];
-  let leftIndex = 0;
-  let rightIndex = 0;
-
-  while (leftIndex < left.length && rightIndex < right.length) {
-    if (left[leftIndex] <= right[rightIndex]) {
-      merged.push(left[leftIndex]);
-      leftIndex += 1;
-    } else {
-      merged.push(right[rightIndex]);
-      rightIndex += 1;
-    }
-  }
-
-  return merged.concat(left.slice(leftIndex), right.slice(rightIndex));
-}
-
-function bubbleSort(values) {
-  const array = [...values];
-
-  for (let end = array.length - 1; end > 0; end -= 1) {
-    for (let index = 0; index < end; index += 1) {
-      if (array[index] > array[index + 1]) {
-        swap(array, index, index + 1);
-      }
-    }
-  }
-
-  return array;
-}
-
-function insertionSort(values) {
-  const array = [...values];
-
-  for (let index = 1; index < array.length; index += 1) {
-    const value = array[index];
-    let pointer = index - 1;
-
-    while (pointer >= 0 && array[pointer] > value) {
-      array[pointer + 1] = array[pointer];
-      pointer -= 1;
-    }
-
-    array[pointer + 1] = value;
-  }
-
-  return array;
-}
-
-function gnomeSort(values) {
-  const array = [...values];
-  let index = 1;
-
-  while (index < array.length) {
-    if (index === 0 || array[index] >= array[index - 1]) {
-      index += 1;
-    } else {
-      swap(array, index, index - 1);
-      index -= 1;
-    }
-  }
-
-  return array;
-}
-
-function stoogeSort(values) {
-  const array = [...values];
-
-  function sort(left, right) {
-    if (array[left] > array[right]) {
-      swap(array, left, right);
-    }
-
-    const length = right - left + 1;
-
-    if (length <= 2) {
-      return;
-    }
-
-    const third = Math.floor(length / 3);
-    sort(left, right - third);
-    sort(left + third, right);
-    sort(left, right - third);
-  }
-
-  sort(0, array.length - 1);
-  return array;
-}
-
-function beadSort(values) {
-  const positive = [...values];
-  const max = Math.max(...positive, 0);
-  const beads = positive.map((value) => Array.from({ length: max }, (_, index) => (index < value ? 1 : 0)));
-
-  for (let column = 0; column < max; column += 1) {
-    let sum = 0;
-
-    for (let row = 0; row < beads.length; row += 1) {
-      sum += beads[row][column];
-      beads[row][column] = 0;
-    }
-
-    for (let row = beads.length - sum; row < beads.length; row += 1) {
-      beads[row][column] = 1;
-    }
-  }
-
-  return beads.map((row) => row.reduce((count, bead) => count + bead, 0));
-}
-
-const benchmarkImplementations = {
-  "quick-sort": quickSort,
-  "merge-sort": mergeSort,
-  "bubble-sort": bubbleSort,
-  "insertion-sort": insertionSort,
-  "gnome-sort": gnomeSort,
-  "stooge-sort": stoogeSort,
-  "bead-sort": beadSort,
+const cCallConfig = {
+  "quick-sort": { mode: "low-high", type: "int" },
+  "merge-sort": { mode: "low-high", type: "int" },
+  "bead-sort": { mode: "length", type: "unsigned int" },
 };
 
 function createDataset(size, seed) {
   let state = seed;
+
   return Array.from({ length: size }, () => {
     state = (state * 1664525 + 1013904223) % 4294967296;
-    return (state % 200) + 1;
+    return (state % MAX_DATASET_VALUE) + 1;
   });
 }
 
-const datasets = {
-  small: createDataset(24, 7),
-  medium: createDataset(120, 13),
-  large: createDataset(240, 29),
-};
+function createDatasets() {
+  return Object.fromEntries(
+    Object.entries(datasetSizes).map(([label, size]) => [label, createDataset(size, datasetSeeds[label])]),
+  );
+}
+
+function slugToFunctionName(slug) {
+  return slug.replace(/-/g, "_");
+}
+
+function hasTool(command) {
+  const result = spawnSync(command, ["--version"], { stdio: "ignore" });
+  return result.status === 0;
+}
+
+function assertGitHubActions() {
+  if (process.env.GITHUB_ACTIONS !== "true") {
+    throw new Error("Benchmark data is CI-only. Run this script from GitHub Actions.");
+  }
+}
+
+function inferBenchmarkDecision(algorithm, hasThreeLanguageSupport) {
+  if (algorithm.benchmarkMode === "none" || algorithm.benchmark === false || algorithm.special === "no-benchmark") {
+    return {
+      mode: "none",
+      reason: algorithm.special || "benchmark=false",
+      source: "algorithm-meta",
+    };
+  }
+
+  const keywords = (algorithm.keywords ?? []).map((keyword) => String(keyword).toLowerCase());
+  const text = [algorithm.name, algorithm.description, algorithm.complexity, ...keywords]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  const exponentMatch = text.match(/n\^([0-9]+(?:\.[0-9]+)?)/);
+  const exponent = exponentMatch ? Number.parseFloat(exponentMatch[1]) : null;
+
+  if (
+    text.includes("random") ||
+    text.includes("shuffle") ||
+    text.includes("manual") ||
+    text.includes("depends on you") ||
+    text.includes("undefined") ||
+    text.includes("impossible") ||
+    text.includes("never") ||
+    text.includes("exponential") ||
+    (typeof exponent === "number" && exponent > 2.2)
+  ) {
+    return {
+      mode: "none",
+      reason: "auto-excluded-unusual",
+      source: "auto-scan",
+    };
+  }
+
+  if (hasThreeLanguageSupport) {
+    return {
+      mode: "automated",
+      reason: "three-language-benchmark",
+      source: "auto-scan",
+    };
+  }
+
+  if (algorithm.benchmarkMode === "estimated") {
+    return {
+      mode: "estimated",
+      reason: "estimated-fallback",
+      source: "algorithm-meta",
+    };
+  }
+
+  return {
+    mode: "none",
+    reason: "missing-three-language-support",
+    source: "auto-scan",
+  };
+}
 
 async function loadAlgorithms() {
   const entries = await readdir(algorithmsDir, { withFileTypes: true });
@@ -209,192 +162,500 @@ async function loadAlgorithms() {
   return algorithms.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function inferBenchmarkDecision(algorithm) {
-  if (algorithm.benchmarkMode === "none" || algorithm.benchmark === false || algorithm.special === "no-benchmark") {
-    return {
-      mode: "none",
-      reason: algorithm.special || "benchmark=false",
-      source: "algorithm-meta",
-    };
+async function writeDatasets(tempDir, datasets) {
+  const paths = {};
+
+  for (const [label, values] of Object.entries(datasets)) {
+    const filePath = path.join(tempDir, `${label}.txt`);
+    await writeFile(filePath, `${values.join("\n")}\n`);
+    paths[label] = filePath;
   }
 
-  if (algorithm.benchmarkMode === "estimated") {
-    return {
-      mode: "estimated",
-      reason: "estimated-classic",
-      source: "algorithm-meta",
-    };
-  }
+  return paths;
+}
 
-  if (algorithm.benchmarkMode === "automated") {
-    return {
-      mode: "automated",
-      reason: "automated-explicit",
-      source: "algorithm-meta",
-    };
-  }
+function pythonRunnerSource() {
+  return `
+import importlib.util
+import json
+import sys
+import time
 
-  const keywords = (algorithm.keywords ?? []).map((keyword) => String(keyword).toLowerCase());
-  const text = [algorithm.name, algorithm.description, algorithm.complexity, ...keywords]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
+WARMUP_RUNS = ${WARMUP_RUNS}
+MIN_MEASURED_RUNS = ${MIN_MEASURED_RUNS}
+MAX_MEASURED_RUNS = ${MAX_MEASURED_RUNS}
+TARGET_MEASURED_WINDOW_MS = ${TARGET_MEASURED_WINDOW_MS}
 
-  if (
-    algorithm.category === "meme" ||
-    algorithm.category === "weird" ||
-    algorithm.visualization === "custom" ||
-    text.includes("random") ||
-    text.includes("shuffle") ||
-    text.includes("drag") ||
-    text.includes("manual") ||
-    text.includes("timing") ||
-    text.includes("gravity") ||
-    text.includes("depends on you") ||
-    text.includes("undefined")
-  ) {
-    return {
-      mode: "none",
-      reason: "auto-excluded-unusual",
-      source: "auto-scan",
-    };
-  }
+algorithm_path = sys.argv[1]
+function_name = sys.argv[2]
+dataset_paths = {"small": sys.argv[3], "medium": sys.argv[4], "large": sys.argv[5]}
 
-  if (algorithm.category === "classic") {
-    return {
-      mode: "automated",
-      reason: "auto-included-classic",
-      source: "auto-scan",
-    };
-  }
+spec = importlib.util.spec_from_file_location("algorithm_module", algorithm_path)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+sort_function = getattr(module, function_name)
+
+def load_values(path):
+    with open(path, "r", encoding="utf-8") as handle:
+        return [int(line.strip()) for line in handle if line.strip()]
+
+def is_sorted(values):
+    return all(values[index - 1] <= values[index] for index in range(1, len(values)))
+
+def run_once(values):
+    result = sort_function(list(values))
+    if result is None:
+        raise RuntimeError("Python benchmark function must return the sorted list.")
+    if not is_sorted(result):
+        raise RuntimeError("Python benchmark result was not sorted.")
+
+def measure_average(values):
+    for _ in range(WARMUP_RUNS):
+        run_once(values)
+
+    probe_started = time.perf_counter()
+    run_once(values)
+    probe_finished = time.perf_counter()
+    probe_ms = max((probe_finished - probe_started) * 1000.0, 0.001)
+    measured_runs = max(MIN_MEASURED_RUNS, min(MAX_MEASURED_RUNS, int(TARGET_MEASURED_WINDOW_MS / probe_ms)))
+
+    started = time.perf_counter()
+    for _ in range(measured_runs):
+        run_once(values)
+    finished = time.perf_counter()
+    return round(((finished - started) * 1000.0) / measured_runs, 3)
+
+results = {}
+for label, dataset_path in dataset_paths.items():
+    results[label] = measure_average(load_values(dataset_path))
+
+print(json.dumps(results))
+`;
+}
+
+function rustRunnerSource(snippetPath, slug) {
+  const functionName = slugToFunctionName(slug);
+  const config = rustCallConfig[slug] ?? { mode: "mut-slice", type: "i32" };
+  const parser = config.type === "usize" ? "value.parse::<usize>().unwrap()" : "value.parse::<i32>().unwrap()";
+  const sortableCall = config.mode === "return-vec"
+    ? `${functionName}(&values)`
+    : `{ let mut copy = values.to_vec(); ${functionName}(&mut copy); copy }`;
+
+  return `
+use std::env;
+use std::fs;
+use std::time::Instant;
+
+const WARMUP_RUNS: usize = ${WARMUP_RUNS};
+const MIN_MEASURED_RUNS: usize = ${MIN_MEASURED_RUNS};
+const MAX_MEASURED_RUNS: usize = ${MAX_MEASURED_RUNS};
+const TARGET_MEASURED_WINDOW_MS: f64 = ${TARGET_MEASURED_WINDOW_MS_LITERAL};
+
+include!(${JSON.stringify(snippetPath)});
+
+fn load_values(path: &str) -> Vec<${config.type}> {
+    fs::read_to_string(path)
+        .unwrap()
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|value| ${parser})
+        .collect()
+}
+
+fn is_sorted(values: &[${config.type}]) -> bool {
+    values.windows(2).all(|window| window[0] <= window[1])
+}
+
+fn run_once(values: &[${config.type}]) {
+    let result = ${sortableCall};
+    if !is_sorted(&result) {
+        panic!("Rust benchmark result was not sorted.");
+    }
+}
+
+fn measure_average(values: &[${config.type}]) -> f64 {
+    for _ in 0..WARMUP_RUNS {
+        run_once(values);
+    }
+
+    let probe_started = Instant::now();
+    run_once(values);
+    let probe_ms = (probe_started.elapsed().as_secs_f64() * 1000.0).max(0.001);
+    let measured_runs = ((TARGET_MEASURED_WINDOW_MS / probe_ms) as usize)
+        .clamp(MIN_MEASURED_RUNS, MAX_MEASURED_RUNS);
+
+    let started = Instant::now();
+    for _ in 0..measured_runs {
+        run_once(values);
+    }
+
+    (started.elapsed().as_secs_f64() * 1000.0) / (measured_runs as f64)
+}
+
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    let small = load_values(&args[1]);
+    let medium = load_values(&args[2]);
+    let large = load_values(&args[3]);
+    let small_ms = measure_average(&small);
+    let medium_ms = measure_average(&medium);
+    let large_ms = measure_average(&large);
+
+    println!(
+        "{{\\"small\\":{:.3},\\"medium\\":{:.3},\\"large\\":{:.3}}}",
+        small_ms,
+        medium_ms,
+        large_ms
+    );
+}
+`;
+}
+
+function cRunnerSource(snippetPath, slug) {
+  const functionName = slugToFunctionName(slug);
+  const config = cCallConfig[slug] ?? { mode: "length", type: "int" };
+  const scanFormat = config.type === "unsigned int" ? "%u" : "%d";
+  const invoke = config.mode === "low-high"
+    ? `if (length > 0) { ${functionName}(copy, 0, length - 1); }`
+    : `${functionName}(copy, length);`;
+
+  return `
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+${snippetPath.endsWith(".c") ? `#include ${JSON.stringify(snippetPath)}` : ""}
+
+#define WARMUP_RUNS ${WARMUP_RUNS}
+#define MIN_MEASURED_RUNS ${MIN_MEASURED_RUNS}
+#define MAX_MEASURED_RUNS ${MAX_MEASURED_RUNS}
+#define TARGET_MEASURED_WINDOW_MS ${TARGET_MEASURED_WINDOW_MS}
+
+typedef ${config.type} value_t;
+
+static value_t *load_values(const char *path, int *length) {
+    FILE *file = fopen(path, "r");
+    if (!file) {
+        perror("fopen");
+        exit(1);
+    }
+
+    int capacity = 128;
+    int count = 0;
+    value_t *values = malloc((size_t) capacity * sizeof(value_t));
+    if (!values) {
+        perror("malloc");
+        exit(1);
+    }
+
+    value_t value;
+    while (fscanf(file, "${scanFormat}", &value) == 1) {
+        if (count == capacity) {
+            capacity *= 2;
+            values = realloc(values, (size_t) capacity * sizeof(value_t));
+            if (!values) {
+                perror("realloc");
+                exit(1);
+            }
+        }
+        values[count++] = value;
+    }
+
+    fclose(file);
+    *length = count;
+    return values;
+}
+
+static int is_sorted(const value_t values[], int length) {
+    for (int index = 1; index < length; index++) {
+        if (values[index - 1] > values[index]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static void run_once(const value_t values[], int length) {
+    value_t *copy = malloc((size_t) length * sizeof(value_t));
+    if (!copy) {
+        perror("malloc");
+        exit(1);
+    }
+
+    memcpy(copy, values, (size_t) length * sizeof(value_t));
+    ${invoke}
+
+    if (!is_sorted(copy, length)) {
+        fprintf(stderr, "C benchmark result was not sorted.\\n");
+        exit(1);
+    }
+
+    free(copy);
+}
+
+static double now_ms(void) {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return ((double) ts.tv_sec * 1000.0) + ((double) ts.tv_nsec / 1000000.0);
+}
+
+static double measure_average(const value_t values[], int length) {
+    for (int warmup = 0; warmup < WARMUP_RUNS; warmup++) {
+        run_once(values, length);
+    }
+
+    double probe_started = now_ms();
+    run_once(values, length);
+    double probe_ms = now_ms() - probe_started;
+    if (probe_ms < 0.001) {
+        probe_ms = 0.001;
+    }
+    int measured_runs = (int) (TARGET_MEASURED_WINDOW_MS / probe_ms);
+    if (measured_runs < MIN_MEASURED_RUNS) {
+        measured_runs = MIN_MEASURED_RUNS;
+    }
+    if (measured_runs > MAX_MEASURED_RUNS) {
+        measured_runs = MAX_MEASURED_RUNS;
+    }
+
+    double started = now_ms();
+    for (int run = 0; run < measured_runs; run++) {
+        run_once(values, length);
+    }
+    double finished = now_ms();
+
+    return (finished - started) / (double) measured_runs;
+}
+
+int main(int argc, char **argv) {
+    if (argc != 4) {
+        fprintf(stderr, "Expected 3 dataset paths.\\n");
+        return 1;
+    }
+
+    int small_length = 0;
+    int medium_length = 0;
+    int large_length = 0;
+    value_t *small = load_values(argv[1], &small_length);
+    value_t *medium = load_values(argv[2], &medium_length);
+    value_t *large = load_values(argv[3], &large_length);
+
+    double small_ms = measure_average(small, small_length);
+    double medium_ms = measure_average(medium, medium_length);
+    double large_ms = measure_average(large, large_length);
+
+    printf("{\\"small\\":%.3f,\\"medium\\":%.3f,\\"large\\":%.3f}\\n", small_ms, medium_ms, large_ms);
+
+    free(small);
+    free(medium);
+    free(large);
+    return 0;
+}
+`;
+}
+
+function runCommand(command, args, options = {}) {
+  return execFileSync(command, args, {
+    cwd: root,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+    ...options,
+  }).trim();
+}
+
+async function benchmarkPython(snippetPath, slug, datasetPaths, tempDir) {
+  const runnerPath = path.join(tempDir, `${slug}-python-runner.py`);
+  await writeFile(runnerPath, pythonRunnerSource());
+
+  return JSON.parse(runCommand(toolchain.python, [
+    runnerPath,
+    snippetPath,
+    slugToFunctionName(slug),
+    datasetPaths.small,
+    datasetPaths.medium,
+    datasetPaths.large,
+  ]));
+}
+
+async function benchmarkRust(snippetPath, slug, datasetPaths, tempDir) {
+  const sourcePath = path.join(tempDir, `${slug}-rust-runner.rs`);
+  const executablePath = path.join(tempDir, `${slug}-rust-runner`);
+  await writeFile(sourcePath, rustRunnerSource(snippetPath, slug));
+  runCommand(toolchain.rust, ["-O", sourcePath, "-o", executablePath]);
+
+  return JSON.parse(runCommand(executablePath, [
+    datasetPaths.small,
+    datasetPaths.medium,
+    datasetPaths.large,
+  ]));
+}
+
+async function benchmarkC(snippetPath, slug, datasetPaths, tempDir) {
+  const sourcePath = path.join(tempDir, `${slug}-c-runner.c`);
+  const executablePath = path.join(tempDir, `${slug}-c-runner`);
+  await writeFile(sourcePath, cRunnerSource(snippetPath, slug));
+  runCommand(toolchain.c, ["-O2", sourcePath, "-o", executablePath]);
+
+  return JSON.parse(runCommand(executablePath, [
+    datasetPaths.small,
+    datasetPaths.medium,
+    datasetPaths.large,
+  ]));
+}
+
+async function benchmarkAutomatedAlgorithm(algorithm, datasetPaths, tempDir) {
+  const slug = algorithm.slug;
+
+  const snippetPaths = {
+    python: path.join(algorithmsDir, slug, "python.py"),
+    rust: path.join(algorithmsDir, slug, "rust.rs"),
+    c: path.join(algorithmsDir, slug, "c.c"),
+  };
 
   return {
-    mode: "none",
-    reason: "auto-excluded-unclassified",
-    source: "auto-scan",
+    python: await benchmarkPython(snippetPaths.python, slug, datasetPaths, tempDir),
+    rust: await benchmarkRust(snippetPaths.rust, slug, datasetPaths, tempDir),
+    c: await benchmarkC(snippetPaths.c, slug, datasetPaths, tempDir),
   };
 }
 
-function measure(fn, dataset) {
-  const started = performance.now();
-  const result = fn(dataset);
-  const finished = performance.now();
+async function hasThreeLanguageSupport(slug) {
+  const requiredFiles = ["python.py", "rust.rs", "c.c"];
 
-  if (!isSorted(result)) {
-    throw new Error("Benchmark result was not sorted.");
+  for (const file of requiredFiles) {
+    try {
+      await readFile(path.join(algorithmsDir, slug, file), "utf8");
+    } catch {
+      return false;
+    }
   }
 
-  return Number((finished - started).toFixed(3));
+  return true;
 }
 
 async function main() {
-  const algorithms = await loadAlgorithms();
-  const ranking = [];
+  assertGitHubActions();
 
-  for (const algorithm of algorithms) {
-    const benchmarkDecision = inferBenchmarkDecision(algorithm);
-
-    if (benchmarkDecision.mode === "none") {
-      ranking.push({
-        name: algorithm.name,
-        slug: algorithm.slug,
-        mode: "none",
-        status: "exempt",
-        reason: benchmarkDecision.reason,
-        metadata: {
-          source: benchmarkDecision.source,
-          benchmarkMode: "none",
-        },
-        runs: [],
-      });
-      continue;
+  for (const [language, command] of Object.entries(toolchain)) {
+    if (!hasTool(command)) {
+      throw new Error(`Missing required ${language} toolchain: ${command}`);
     }
-
-    if (benchmarkDecision.mode === "estimated") {
-      ranking.push({
-        name: algorithm.name,
-        slug: algorithm.slug,
-        mode: "estimated",
-        complexity: algorithm.complexity,
-        relativeRank: algorithm.benchmarkRelativeRank || "medium",
-        status: "estimated",
-        metadata: {
-          source: benchmarkDecision.source,
-          benchmarkMode: "estimated",
-        },
-        runs: [],
-      });
-      continue;
-    }
-
-    const implementation = benchmarkImplementations[algorithm.slug];
-
-    if (!implementation) {
-      throw new Error(`Missing benchmark implementation for ${algorithm.slug}. Mark it as no-benchmark or add an implementation.`);
-    }
-
-    const runs = [];
-
-    for (let runIndex = 0; runIndex < 3; runIndex += 1) {
-      const samples = Object.values(datasets).map((dataset) => measure(implementation, dataset));
-      const sampleAverage = samples.reduce((sum, value) => sum + value, 0) / samples.length;
-      runs.push(Number(sampleAverage.toFixed(3)));
-    }
-
-    const datasetAverages = Object.fromEntries(
-      Object.entries(datasets).map(([label, dataset]) => {
-        const samples = Array.from({ length: 3 }, () => measure(implementation, dataset));
-        const average = samples.reduce((sum, value) => sum + value, 0) / samples.length;
-        return [label, Number(average.toFixed(3))];
-      }),
-    );
-
-    const average = runs.reduce((sum, value) => sum + value, 0) / runs.length;
-
-    ranking.push({
-      name: algorithm.name,
-      slug: algorithm.slug,
-      mode: "automated",
-      average: Number(average.toFixed(3)),
-      unit: "ms",
-      status: "benchmarked",
-      metadata: {
-        source: "github-actions",
-        benchmarkMode: "automated",
-      },
-      runs,
-      datasets: datasetAverages,
-    });
   }
 
-  ranking.sort((left, right) => {
-    if (left.mode === "none" && right.mode !== "none") {
-      return 1;
+  const datasets = createDatasets();
+  const algorithms = await loadAlgorithms();
+  const ranking = [];
+  const tempDir = await mkdtemp(path.join(os.tmpdir(), "sort-playground-bench-"));
+
+  try {
+    const datasetPaths = await writeDatasets(tempDir, datasets);
+
+    for (const algorithm of algorithms) {
+      const automatedSupport = await hasThreeLanguageSupport(algorithm.slug);
+      const benchmarkDecision = inferBenchmarkDecision(algorithm, automatedSupport);
+
+      if (benchmarkDecision.mode === "none") {
+        ranking.push({
+          name: algorithm.name,
+          slug: algorithm.slug,
+          mode: "none",
+          status: "exempt",
+          reason: benchmarkDecision.reason,
+          metadata: {
+            source: benchmarkDecision.source,
+            benchmarkMode: "none",
+          },
+        });
+        continue;
+      }
+
+      if (benchmarkDecision.mode === "estimated") {
+        ranking.push({
+          name: algorithm.name,
+          slug: algorithm.slug,
+          mode: "estimated",
+          complexity: algorithm.complexity,
+          relativeRank: algorithm.benchmarkRelativeRank || "medium",
+          status: "estimated",
+          metadata: {
+            source: benchmarkDecision.source,
+            benchmarkMode: "estimated",
+          },
+        });
+        continue;
+      }
+
+      const results = await benchmarkAutomatedAlgorithm(algorithm, datasetPaths, tempDir);
+
+      ranking.push({
+        name: algorithm.name,
+        slug: algorithm.slug,
+        mode: "automated",
+        results,
+        unit: "ms",
+        status: "benchmarked",
+        metadata: {
+          source: "github-actions",
+          benchmarkMode: "automated",
+        },
+        snapshot: {
+          workloadProfiles: Object.fromEntries(BENCHMARK_WORKLOAD_PROFILES.map((profile) => [profile, undefined])),
+          tiers: Object.fromEntries(BENCHMARK_TIERS.map((tier) => [tier, undefined])),
+          environment: {
+            benchmarkSpecVersion: BENCHMARK_SPEC_VERSION,
+            runnerOs: process.env.RUNNER_OS,
+            workflowRunId: process.env.GITHUB_RUN_ID,
+          },
+          harness: {
+            datasetGenerator: "deterministic-seeded",
+            warmupPolicy: `${WARMUP_RUNS} warm-up runs`,
+            runCountPolicy: `adaptive ${MIN_MEASURED_RUNS}-${MAX_MEASURED_RUNS} measured runs`,
+            timeoutPolicy: "CI-managed",
+            memoryConstraints: "runner-default",
+            correctnessValidation: "sorted-output verification",
+            languageRunnerContract: "python.py, rust.rs, c.c",
+          },
+          score: {},
+        },
+      });
     }
 
-    if (left.mode !== "none" && right.mode === "none") {
-      return -1;
-    }
+    ranking.sort((left, right) => {
+      if (left.mode === "none" && right.mode !== "none") {
+        return 1;
+      }
 
-    if (left.mode === "automated" && right.mode === "estimated") {
-      return -1;
-    }
+      if (left.mode !== "none" && right.mode === "none") {
+        return -1;
+      }
 
-    if (left.mode === "estimated" && right.mode === "automated") {
-      return 1;
-    }
+      if (left.mode === "automated" && right.mode === "estimated") {
+        return -1;
+      }
 
-    if (left.mode === "estimated" && right.mode === "estimated") {
-      const rankOrder = { high: 0, medium: 1, low: 2 };
-      return rankOrder[left.relativeRank || "medium"] - rankOrder[right.relativeRank || "medium"] || left.name.localeCompare(right.name);
-    }
+      if (left.mode === "estimated" && right.mode === "automated") {
+        return 1;
+      }
 
-    return (left.average ?? Number.POSITIVE_INFINITY) - (right.average ?? Number.POSITIVE_INFINITY) || left.name.localeCompare(right.name);
-  });
+      if (left.mode === "estimated" && right.mode === "estimated") {
+        const rankOrder = { high: 0, medium: 1, low: 2 };
+        return rankOrder[left.relativeRank || "medium"] - rankOrder[right.relativeRank || "medium"] || left.name.localeCompare(right.name);
+      }
 
-  await mkdir(outputDir, { recursive: true });
-  await writeFile(outputPath, `${JSON.stringify(ranking, null, 2)}\n`);
-  console.log(`Wrote ${ranking.length} benchmark entries.`);
+      return (
+        (left.results?.python?.medium ?? Number.POSITIVE_INFINITY) -
+          (right.results?.python?.medium ?? Number.POSITIVE_INFINITY) ||
+        left.name.localeCompare(right.name)
+      );
+    });
+
+    await mkdir(outputDir, { recursive: true });
+    await writeFile(outputPath, `${JSON.stringify(ranking, null, 2)}\n`);
+    console.log(`Wrote ${ranking.length} benchmark entries.`);
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
 }
 
 main().catch((error) => {
