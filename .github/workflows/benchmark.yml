@@ -13,14 +13,12 @@ permissions:
   contents: read
 
 jobs:
-  benchmark:
+  generate-matrix:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
-    strategy:
-      matrix:
-        node-version: [22]
-    env:
-      BENCHMARK_RUN_MODE: small
+    timeout-minutes: 65
+    outputs:
+      matrix: ${{ steps.generate-matrix.outputs.matrix }}
+      count: ${{ steps.generate-matrix.outputs.count }}
 
     steps:
       - name: Check out repository
@@ -31,11 +29,37 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
+          node-version: 22
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Generate algorithm matrix
+        id: generate-matrix
+        run: |
+          node scripts/benchmark/list-algorithms.js > algorithms.json
+          COUNT=$(node --input-type=module -e 'import fs from "node:fs"; console.log(JSON.parse(fs.readFileSync("algorithms.json", "utf8")).length)')
+          echo "matrix=$(cat algorithms.json)" >> "$GITHUB_OUTPUT"
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+
+  benchmark:
+    needs: generate-matrix
+    if: needs.generate-matrix.outputs.count != '0'
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    strategy:
+      fail-fast: false
+      matrix:
+        algorithm: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+        language: [python, rust, c]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -45,8 +69,50 @@ jobs:
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Run benchmark generation
+      - name: Run benchmark
         run: node scripts/benchmark/run.js
+        env:
+          ALGORITHM: ${{ matrix.algorithm.slug }}
+          LANGUAGE: ${{ matrix.language }}
+          BENCHMARK_RUN_MODE: small
+          OUTPUT_PATH: benchmark-${{ matrix.algorithm.slug }}-${{ matrix.language }}.json
+
+      - name: Upload partial benchmark artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-${{ matrix.algorithm.slug }}-${{ matrix.language }}
+          path: benchmark-${{ matrix.algorithm.slug }}-${{ matrix.language }}.json
+
+  merge-results:
+    needs: [generate-matrix, benchmark]
+    if: always() && needs.generate-matrix.result == 'success' && (needs.benchmark.result == 'success' || needs.benchmark.result == 'skipped')
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Download partial benchmark artifacts
+        if: needs.generate-matrix.outputs.count != '0'
+        uses: actions/download-artifact@v4
+        with:
+          pattern: benchmark-*
+          merge-multiple: true
+          path: benchmark-results
+
+      - name: Merge benchmark results
+        run: node scripts/benchmark/merge-results.js
+        env:
+          BENCHMARK_RUN_MODE: small
+          PARTIAL_RESULTS_DIR: benchmark-results
 
       - name: Upload benchmark artifact
         uses: actions/upload-artifact@v4
