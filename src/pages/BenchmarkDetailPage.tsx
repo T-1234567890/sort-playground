@@ -32,12 +32,12 @@ async function readJson<T>(path: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-function formatDateTime(value?: string) {
+function formatDateTime(value?: string, locale?: string) {
   if (!value) {
     return "-";
   }
 
-  return new Intl.DateTimeFormat("en", {
+  return new Intl.DateTimeFormat(locale || undefined, {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -47,7 +47,7 @@ function formatDateTime(value?: string) {
 }
 
 export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetailPageProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [entries, setEntries] = useState<BenchmarkRankingEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState<BenchmarkLanguage>("python");
@@ -83,7 +83,10 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
     };
   }, []);
 
-  const entry = useMemo(() => entries.find((item) => item.slug === slug), [entries, slug]);
+  const entry = useMemo(
+    () => entries.find((item) => item.slug === slug && item.mode !== "none" && item.status !== "exempt"),
+    [entries, slug],
+  );
   const selectedResult = entry?.results?.[language]?.[size];
   const compositeScore = getCompositeScore(entry);
   const selectedSizeScore = getSizeScore(entry, language, size);
@@ -100,7 +103,7 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
         { label: t("benchmarkDetail.fields.status"), value: entry.status },
         { label: t("benchmarkDetail.fields.unit"), value: entry.unit ?? "-" },
         { label: t("benchmarkDetail.fields.source"), value: entry.metadata?.source ?? "-" },
-        { label: t("benchmarkDetail.fields.lastRunAt"), value: formatDateTime(entry.metadata?.lastRunAt) },
+        { label: t("benchmarkDetail.fields.lastRunAt"), value: formatDateTime(entry.metadata?.lastRunAt, i18n.language) },
         { label: t("benchmarkDetail.fields.lastRunMode"), value: entry.metadata?.lastRunMode ?? t("benchmarkDetail.none") },
         { label: t("benchmarkDetail.fields.algorithmHash"), value: entry.metadata?.algorithmHash ?? t("benchmarkDetail.none") },
         { label: t("benchmarkDetail.fields.reason"), value: entry.reason ?? t("benchmarkDetail.none") },
@@ -182,7 +185,7 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                       {t("benchmarkDetail.status")}: {entry.status}
                     </span>
                     <span className="rounded-lg border border-zinc-950/10 bg-white/70 px-3 py-2 dark:border-white/10 dark:bg-white/10">
-                      {t("benchmarkDetail.fields.lastRunAt")}: {formatDateTime(entry.metadata?.lastRunAt)}
+                      {t("benchmarkDetail.fields.lastRunAt")}: {formatDateTime(entry.metadata?.lastRunAt, i18n.language)}
                     </span>
                   </div>
                   <p className="mt-5 max-w-3xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("benchmarkDetail.summary")}</p>

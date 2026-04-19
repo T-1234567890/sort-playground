@@ -29,6 +29,10 @@ const BENCHMARK_INFRASTRUCTURE_PREFIXES = [
   ".github/workflows/benchmark-direct-push.yml",
 ];
 
+function isPublishedBenchmarkEntry(entry) {
+  return entry?.mode === "automated" || entry?.mode === "estimated";
+}
+
 function runCommand(command, args, options = {}) {
   return execFileSync(command, args, {
     cwd: root,
@@ -46,6 +50,18 @@ function tryRunCommand(command, args) {
   }
 }
 
+function parseRankingJson(raw) {
+  if (!raw) {
+    return [];
+  }
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
 function hasTool(command) {
   const result = spawnSync(command, ["--version"], { stdio: "ignore" });
   return result.status === 0;
@@ -55,6 +71,17 @@ function assertGitHubActions() {
   if (process.env.GITHUB_ACTIONS !== "true") {
     throw new Error("Benchmark data is CI-only. Run this script from GitHub Actions.");
   }
+}
+
+async function loadReferenceRanking(root) {
+  const localRanking = await loadExistingRanking(root);
+
+  if (localRanking.length > 0) {
+    return localRanking;
+  }
+
+  const fromOriginMain = tryRunCommand("git", ["show", `origin/main:public/data/benchmark-ranking.json`]);
+  return parseRankingJson(fromOriginMain);
 }
 
 async function readOptional(filePath) {
@@ -350,7 +377,8 @@ async function main() {
     }
   }
 
-  const existingRanking = await loadExistingRanking(root);
+  const storedRanking = await loadReferenceRanking(root);
+  const existingRanking = storedRanking.filter(isPublishedBenchmarkEntry);
   const existingBySlug = new Map(existingRanking.map((entry) => [entry.slug, entry]));
   const datasets = createDatasets();
   const algorithms = await loadAlgorithms();
@@ -362,6 +390,13 @@ async function main() {
   const smallRunChangeSet = await detectSmallRunChanges(existingBySlug);
 
   if (BENCHMARK_RUN_MODE === "small" && existingRanking.length > 0 && !smallRunChangeSet.rerunAll && smallRunChangeSet.changedSlugs?.size === 0) {
+    if (storedRanking.length !== existingRanking.length) {
+      computeScoreSnapshots(existingRanking);
+      sortRanking(existingRanking);
+      await writeRanking(root, existingRanking);
+      console.log("Removed non-benchmark entries from published benchmark data.");
+      return;
+    }
     console.log("No benchmark-relevant changes detected for small run. Reusing existing benchmark data.");
     return;
   }
@@ -391,20 +426,6 @@ async function main() {
       }
 
       if (benchmarkDecision.mode === "none") {
-        ranking.push({
-          name: algorithm.name,
-          slug: algorithm.slug,
-          mode: "none",
-          status: "exempt",
-          reason: benchmarkDecision.reason,
-          metadata: {
-            source: benchmarkDecision.source,
-            benchmarkMode: "none",
-            algorithmHash: algorithm.algorithmHash,
-            lastRunAt,
-            lastRunMode: BENCHMARK_RUN_MODE,
-          },
-        });
         continue;
       }
 

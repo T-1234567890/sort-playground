@@ -442,13 +442,19 @@
     "mode": "Mode",
     "status": "Status",
     "summary": "This page shows the currently stored benchmark dataset for one algorithm. It exposes raw timing data by language and input size, plus any benchmark snapshot metadata published by CI.",
+    "compositeTitle": "Composite Score",
+    "compositeDescription": "A normalized summary of the current stored benchmark profile for this algorithm.",
     "selectedTitle": "Selected Benchmark",
     "selectedMetric": "Current selection",
+    "sizeScore": "Size score:",
+    "radarTitle": "Profile radar",
     "resultsTitle": "Results",
     "resultsDescription": "This algorithm page shows the stored benchmark timings across all supported languages and input sizes.",
     "selectedRanking": "Selected benchmark set",
     "selectedRankingDescription": "Current ranking on the benchmark overview is based on raw time for {{language}} at {{size}} size. Lower is better.",
     "noPoints": "No points or composite score are available yet.",
+    "profileTitle": "Profile Breakdown",
+    "profileDescription": "Each dimension shows the stored workload score for the selected language, together with the raw timings for small, medium, and large inputs.",
     "dataTitle": "Benchmark Data",
     "dataDescription": "This is the benchmark metadata currently published for this algorithm entry.",
     "snapshotTitle": "System Snapshot",
@@ -461,7 +467,14 @@
     "futureDescription": "These fields are placeholders for future workload profiles and tiered benchmark views.",
     "missingTitle": "Benchmark entry not found",
     "none": "Not available",
+    "table": {
+      "dimension": "Dimension",
+      "score": "Score"
+    },
     "fields": {
+      "lastRunAt": "Last benchmark run",
+      "lastRunMode": "Last run mode",
+      "algorithmHash": "Algorithm hash",
       "mode": "Benchmark mode",
       "status": "Benchmark status",
       "unit": "Unit",
@@ -476,6 +489,7 @@
       "compilerVersion": "Compiler version",
       "workflowRun": "Workflow run id",
       "datasetGenerator": "Dataset generator",
+      "datasetProfile": "Dataset profile",
       "warmup": "Warm-up policy",
       "runCount": "Run-count policy",
       "timeout": "Timeout policy",
@@ -545,6 +559,14 @@
     "eyebrow": "BENCHMARK",
     "title": "Sort Benchmark",
     "subtitle": "A reproducible benchmark for sorting algorithms across languages.",
+    "profiles": {
+      "random-uniform": "Random Uniform",
+      "nearly-sorted": "Nearly Sorted",
+      "reverse-sorted": "Reverse Sorted",
+      "many-duplicates": "Many Duplicates",
+      "low-value-range": "Low Value Range",
+      "adversarial-pivot": "Adversarial Pivot"
+    },
     "intro": {
       "body1": "This benchmark focuses on consistent, reproducible measurements of sorting algorithms.",
       "body2": "It is designed to compare behavior across different implementations and languages under controlled conditions."
