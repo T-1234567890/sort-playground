@@ -87,13 +87,15 @@ export type BenchmarkWorkloadProfile =
   | "reverse-sorted"
   | "many-duplicates"
   | "low-value-range"
-  | "high-value-range"
-  | "adversarial-pivot"
-  | "stable-sensitive";
+  | "adversarial-pivot";
 export type BenchmarkTier = "lite" | "standard" | "extreme";
+export type BenchmarkRunMode = "small" | "full";
 
 export type BenchmarkResults = Record<BenchmarkSize, number>;
 export type BenchmarkLanguageResults = Record<BenchmarkLanguage, BenchmarkResults>;
+export type BenchmarkProfileScores = Partial<Record<BenchmarkWorkloadProfile, number>>;
+export type BenchmarkLanguageProfileScores = Partial<Record<BenchmarkLanguage, BenchmarkProfileScores>>;
+export type BenchmarkLanguageSizeScores = Partial<Record<BenchmarkLanguage, Partial<Record<BenchmarkSize, number>>>>;
 
 export type BenchmarkEnvironmentMetadata = {
   benchmarkSpecVersion?: string;
@@ -108,12 +110,14 @@ export type BenchmarkEnvironmentMetadata = {
 
 export type BenchmarkHarnessSnapshot = {
   datasetGenerator?: string;
+  datasetProfile?: string;
   warmupPolicy?: string;
   runCountPolicy?: string;
   timeoutPolicy?: string;
   memoryConstraints?: string;
   correctnessValidation?: string;
   languageRunnerContract?: string;
+  dimensionWeights?: Partial<Record<BenchmarkWorkloadProfile, number>>;
 };
 
 export type BenchmarkScoreSnapshot = {
@@ -121,6 +125,9 @@ export type BenchmarkScoreSnapshot = {
   composite?: number;
   percentile?: number;
   badges?: string[];
+  rawAverageMs?: number;
+  dimensionScores?: BenchmarkLanguageProfileScores;
+  sizeScores?: BenchmarkLanguageSizeScores;
 };
 
 export type BenchmarkSystemSnapshot = {
@@ -144,6 +151,9 @@ export type BenchmarkRankingEntry = {
   metadata?: {
     source?: string;
     benchmarkMode?: "automated" | "estimated" | "none";
+    algorithmHash?: string;
+    lastRunAt?: string;
+    lastRunMode?: BenchmarkRunMode;
   };
   snapshot?: BenchmarkSystemSnapshot;
 };

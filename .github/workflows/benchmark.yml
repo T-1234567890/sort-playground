@@ -15,6 +15,11 @@ permissions:
 jobs:
   benchmark:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22]
+    env:
+      BENCHMARK_RUN_MODE: small
 
     steps:
       - name: Check out repository
@@ -23,7 +28,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -34,7 +43,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Run benchmark generation
-        run: node scripts/generate-benchmark-ranking.mjs
+        run: node scripts/benchmark/run.js
 
       - name: Upload benchmark artifact
         uses: actions/upload-artifact@v4

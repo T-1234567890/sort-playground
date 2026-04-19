@@ -122,6 +122,8 @@ export default function App() {
     <div className="min-h-screen bg-zinc-50 text-zinc-950 transition-colors dark:bg-zinc-950 dark:text-zinc-50">
       {selectedAlgorithm && route.page === "embed" ? (
         <EmbedPage algorithm={selectedAlgorithm} />
+      ) : route.page === "benchmark-detail" ? (
+        <BenchmarkDetailPage slug={route.name ?? ""} dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : selectedAlgorithm ? (
         <AlgorithmPage algorithm={selectedAlgorithm} dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "allalgo" ? (
@@ -136,8 +138,6 @@ export default function App() {
         <BenchmarkLandingPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "race" ? (
         <RacePage algorithms={algorithms} dark={dark} onToggleDark={() => setDark((value) => !value)} />
-      ) : route.page === "benchmark-detail" ? (
-        <BenchmarkDetailPage slug={route.name ?? ""} dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "labs" ? (
         <LabsPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "privacy" || route.page === "terms" ? (

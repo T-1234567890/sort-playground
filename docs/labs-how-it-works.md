@@ -66,6 +66,10 @@ The ranking should read like a list, not a dense dashboard. Until enough signal 
 
 Benchmark is for algorithms that can be measured or classified in a fair and repeatable way.
 
+Benchmark methodology is documented publicly in:
+
+- [docs/benchmark.md](/Users/2111832868qq.com/PycharmProjects/sort-playground/docs/benchmark.md:1)
+
 There are two benchmark modes:
 
 #### Automated Benchmark
@@ -78,10 +82,15 @@ Rules:
   small: 100
   medium: 1000
   large: 10000
+- benchmark workload profiles, not just one random input
 - run multiple times in each language
 - compute per-size averages for Python, Rust, and C separately
+- validate that all three language implementations return the same sorted output
+- compute composite and per-dimension scores from measured timings
 - runs in GitHub Actions
 - does not generate benchmark data during local dev or local build
+- supports incremental small runs and scheduled full reruns
+- stores run metadata, algorithm hash, and system snapshot in the published JSON
 
 #### Estimated Benchmark
 
@@ -107,6 +116,7 @@ Benchmark data should only appear when:
 - the benchmark workflow is ready
 - the input set is defined
 - the runs are repeatable enough to compare
+- correctness validation passes
 
 Until then, the page should show a collection state rather than pretend to have authoritative numbers.
 
@@ -155,7 +165,10 @@ Event ranking should stay hidden until real submissions are collected.
 - `mode` (`automated` / `estimated` / `none`)
 - `results.python`, `results.rust`, `results.c` or `complexity`
 - `metadata`
-- optional `snapshot` placeholders for future benchmark spec work
+- `snapshot.environment`
+- `snapshot.harness`
+- `snapshot.workloadProfiles`
+- `snapshot.score`
 
 ### Events
 
