@@ -1,0 +1,16 @@
+{
+  "name": "Quantum Bogosort",
+  "category": "meme",
+  "complexity": "O(1) in the surviving universe",
+  "spaceComplexity": "O(1)",
+  "stability": "Cosmically unstable",
+  "description": "Shuffles once, checks whether reality happened to produce a sorted list, and otherwise assumes every failed universe has been removed from consideration.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-19",
+  "keywords": ["meme", "quantum", "many worlds", "random"],
+  "funRank": 5,
+  "benchmark": false,
+  "special": "no-benchmark",
+  "eventEligible": true
+}

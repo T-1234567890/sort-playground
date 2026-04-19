@@ -1,0 +1,14 @@
+{
+  "name": "Odd-Even Merge Sort",
+  "category": "classic",
+  "complexity": "O(n log^2 n)",
+  "spaceComplexity": "O(log n)",
+  "stability": "Unstable",
+  "description": "Recursively splits the data and merges it through odd-even compare stages, giving another clear sorting-network style execution pattern.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-19",
+  "keywords": ["sorting network", "batcher", "parallel", "odd-even merge"],
+  "benchmarkRelativeRank": "low",
+  "funRank": 3
+}

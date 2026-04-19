@@ -1,0 +1,14 @@
+{
+  "name": "Library Sort",
+  "category": "classic",
+  "complexity": "O(n log n)",
+  "spaceComplexity": "O(n)",
+  "stability": "Stable",
+  "description": "Keeps gaps between ordered elements so insertions can land faster than dense insertion sort after periodic rebalancing.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-19",
+  "keywords": ["gapped insertion", "library sort", "rebalance", "adaptive"],
+  "benchmarkRelativeRank": "medium",
+  "funRank": 3
+}

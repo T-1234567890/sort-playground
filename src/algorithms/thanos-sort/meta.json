@@ -1,0 +1,16 @@
+{
+  "name": "Thanos Sort",
+  "category": "meme",
+  "complexity": "O(n log n) survivors, O(n) disappearances",
+  "spaceComplexity": "O(n)",
+  "stability": "Stable among the survivors",
+  "description": "Checks whether the list is sorted and, if not, snaps away exactly half of the elements before trying again with whoever remains.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-19",
+  "keywords": ["meme", "delete", "chaos", "snap"],
+  "funRank": 5,
+  "benchmark": false,
+  "special": "no-benchmark",
+  "eventEligible": true
+}

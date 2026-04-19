@@ -1,0 +1,14 @@
+{
+  "name": "Cycle Sort",
+  "category": "classic",
+  "complexity": "O(n^2)",
+  "spaceComplexity": "O(1)",
+  "stability": "Unstable",
+  "description": "Places each value directly into its final position and minimizes writes, making it useful when overwrites are more expensive than comparisons.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-19",
+  "keywords": ["in-place", "minimal writes", "cycle", "selection"],
+  "benchmarkRelativeRank": "medium",
+  "funRank": 2
+}

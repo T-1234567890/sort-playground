@@ -1,0 +1,14 @@
+{
+  "name": "Bitonic Sort",
+  "category": "classic",
+  "complexity": "O(n log^2 n)",
+  "spaceComplexity": "O(log n)",
+  "stability": "Unstable",
+  "description": "Builds bitonic sequences and merges them through compare-swap stages, making it a natural fit for sorting-network style visualizations.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-19",
+  "keywords": ["sorting network", "parallel", "bitonic", "compare and swap"],
+  "benchmarkRelativeRank": "low",
+  "funRank": 3
+}

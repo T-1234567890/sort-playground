@@ -13,6 +13,13 @@ import { slowsortSteps } from "../algorithms/slowsort/steps";
 import { miracleSortSteps } from "../algorithms/miracle-sort/steps";
 import { beadSortSteps } from "../algorithms/bead-sort/steps";
 import { manualSortSteps } from "../algorithms/manual-sort/steps";
+import { bitonicSortSteps } from "../algorithms/bitonic-sort/steps";
+import { oddEvenMergeSortSteps } from "../algorithms/odd-even-merge-sort/steps";
+import { cycleSortSteps } from "../algorithms/cycle-sort/steps";
+import { librarySortSteps } from "../algorithms/library-sort/steps";
+import { smoothsortSteps } from "../algorithms/smoothsort/steps";
+import { quantumBogosortSteps } from "../algorithms/quantum-bogosort/steps";
+import { thanosSortSteps } from "../algorithms/thanos-sort/steps";
 
 const metaModules = import.meta.glob<AlgorithmMeta>("../algorithms/*/meta.json", {
   eager: true,
@@ -81,6 +88,13 @@ const stepModules = {
   "miracle-sort": miracleSortSteps,
   "bead-sort": beadSortSteps,
   "manual-sort": manualSortSteps,
+  "bitonic-sort": bitonicSortSteps,
+  "odd-even-merge-sort": oddEvenMergeSortSteps,
+  "cycle-sort": cycleSortSteps,
+  "library-sort": librarySortSteps,
+  smoothsort: smoothsortSteps,
+  "quantum-bogosort": quantumBogosortSteps,
+  "thanos-sort": thanosSortSteps,
 };
 
 function slugFromPath(path: string) {

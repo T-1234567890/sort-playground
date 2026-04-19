@@ -1,0 +1,15 @@
+{
+  "name": "Smoothsort",
+  "category": "classic",
+  "complexity": "O(n log n)",
+  "spaceComplexity": "O(1)",
+  "stability": "Unstable",
+  "description": "A heap-oriented adaptive sort inspired by Dijkstra's Leonardo-heap approach, included here as a heap-family reference implementation.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-19",
+  "keywords": ["heap", "adaptive", "smoothsort", "leonardo heaps"],
+  "benchmark": false,
+  "special": "no-benchmark",
+  "funRank": 2
+}
