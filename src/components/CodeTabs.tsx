@@ -62,7 +62,7 @@ function CommunityExampleCard({ algorithm, example }: CommunityExampleCardProps)
     downloadTextFile(example.code, `${algorithm.slug}.${example.id}.${extensionFromFilename(example.file)}`);
   }
 
-  const githubFileUrl = example.sourceUrl ?? `${repoBaseUrl}/src/algorithms/${algorithm.slug}/community/${example.file}`;
+  const githubFileUrl = example.sourceUrl ?? `${repoBaseUrl}/src/algorithms/${algorithm.slug}/${example.file}`;
 
   return (
     <div className="overflow-hidden rounded-lg border border-zinc-950/10 bg-white/72 dark:border-white/10 dark:bg-white/8">
@@ -70,7 +70,7 @@ function CommunityExampleCard({ algorithm, example }: CommunityExampleCardProps)
         <div>
           <p className="text-lg font-semibold">{example.label ?? example.language}</p>
           <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-            {t("code.communityBy", { contributor: example.contributor })} · {t("code.lines", { count: lineCount })}
+            {example.contributor ? `${t("code.communityBy", { contributor: example.contributor })} · ` : ""}{t("code.lines", { count: lineCount })}
           </p>
           <a href={githubFileUrl} className="mt-2 inline-flex text-sm font-semibold text-teal-700 hover:text-teal-600 dark:text-teal-300 dark:hover:text-teal-200">
             {t("code.communitySource")}

@@ -93,13 +93,21 @@ Use:
 
 ```text
 src/algorithms/<algorithm-slug>/
-  community-examples.json
-  community/
-    <algorithm-slug>.js
-    <algorithm-slug>.ts
+  js.js
+  ts.ts
+  go.go
 ```
 
-`community-examples.json` should describe each optional example with language, file, contributor, and optional source link.
+Community language examples now live directly inside the algorithm folder.
+
+Recommended naming rule:
+
+- use `<language-code>.<extension>`
+- examples:
+  - `js.js`
+  - `ts.ts`
+  - `go.go`
+  - `java.java`
 
 Required reminder:
 
@@ -108,13 +116,10 @@ Required reminder:
 
 Working examples in this repo:
 
-- `src/algorithms/quick-sort/community-examples.json`
-- `src/algorithms/quick-sort/community/quick-sort.js`
-- `src/algorithms/merge-sort/community-examples.json`
-- `src/algorithms/merge-sort/community/merge-sort.ts`
-- `src/algorithms/bubble-sort/community-examples.json`
-- `src/algorithms/bubble-sort/community/bubble-sort.js`
-- `src/algorithms/bubble-sort/community/bubble-sort.go`
+- `src/algorithms/quick-sort/js.js`
+- `src/algorithms/merge-sort/ts.ts`
+- `src/algorithms/bubble-sort/js.js`
+- `src/algorithms/bubble-sort/go.go`
 
 These are examples of the feature, not required extra files.
 

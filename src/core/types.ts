@@ -39,7 +39,7 @@ export type CommunityCodeExampleMeta = {
   id: string;
   language: string;
   file: string;
-  contributor: string;
+  contributor?: string;
   contributorUrl?: string;
   label?: string;
   sourceUrl?: string;

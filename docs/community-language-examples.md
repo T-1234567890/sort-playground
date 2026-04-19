@@ -23,10 +23,9 @@ src/algorithms/<algorithm-slug>/
   python.py
   rust.rs
   c.c
-  community-examples.json
-  community/
-    <algorithm-slug>.js
-    <algorithm-slug>.ts
+  js.js
+  ts.ts
+  go.go
 ```
 
 ## Supported Community Languages
@@ -45,45 +44,20 @@ The current loader supports:
 
 ## Naming Convention
 
-Recommended convention:
+Required convention:
 
-- metadata file: `community-examples.json`
-- code folder: `community/`
-- code file: `<algorithm-slug>.<ext>`
-- metadata id: `<language>-community`
+- community examples live directly inside the algorithm folder
+- no nested `community/` folder is required
+- no `community-examples.json` file is required
+- use `<language-code>.<extension>`
 
 Examples:
 
-- `quick-sort.js`
-- `merge-sort.ts`
-- `javascript-community`
-- `typescript-community`
-
-## Metadata Format
-
-Example:
-
-```json
-[
-  {
-    "id": "javascript-community",
-    "language": "JavaScript",
-    "file": "quick-sort.js",
-    "contributor": "your-github-name",
-    "label": "JavaScript Community Example"
-  }
-]
-```
-
-Fields:
-
-- `id`: stable identifier for the example
-- `language`: display language name
-- `file`: filename inside `community/`
-- `contributor`: GitHub username
-- `label`: optional display label
-- `contributorUrl`: optional override
-- `sourceUrl`: optional override for GitHub file link
+- `js.js`
+- `ts.ts`
+- `go.go`
+- `java.java`
+- `swift.swift`
 
 ## How Submission Works
 
@@ -91,23 +65,19 @@ Community Language Examples are submitted through a normal pull request.
 
 Submitters should:
 
-1. add the code file under `community/`
-2. add or update `community-examples.json`
-3. make sure the filename matches the metadata
-4. run `npm run build`
-5. open a pull request
+1. add the code file directly inside the algorithm folder
+2. make sure the filename follows `<language-code>.<extension>`
+3. run `npm run build`
+4. open a pull request
 
 ## Example Folders In This Repo
 
 Current examples:
 
-- `src/algorithms/quick-sort/community-examples.json`
-- `src/algorithms/quick-sort/community/quick-sort.js`
-- `src/algorithms/merge-sort/community-examples.json`
-- `src/algorithms/merge-sort/community/merge-sort.ts`
-- `src/algorithms/bubble-sort/community-examples.json`
-- `src/algorithms/bubble-sort/community/bubble-sort.js`
-- `src/algorithms/bubble-sort/community/bubble-sort.go`
+- `src/algorithms/quick-sort/js.js`
+- `src/algorithms/merge-sort/ts.ts`
+- `src/algorithms/bubble-sort/js.js`
+- `src/algorithms/bubble-sort/go.go`
 
 These are example community submissions included in the repo to show the intended structure and naming pattern.
 
@@ -126,7 +96,6 @@ On the algorithm detail page:
 - Community Versions appears below
 - each community example shows:
   - language
-  - contributor
   - GitHub file link
   - download button
   - copy button

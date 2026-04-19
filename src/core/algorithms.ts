@@ -42,7 +42,19 @@ const communityExampleMetaModules = import.meta.glob<CommunityCodeExampleMeta[]>
   import: "default",
 });
 
-const communityCodeModules = {
+const directCommunityCodeModules = {
+  ...import.meta.glob<string>("../algorithms/*/*.js", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/*.ts", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/*.go", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/*.java", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/*.cpp", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/*.swift", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/*.kt", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/*.zig", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/*.rb", { eager: true, query: "?raw", import: "default" }),
+};
+
+const legacyCommunityCodeModules = {
   ...import.meta.glob<string>("../algorithms/*/community/*.js", { eager: true, query: "?raw", import: "default" }),
   ...import.meta.glob<string>("../algorithms/*/community/*.ts", { eager: true, query: "?raw", import: "default" }),
   ...import.meta.glob<string>("../algorithms/*/community/*.go", { eager: true, query: "?raw", import: "default" }),
@@ -79,11 +91,60 @@ function rawFor(modules: Record<string, string>, slug: string, file: string) {
   return modules[`../algorithms/${slug}/${file}`] ?? "";
 }
 
+const reservedFilenames = new Set(["meta.json", "steps.ts", "python.py", "rust.rs", "c.c"]);
+const languageCodeLabels: Record<string, string> = {
+  js: "JavaScript",
+  ts: "TypeScript",
+  go: "Go",
+  java: "Java",
+  cpp: "C++",
+  swift: "Swift",
+  kt: "Kotlin",
+  zig: "Zig",
+  rb: "Ruby",
+};
+
+function directCommunityExamplesFor(slug: string): CommunityCodeExample[] {
+  return Object.entries(directCommunityCodeModules)
+    .flatMap(([modulePath, code]) => {
+      if (!modulePath.startsWith(`../algorithms/${slug}/`)) {
+        return [];
+      }
+
+      const file = modulePath.split("/").at(-1) ?? "";
+
+      if (reservedFilenames.has(file)) {
+        return [];
+      }
+
+      const [stem = "", extension = ""] = file.split(".");
+
+      if (!stem || !extension || stem !== extension) {
+        return [];
+      }
+
+      return [{
+        id: `${stem}-community`,
+        language: languageCodeLabels[stem] ?? stem.toUpperCase(),
+        file,
+        label: languageCodeLabels[stem] ?? stem.toUpperCase(),
+        code,
+      }];
+    })
+    .sort((left, right) => left.language.localeCompare(right.language));
+}
+
 function communityExamplesFor(slug: string): CommunityCodeExample[] {
+  const directExamples = directCommunityExamplesFor(slug);
+
+  if (directExamples.length > 0) {
+    return directExamples;
+  }
+
   const meta = communityExampleMetaModules[`../algorithms/${slug}/community-examples.json`] ?? [];
 
   return meta.flatMap((example) => {
-    const code = communityCodeModules[`../algorithms/${slug}/community/${example.file}`];
+    const code = legacyCommunityCodeModules[`../algorithms/${slug}/community/${example.file}`];
 
     if (!code) {
       return [];

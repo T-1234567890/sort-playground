@@ -97,7 +97,7 @@ const fileRoles = [
   ["python.py", "Readable Python reference implementation."],
   ["rust.rs", "Readable Rust reference implementation."],
   ["c.c", "Readable C reference implementation."],
-  ["community-examples.json (optional)", "Metadata for extra community language examples shown below the required tabs."],
+  ["js.js / go.go / ts.ts (optional)", "Optional extra community language examples discovered automatically from the algorithm folder."],
 ];
 
 const checklist = [
@@ -241,8 +241,9 @@ export function ContributePage({ dark, onToggleDark }: ContributePageProps) {
   python.py
   rust.rs
   c.c
-  community-examples.json (optional)
-  community/ (optional)`}</code>
+  js.js (optional)
+  go.go (optional)
+  ts.ts (optional)`}</code>
             </pre>
           </div>
 
