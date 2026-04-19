@@ -3,7 +3,7 @@
     "name": "Insertion Sort",
     "slug": "insertion-sort",
     "mode": "automated",
-    "average": 0.2,
+    "average": 0.168,
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
@@ -11,21 +11,21 @@
       "benchmarkMode": "automated"
     },
     "runs": [
-      0.3,
-      0.244,
-      0.057
+      0.293,
+      0.196,
+      0.016
     ],
     "datasets": {
       "small": 0.001,
-      "medium": 0.006,
-      "large": 0.02
+      "medium": 0.017,
+      "large": 0.035
     }
   },
   {
     "name": "Bubble Sort",
     "slug": "bubble-sort",
     "mode": "automated",
-    "average": 0.663,
+    "average": 0.649,
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
@@ -33,14 +33,14 @@
       "benchmarkMode": "automated"
     },
     "runs": [
-      1.747,
-      0.127,
-      0.116
+      1.466,
+      0.421,
+      0.06
     ],
     "datasets": {
-      "small": 0.012,
-      "medium": 0.032,
-      "large": 0.15
+      "small": 0.003,
+      "medium": 0.089,
+      "large": 0.162
     }
   },
   {
