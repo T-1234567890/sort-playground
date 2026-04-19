@@ -21,6 +21,13 @@ const toolchain = {
   c: "cc",
 };
 const BENCHMARK_RUN_MODE = process.env.BENCHMARK_RUN_MODE === "full" ? "full" : "small";
+const BENCHMARK_RELEVANT_FILES = new Set(["meta.json", "python.py", "rust.rs", "c.c"]);
+const BENCHMARK_INFRASTRUCTURE_PREFIXES = [
+  "scripts/benchmark/",
+  "scripts/generate-benchmark-ranking.mjs",
+  ".github/workflows/benchmark.yml",
+  ".github/workflows/benchmark-direct-push.yml",
+];
 
 function runCommand(command, args, options = {}) {
   return execFileSync(command, args, {
@@ -56,6 +63,102 @@ async function readOptional(filePath) {
   } catch {
     return undefined;
   }
+}
+
+async function readGitHubEventPayload() {
+  if (!process.env.GITHUB_EVENT_PATH) {
+    return undefined;
+  }
+
+  try {
+    return JSON.parse(await readFile(process.env.GITHUB_EVENT_PATH, "utf8"));
+  } catch {
+    return undefined;
+  }
+}
+
+async function changedFilesForSmallRun() {
+  if (BENCHMARK_RUN_MODE !== "small") {
+    return undefined;
+  }
+
+  const eventName = process.env.GITHUB_EVENT_NAME;
+  const eventPayload = await readGitHubEventPayload();
+
+  try {
+    if (eventName === "workflow_dispatch") {
+      return undefined;
+    }
+
+    if (eventName === "pull_request" && eventPayload?.pull_request?.base?.sha && eventPayload?.pull_request?.head?.sha) {
+      return runCommand("git", ["diff", "--name-only", eventPayload.pull_request.base.sha, eventPayload.pull_request.head.sha])
+        .split("\n")
+        .map((file) => file.trim())
+        .filter(Boolean);
+    }
+
+    if (eventName === "push" && eventPayload?.before && eventPayload?.after && !/^0+$/.test(eventPayload.before)) {
+      return runCommand("git", ["diff", "--name-only", eventPayload.before, eventPayload.after])
+        .split("\n")
+        .map((file) => file.trim())
+        .filter(Boolean);
+    }
+  } catch {
+    return undefined;
+  }
+
+  return [];
+}
+
+async function detectSmallRunChanges(existingBySlug) {
+  if (process.env.GITHUB_EVENT_NAME === "workflow_dispatch") {
+    return {
+      rerunAll: true,
+      changedSlugs: undefined,
+      reason: "manual-dispatch",
+    };
+  }
+
+  const changedFiles = await changedFilesForSmallRun();
+
+  if (!changedFiles) {
+    return {
+      rerunAll: false,
+      changedSlugs: undefined,
+      reason: "diff-unavailable",
+    };
+  }
+
+  if (changedFiles.some((file) => BENCHMARK_INFRASTRUCTURE_PREFIXES.some((prefix) => file === prefix || file.startsWith(prefix)))) {
+    return {
+      rerunAll: true,
+      changedSlugs: undefined,
+      reason: "benchmark-infrastructure-changed",
+    };
+  }
+
+  const changedSlugs = new Set(
+    changedFiles.flatMap((file) => {
+      const match = file.match(/^src\/algorithms\/([^/]+)\/([^/]+)$/);
+
+      if (!match) {
+        return [];
+      }
+
+      const [, slug, basename] = match;
+      return BENCHMARK_RELEVANT_FILES.has(basename) ? [slug] : [];
+    }),
+  );
+
+  const addedSlugs = new Set(
+    [...changedSlugs].filter((slug) => !existingBySlug.has(slug)),
+  );
+
+  return {
+    rerunAll: false,
+    changedSlugs: addedSlugs,
+    reason: addedSlugs.size > 0 ? "new-algorithms-added" : "no-new-algorithms",
+  };
 }
 
 async function createAlgorithmHash(slug) {
@@ -256,6 +359,12 @@ async function main() {
   const environmentSnapshot = buildEnvironmentSnapshot({ toolchain, tryRunCommand });
   const harnessSnapshot = buildHarnessSnapshot();
   const lastRunAt = new Date().toISOString();
+  const smallRunChangeSet = await detectSmallRunChanges(existingBySlug);
+
+  if (BENCHMARK_RUN_MODE === "small" && existingRanking.length > 0 && !smallRunChangeSet.rerunAll && smallRunChangeSet.changedSlugs?.size === 0) {
+    console.log("No benchmark-relevant changes detected for small run. Reusing existing benchmark data.");
+    return;
+  }
 
   try {
     const datasetPaths = await writeDatasets(tempDir, datasets);
@@ -264,6 +373,17 @@ async function main() {
       const automatedSupport = await hasThreeLanguageSupport(algorithm.slug);
       const benchmarkDecision = inferBenchmarkDecision(algorithm, automatedSupport);
       const existingEntry = existingBySlug.get(algorithm.slug);
+
+       if (
+        BENCHMARK_RUN_MODE === "small" &&
+        existingEntry &&
+        !smallRunChangeSet.rerunAll &&
+        smallRunChangeSet.changedSlugs &&
+        !smallRunChangeSet.changedSlugs.has(algorithm.slug)
+      ) {
+        ranking.push(createCachedEntry(existingEntry));
+        continue;
+      }
 
       if (shouldReuseCachedEntry(existingEntry, algorithm.algorithmHash, benchmarkDecision)) {
         ranking.push(createCachedEntry(existingEntry));

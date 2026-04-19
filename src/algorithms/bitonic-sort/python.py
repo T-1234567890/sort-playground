@@ -1,5 +1,13 @@
 def bitonic_sort(values):
-    items = values[:]
+    if not values:
+        return []
+
+    pad_value = max(values) + 1
+    length = 1
+    while length < len(values):
+        length <<= 1
+
+    items = values[:] + [pad_value] * (length - len(values))
 
     def greatest_power_of_two_less_than(length):
         power = 1
@@ -30,4 +38,4 @@ def bitonic_sort(values):
         merge(start, length, ascending)
 
     sort(0, len(items), True)
-    return items
+    return items[:len(values)]

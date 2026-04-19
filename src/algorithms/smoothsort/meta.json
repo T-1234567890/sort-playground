@@ -9,7 +9,6 @@
   "contributors": ["T-1234567890"],
   "added": "2026-04-19",
   "keywords": ["heap", "adaptive", "smoothsort", "leonardo heaps"],
-  "benchmark": false,
-  "special": "no-benchmark",
+  "benchmarkRelativeRank": "medium",
   "funRank": 2
 }

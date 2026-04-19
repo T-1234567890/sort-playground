@@ -1,5 +1,13 @@
 def odd_even_merge_sort(values):
-    items = values[:]
+    if not values:
+        return []
+
+    pad_value = max(values) + 1
+    length = 1
+    while length < len(values):
+        length <<= 1
+
+    items = values[:] + [pad_value] * (length - len(values))
 
     def compare_and_swap(left, right):
         if items[left] > items[right]:
@@ -27,4 +35,4 @@ def odd_even_merge_sort(values):
         merge(start, length, 1)
 
     sort(0, len(items))
-    return items
+    return items[:len(values)]

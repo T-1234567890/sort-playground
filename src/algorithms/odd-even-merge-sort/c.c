@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 static void compare_and_swap(int values[], int left, int right) {
     if (values[left] > values[right]) {
         int temp = values[left];
@@ -33,5 +35,36 @@ static void odd_even_merge_sort_range(int values[], int start, int length) {
 }
 
 void odd_even_merge_sort(int values[], int length) {
-    odd_even_merge_sort_range(values, 0, length);
+    if (length <= 1) {
+        return;
+    }
+
+    int pad_value = values[0];
+    for (int index = 1; index < length; index++) {
+        if (values[index] > pad_value) {
+            pad_value = values[index];
+        }
+    }
+    pad_value += 1;
+
+    int padded_length = 1;
+    while (padded_length < length) {
+        padded_length <<= 1;
+    }
+
+    int *working = malloc((size_t) padded_length * sizeof(int));
+    for (int index = 0; index < length; index++) {
+        working[index] = values[index];
+    }
+    for (int index = length; index < padded_length; index++) {
+        working[index] = pad_value;
+    }
+
+    odd_even_merge_sort_range(working, 0, padded_length);
+
+    for (int index = 0; index < length; index++) {
+        values[index] = working[index];
+    }
+
+    free(working);
 }

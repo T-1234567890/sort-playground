@@ -33,6 +33,19 @@ fn odd_even_merge_sort_range(values: &mut [i32], start: usize, length: usize) {
 }
 
 pub fn odd_even_merge_sort(values: &mut [i32]) {
-    let length = values.len();
-    odd_even_merge_sort_range(values, 0, length);
+    if values.is_empty() {
+        return;
+    }
+
+    let pad_value = values.iter().copied().max().unwrap_or(0) + 1;
+    let mut length = 1usize;
+    while length < values.len() {
+        length <<= 1;
+    }
+
+    let original_len = values.len();
+    let mut working = values.to_vec();
+    working.resize(length, pad_value);
+    odd_even_merge_sort_range(&mut working, 0, length);
+    values.copy_from_slice(&working[..original_len]);
 }

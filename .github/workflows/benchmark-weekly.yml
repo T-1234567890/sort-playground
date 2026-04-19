@@ -1,20 +1,12 @@
-name: Benchmark Direct Push
+name: Benchmark Weekly Full Run
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "src/algorithms/**"
-      - "scripts/benchmark/**"
-      - "scripts/generate-benchmark-ranking.mjs"
-      - ".github/workflows/benchmark.yml"
-      - ".github/workflows/benchmark-direct-push.yml"
-      - ".github/workflows/benchmark-weekly.yml"
+  schedule:
+    - cron: "0 0 * * 0"
   workflow_dispatch:
 
 concurrency:
-  group: benchmark-direct-push
+  group: benchmark-weekly-full
   cancel-in-progress: false
 
 permissions:
@@ -23,9 +15,9 @@ permissions:
 jobs:
   benchmark:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 45
     env:
-      BENCHMARK_RUN_MODE: small
+      BENCHMARK_RUN_MODE: full
 
     steps:
       - name: Check out repository
@@ -56,7 +48,7 @@ jobs:
       - name: Upload benchmark artifact
         uses: actions/upload-artifact@v4
         with:
-          name: benchmark-ranking-direct-push
+          name: benchmark-ranking-weekly
           path: public/data/benchmark-ranking.json
 
       - name: Commit generated benchmark data
@@ -67,6 +59,6 @@ jobs:
           if git diff --cached --quiet; then
             exit 0
           fi
-          git commit -m "chore: refresh benchmark ranking data"
+          git commit -m "chore: weekly benchmark refresh"
           git pull --rebase origin main
           git push origin HEAD:main

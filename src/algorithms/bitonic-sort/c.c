@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdlib.h>
 
 static int greatest_power_of_two_less_than(int length) {
     int power = 1;
@@ -44,5 +45,36 @@ static void bitonic_sort_range(int values[], int start, int length, bool ascendi
 }
 
 void bitonic_sort(int values[], int length) {
-    bitonic_sort_range(values, 0, length, true);
+    if (length <= 1) {
+        return;
+    }
+
+    int pad_value = values[0];
+    for (int index = 1; index < length; index++) {
+        if (values[index] > pad_value) {
+            pad_value = values[index];
+        }
+    }
+    pad_value += 1;
+
+    int padded_length = 1;
+    while (padded_length < length) {
+        padded_length <<= 1;
+    }
+
+    int *working = malloc((size_t) padded_length * sizeof(int));
+    for (int index = 0; index < length; index++) {
+        working[index] = values[index];
+    }
+    for (int index = length; index < padded_length; index++) {
+        working[index] = pad_value;
+    }
+
+    bitonic_sort_range(working, 0, padded_length, true);
+
+    for (int index = 0; index < length; index++) {
+        values[index] = working[index];
+    }
+
+    free(working);
 }

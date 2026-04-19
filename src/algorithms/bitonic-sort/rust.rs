@@ -44,6 +44,19 @@ fn bitonic_sort_range(values: &mut [i32], start: usize, length: usize, ascending
 }
 
 pub fn bitonic_sort(values: &mut [i32]) {
-    let length = values.len();
-    bitonic_sort_range(values, 0, length, true);
+    if values.is_empty() {
+        return;
+    }
+
+    let pad_value = values.iter().copied().max().unwrap_or(0) + 1;
+    let mut length = 1usize;
+    while length < values.len() {
+        length <<= 1;
+    }
+
+    let original_len = values.len();
+    let mut working = values.to_vec();
+    working.resize(length, pad_value);
+    bitonic_sort_range(&mut working, 0, length, true);
+    values.copy_from_slice(&working[..original_len]);
 }
