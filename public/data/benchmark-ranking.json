@@ -5,45 +5,217 @@
     "mode": "automated",
     "results": {
       "python": {
-        "small": 0.056,
-        "medium": 0.96,
-        "large": 15.876
+        "small": 0.075,
+        "medium": 0.986,
+        "large": 16.59
       },
       "rust": {
-        "small": 0.001,
-        "medium": 0.019,
-        "large": 0.414
+        "small": 0.004,
+        "medium": 0.053,
+        "large": 0.581
       },
       "c": {
-        "small": 0.001,
-        "medium": 0.012,
-        "large": 0.403
+        "small": 0.003,
+        "medium": 0.047,
+        "large": 0.457
       }
     },
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
       "source": "github-actions",
-      "benchmarkMode": "automated"
+      "benchmarkMode": "automated",
+      "algorithmHash": "91162654cb5f2d6e0d63811403a2aa55b5d35277a7ded9b0dfec69a84e120e92",
+      "lastRunAt": "2026-04-19T14:59:27.344Z",
+      "lastRunMode": "small"
     },
     "snapshot": {
-      "workloadProfiles": {},
+      "workloadProfiles": {
+        "random-uniform": {
+          "python": {
+            "small": 0.075,
+            "medium": 0.986,
+            "large": 16.59
+          },
+          "rust": {
+            "small": 0.004,
+            "medium": 0.053,
+            "large": 0.581
+          },
+          "c": {
+            "small": 0.003,
+            "medium": 0.047,
+            "large": 0.457
+          }
+        },
+        "nearly-sorted": {
+          "python": {
+            "small": 0.063,
+            "medium": 0.957,
+            "large": 14.103
+          },
+          "rust": {
+            "small": 0.003,
+            "medium": 0.029,
+            "large": 0.328
+          },
+          "c": {
+            "small": 0.002,
+            "medium": 0.024,
+            "large": 0.293
+          }
+        },
+        "reverse-sorted": {
+          "python": {
+            "small": 0.074,
+            "medium": 1.256,
+            "large": 17.969
+          },
+          "rust": {
+            "small": 0.003,
+            "medium": 0.022,
+            "large": 0.215
+          },
+          "c": {
+            "small": 0.002,
+            "medium": 0.016,
+            "large": 0.188
+          }
+        },
+        "many-duplicates": {
+          "python": {
+            "small": 0.09,
+            "medium": 4.29,
+            "large": 379.015
+          },
+          "rust": {
+            "small": 0.004,
+            "medium": 0.062,
+            "large": 3.816
+          },
+          "c": {
+            "small": 0.003,
+            "medium": 0.047,
+            "large": 3.108
+          }
+        },
+        "low-value-range": {
+          "python": {
+            "small": 0.071,
+            "medium": 1.8,
+            "large": 102.899
+          },
+          "rust": {
+            "small": 0.004,
+            "medium": 0.042,
+            "large": 1.204
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.032,
+            "large": 0.986
+          }
+        },
+        "adversarial-pivot": {
+          "python": {
+            "small": 0.067,
+            "medium": 0.985,
+            "large": 14.092
+          },
+          "rust": {
+            "small": 0.003,
+            "medium": 0.019,
+            "large": 0.17
+          },
+          "c": {
+            "small": 0.002,
+            "medium": 0.014,
+            "large": 0.145
+          }
+        }
+      },
       "tiers": {},
       "environment": {
-        "benchmarkSpecVersion": "draft-v1",
+        "benchmarkSpecVersion": "draft-v2",
         "runnerOs": "Linux",
-        "workflowRunId": "24626578043"
+        "cpu": "AMD EPYC 7763 64-Core Processor",
+        "nodeVersion": "v22.22.2",
+        "pythonVersion": "Python 3.12.13",
+        "rustVersion": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "compilerVersion": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "workflowRunId": "24631972996"
       },
       "harness": {
         "datasetGenerator": "deterministic-seeded",
-        "warmupPolicy": "2 warm-up runs",
-        "runCountPolicy": "adaptive 2-10 measured runs",
+        "datasetProfile": "small=100, medium=1000, large=10000",
+        "warmupPolicy": "5 warm-up runs",
+        "runCountPolicy": "30 measured runs",
         "timeoutPolicy": "CI-managed",
         "memoryConstraints": "runner-default",
-        "correctnessValidation": "sorted-output verification",
-        "languageRunnerContract": "python.py, rust.rs, c.c"
+        "correctnessValidation": "sorted-output and cross-language identity",
+        "languageRunnerContract": "python.py, rust.rs, c.c",
+        "dimensionWeights": {
+          "random-uniform": 1,
+          "nearly-sorted": 1,
+          "reverse-sorted": 1,
+          "many-duplicates": 1,
+          "low-value-range": 1,
+          "adversarial-pivot": 1
+        }
       },
-      "score": {}
+      "score": {
+        "rawAverageMs": 10.506,
+        "normalized": 100,
+        "composite": 74,
+        "percentile": 100,
+        "badges": [
+          "Fast Random",
+          "Adversarial Ready"
+        ],
+        "dimensionScores": {
+          "python": {
+            "random-uniform": 100,
+            "nearly-sorted": 100,
+            "reverse-sorted": 94.6,
+            "many-duplicates": 4,
+            "low-value-range": 24.5,
+            "adversarial-pivot": 100
+          },
+          "rust": {
+            "random-uniform": 100,
+            "nearly-sorted": 100,
+            "reverse-sorted": 100,
+            "many-duplicates": 6.2,
+            "low-value-range": 47.4,
+            "adversarial-pivot": 100
+          },
+          "c": {
+            "random-uniform": 100,
+            "nearly-sorted": 100,
+            "reverse-sorted": 100,
+            "many-duplicates": 6.6,
+            "low-value-range": 47.8,
+            "adversarial-pivot": 100
+          }
+        },
+        "sizeScores": {
+          "python": {
+            "small": 100,
+            "medium": 100,
+            "large": 100
+          },
+          "rust": {
+            "small": 100,
+            "medium": 100,
+            "large": 100
+          },
+          "c": {
+            "small": 100,
+            "medium": 100,
+            "large": 100
+          }
+        }
+      }
     }
   },
   {
@@ -52,139 +224,430 @@
     "mode": "automated",
     "results": {
       "python": {
-        "small": 0.137,
-        "medium": 1.806,
-        "large": 23.351
+        "small": 0.18,
+        "medium": 2.025,
+        "large": 25.109
       },
       "rust": {
-        "small": 0.004,
-        "medium": 0.09,
-        "large": 0.94
+        "small": 0.008,
+        "medium": 0.095,
+        "large": 1.035
       },
       "c": {
-        "small": 0.004,
-        "medium": 0.047,
-        "large": 0.782
+        "small": 0.007,
+        "medium": 0.083,
+        "large": 0.906
       }
     },
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
       "source": "github-actions",
-      "benchmarkMode": "automated"
+      "benchmarkMode": "automated",
+      "algorithmHash": "7fd675bce6b227d81303bd18bf1cc18fd87e53ef1111917147ed2475ddda32e7",
+      "lastRunAt": "2026-04-19T14:59:28.145Z",
+      "lastRunMode": "small"
     },
     "snapshot": {
-      "workloadProfiles": {},
+      "workloadProfiles": {
+        "random-uniform": {
+          "python": {
+            "small": 0.18,
+            "medium": 2.025,
+            "large": 25.109
+          },
+          "rust": {
+            "small": 0.008,
+            "medium": 0.095,
+            "large": 1.035
+          },
+          "c": {
+            "small": 0.007,
+            "medium": 0.083,
+            "large": 0.906
+          }
+        },
+        "nearly-sorted": {
+          "python": {
+            "small": 0.144,
+            "medium": 1.783,
+            "large": 21.826
+          },
+          "rust": {
+            "small": 0.006,
+            "medium": 0.058,
+            "large": 0.584
+          },
+          "c": {
+            "small": 0.006,
+            "medium": 0.05,
+            "large": 0.512
+          }
+        },
+        "reverse-sorted": {
+          "python": {
+            "small": 0.136,
+            "medium": 1.461,
+            "large": 16.665
+          },
+          "rust": {
+            "small": 0.005,
+            "medium": 0.048,
+            "large": 0.463
+          },
+          "c": {
+            "small": 0.005,
+            "medium": 0.045,
+            "large": 0.43
+          }
+        },
+        "many-duplicates": {
+          "python": {
+            "small": 0.164,
+            "medium": 1.895,
+            "large": 22.971
+          },
+          "rust": {
+            "small": 0.008,
+            "medium": 0.079,
+            "large": 0.79
+          },
+          "c": {
+            "small": 0.007,
+            "medium": 0.069,
+            "large": 0.676
+          }
+        },
+        "low-value-range": {
+          "python": {
+            "small": 0.165,
+            "medium": 1.93,
+            "large": 23.545
+          },
+          "rust": {
+            "small": 0.009,
+            "medium": 0.095,
+            "large": 0.884
+          },
+          "c": {
+            "small": 0.007,
+            "medium": 0.076,
+            "large": 0.773
+          }
+        },
+        "adversarial-pivot": {
+          "python": {
+            "small": 0.136,
+            "medium": 1.448,
+            "large": 16.497
+          },
+          "rust": {
+            "small": 0.005,
+            "medium": 0.048,
+            "large": 0.474
+          },
+          "c": {
+            "small": 0.005,
+            "medium": 0.048,
+            "large": 0.421
+          }
+        }
+      },
       "tiers": {},
       "environment": {
-        "benchmarkSpecVersion": "draft-v1",
+        "benchmarkSpecVersion": "draft-v2",
         "runnerOs": "Linux",
-        "workflowRunId": "24626578043"
+        "cpu": "AMD EPYC 9V74 80-Core Processor",
+        "nodeVersion": "v22.22.2",
+        "pythonVersion": "Python 3.12.13",
+        "rustVersion": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "compilerVersion": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "workflowRunId": "24631972996"
       },
       "harness": {
         "datasetGenerator": "deterministic-seeded",
-        "warmupPolicy": "2 warm-up runs",
-        "runCountPolicy": "adaptive 2-10 measured runs",
+        "datasetProfile": "small=100, medium=1000, large=10000",
+        "warmupPolicy": "5 warm-up runs",
+        "runCountPolicy": "30 measured runs",
         "timeoutPolicy": "CI-managed",
         "memoryConstraints": "runner-default",
-        "correctnessValidation": "sorted-output verification",
-        "languageRunnerContract": "python.py, rust.rs, c.c"
+        "correctnessValidation": "sorted-output and cross-language identity",
+        "languageRunnerContract": "python.py, rust.rs, c.c",
+        "dimensionWeights": {
+          "random-uniform": 1,
+          "nearly-sorted": 1,
+          "reverse-sorted": 1,
+          "many-duplicates": 1,
+          "low-value-range": 1,
+          "adversarial-pivot": 1
+        }
       },
-      "score": {}
-    }
-  },
-  {
-    "name": "Insertion Sort",
-    "slug": "insertion-sort",
-    "mode": "automated",
-    "results": {
-      "python": {
-        "small": 0.144,
-        "medium": 17.78,
-        "large": 1910.987
-      },
-      "rust": {
-        "small": 0.002,
-        "medium": 0.154,
-        "large": 8.07
-      },
-      "c": {
-        "small": 0.001,
-        "medium": 0.086,
-        "large": 8.009
+      "score": {
+        "rawAverageMs": 2.72,
+        "normalized": 52,
+        "composite": 56.9,
+        "percentile": 83.3,
+        "badges": [],
+        "dimensionScores": {
+          "python": {
+            "random-uniform": 64.6,
+            "nearly-sorted": 63.7,
+            "reverse-sorted": 100,
+            "many-duplicates": 61.1,
+            "low-value-range": 100,
+            "adversarial-pivot": 83.8
+          },
+          "rust": {
+            "random-uniform": 56.1,
+            "nearly-sorted": 55.6,
+            "reverse-sorted": 46.5,
+            "many-duplicates": 27.4,
+            "low-value-range": 59.9,
+            "adversarial-pivot": 36.4
+          },
+          "c": {
+            "random-uniform": 50.9,
+            "nearly-sorted": 56.2,
+            "reverse-sorted": 42.9,
+            "many-duplicates": 27.7,
+            "low-value-range": 57.1,
+            "adversarial-pivot": 34
+          }
+        },
+        "sizeScores": {
+          "python": {
+            "small": 41.7,
+            "medium": 48.7,
+            "large": 66.1
+          },
+          "rust": {
+            "small": 50,
+            "medium": 55.8,
+            "large": 56.1
+          },
+          "c": {
+            "small": 42.9,
+            "medium": 56.6,
+            "large": 50.4
+          }
+        }
       }
-    },
-    "unit": "ms",
-    "status": "benchmarked",
-    "metadata": {
-      "source": "github-actions",
-      "benchmarkMode": "automated"
-    },
-    "snapshot": {
-      "workloadProfiles": {},
-      "tiers": {},
-      "environment": {
-        "benchmarkSpecVersion": "draft-v1",
-        "runnerOs": "Linux",
-        "workflowRunId": "24626578043"
-      },
-      "harness": {
-        "datasetGenerator": "deterministic-seeded",
-        "warmupPolicy": "2 warm-up runs",
-        "runCountPolicy": "adaptive 2-10 measured runs",
-        "timeoutPolicy": "CI-managed",
-        "memoryConstraints": "runner-default",
-        "correctnessValidation": "sorted-output verification",
-        "languageRunnerContract": "python.py, rust.rs, c.c"
-      },
-      "score": {}
     }
   },
   {
-    "name": "Bubble Sort",
-    "slug": "bubble-sort",
+    "name": "Smoothsort",
+    "slug": "smoothsort",
     "mode": "automated",
     "results": {
       "python": {
-        "small": 0.315,
-        "medium": 40.699,
-        "large": 4469.865
+        "small": 0.134,
+        "medium": 2.108,
+        "large": 30.62
       },
       "rust": {
         "small": 0.005,
-        "medium": 0.759,
-        "large": 53.831
+        "medium": 0.062,
+        "large": 0.819
       },
       "c": {
-        "small": 0.022,
-        "medium": 2.205,
-        "large": 209.477
+        "small": 0.004,
+        "medium": 0.056,
+        "large": 0.73
       }
     },
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
       "source": "github-actions",
-      "benchmarkMode": "automated"
+      "benchmarkMode": "automated",
+      "algorithmHash": "54458fbd192ae46f9d4980518d4d48132cf4136425f489da112d0e6108f715c3",
+      "lastRunAt": "2026-04-19T14:59:27.370Z",
+      "lastRunMode": "small"
     },
     "snapshot": {
-      "workloadProfiles": {},
+      "workloadProfiles": {
+        "random-uniform": {
+          "python": {
+            "small": 0.134,
+            "medium": 2.108,
+            "large": 30.62
+          },
+          "rust": {
+            "small": 0.005,
+            "medium": 0.062,
+            "large": 0.819
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.056,
+            "large": 0.73
+          }
+        },
+        "nearly-sorted": {
+          "python": {
+            "small": 0.13,
+            "medium": 2.17,
+            "large": 31.948
+          },
+          "rust": {
+            "small": 0.004,
+            "medium": 0.05,
+            "large": 0.614
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.046,
+            "large": 0.522
+          }
+        },
+        "reverse-sorted": {
+          "python": {
+            "small": 0.116,
+            "medium": 1.901,
+            "large": 30.864
+          },
+          "rust": {
+            "small": 0.004,
+            "medium": 0.054,
+            "large": 0.552
+          },
+          "c": {
+            "small": 0.003,
+            "medium": 0.044,
+            "large": 0.505
+          }
+        },
+        "many-duplicates": {
+          "python": {
+            "small": 0.119,
+            "medium": 1.912,
+            "large": 27.509
+          },
+          "rust": {
+            "small": 0.005,
+            "medium": 0.058,
+            "large": 0.648
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.051,
+            "large": 0.587
+          }
+        },
+        "low-value-range": {
+          "python": {
+            "small": 0.125,
+            "medium": 2.047,
+            "large": 29.407
+          },
+          "rust": {
+            "small": 0.005,
+            "medium": 0.064,
+            "large": 0.794
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.059,
+            "large": 0.69
+          }
+        },
+        "adversarial-pivot": {
+          "python": {
+            "small": 0.126,
+            "medium": 2.098,
+            "large": 31.617
+          },
+          "rust": {
+            "small": 0.004,
+            "medium": 0.049,
+            "large": 0.535
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.043,
+            "large": 0.468
+          }
+        }
+      },
       "tiers": {},
       "environment": {
-        "benchmarkSpecVersion": "draft-v1",
+        "benchmarkSpecVersion": "draft-v2",
         "runnerOs": "Linux",
-        "workflowRunId": "24626578043"
+        "cpu": "AMD EPYC 9V74 80-Core Processor",
+        "nodeVersion": "v22.22.2",
+        "pythonVersion": "Python 3.12.13",
+        "rustVersion": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "compilerVersion": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "workflowRunId": "24631972996"
       },
       "harness": {
         "datasetGenerator": "deterministic-seeded",
-        "warmupPolicy": "2 warm-up runs",
-        "runCountPolicy": "adaptive 2-10 measured runs",
+        "datasetProfile": "small=100, medium=1000, large=10000",
+        "warmupPolicy": "5 warm-up runs",
+        "runCountPolicy": "30 measured runs",
         "timeoutPolicy": "CI-managed",
         "memoryConstraints": "runner-default",
-        "correctnessValidation": "sorted-output verification",
-        "languageRunnerContract": "python.py, rust.rs, c.c"
+        "correctnessValidation": "sorted-output and cross-language identity",
+        "languageRunnerContract": "python.py, rust.rs, c.c",
+        "dimensionWeights": {
+          "random-uniform": 1,
+          "nearly-sorted": 1,
+          "reverse-sorted": 1,
+          "many-duplicates": 1,
+          "low-value-range": 1,
+          "adversarial-pivot": 1
+        }
       },
-      "score": {}
+      "score": {
+        "rawAverageMs": 3.761,
+        "normalized": 68.3,
+        "composite": 51,
+        "percentile": 66.7,
+        "badges": [],
+        "dimensionScores": {
+          "python": {
+            "random-uniform": 53.7,
+            "nearly-sorted": 44.2,
+            "reverse-sorted": 55.5,
+            "many-duplicates": 51.8,
+            "low-value-range": 81.2,
+            "adversarial-pivot": 44.8
+          },
+          "rust": {
+            "random-uniform": 72,
+            "nearly-sorted": 53.9,
+            "reverse-sorted": 39.3,
+            "many-duplicates": 33.8,
+            "low-value-range": 68.6,
+            "adversarial-pivot": 32.7
+          },
+          "c": {
+            "random-uniform": 64.2,
+            "nearly-sorted": 55.8,
+            "reverse-sorted": 37.3,
+            "many-duplicates": 32.4,
+            "low-value-range": 64.9,
+            "adversarial-pivot": 31.3
+          }
+        },
+        "sizeScores": {
+          "python": {
+            "small": 56,
+            "medium": 46.8,
+            "large": 54.2
+          },
+          "rust": {
+            "small": 80,
+            "medium": 85.5,
+            "large": 70.9
+          },
+          "c": {
+            "small": 75,
+            "medium": 83.9,
+            "large": 62.6
+          }
+        }
+      }
     }
   },
   {
@@ -193,180 +656,864 @@
     "mode": "automated",
     "results": {
       "python": {
-        "small": 7.575,
-        "medium": 90.1,
-        "large": 947.296
+        "small": 7.733,
+        "medium": 86.605,
+        "large": 934.485
       },
       "rust": {
-        "small": 0.061,
-        "medium": 0.636,
-        "large": 6.282
+        "small": 0.141,
+        "medium": 1.314,
+        "large": 12.817
       },
       "c": {
-        "small": 0.073,
-        "medium": 0.824,
-        "large": 7.594
+        "small": 0.086,
+        "medium": 0.751,
+        "large": 7.568
       }
     },
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
       "source": "github-actions",
-      "benchmarkMode": "automated"
+      "benchmarkMode": "automated",
+      "algorithmHash": "b35a12a60722ff524761dd4d98d3a23284e20499831df5fb374f91db699897f7",
+      "lastRunAt": "2026-04-19T14:59:28.108Z",
+      "lastRunMode": "small"
     },
     "snapshot": {
-      "workloadProfiles": {},
+      "workloadProfiles": {
+        "random-uniform": {
+          "python": {
+            "small": 7.733,
+            "medium": 86.605,
+            "large": 934.485
+          },
+          "rust": {
+            "small": 0.141,
+            "medium": 1.314,
+            "large": 12.817
+          },
+          "c": {
+            "small": 0.086,
+            "medium": 0.751,
+            "large": 7.568
+          }
+        },
+        "nearly-sorted": {
+          "python": {
+            "small": 0.584,
+            "medium": 84.668,
+            "large": 10135.866
+          },
+          "rust": {
+            "small": 0.013,
+            "medium": 1.281,
+            "large": 124.943
+          },
+          "c": {
+            "small": 0.012,
+            "medium": 0.753,
+            "large": 71.549
+          }
+        },
+        "reverse-sorted": {
+          "python": {
+            "small": 0.589,
+            "medium": 85.391,
+            "large": 10235.347
+          },
+          "rust": {
+            "small": 0.013,
+            "medium": 1.284,
+            "large": 125.224
+          },
+          "c": {
+            "small": 0.016,
+            "medium": 1.098,
+            "large": 71.619
+          }
+        },
+        "many-duplicates": {
+          "python": {
+            "small": 0.126,
+            "medium": 1.314,
+            "large": 13.854
+          },
+          "rust": {
+            "small": 0.003,
+            "medium": 0.026,
+            "large": 0.211
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.02,
+            "large": 0.184
+          }
+        },
+        "low-value-range": {
+          "python": {
+            "small": 0.328,
+            "medium": 3.541,
+            "large": 38.396
+          },
+          "rust": {
+            "small": 0.008,
+            "medium": 0.061,
+            "large": 0.523
+          },
+          "c": {
+            "small": 0.006,
+            "medium": 0.048,
+            "large": 0.435
+          }
+        },
+        "adversarial-pivot": {
+          "python": {
+            "small": 0.584,
+            "medium": 83.502,
+            "large": 10114.322
+          },
+          "rust": {
+            "small": 0.013,
+            "medium": 1.284,
+            "large": 124.766
+          },
+          "c": {
+            "small": 0.01,
+            "medium": 0.731,
+            "large": 71.63
+          }
+        }
+      },
       "tiers": {},
       "environment": {
-        "benchmarkSpecVersion": "draft-v1",
+        "benchmarkSpecVersion": "draft-v2",
         "runnerOs": "Linux",
-        "workflowRunId": "24626578043"
+        "cpu": "AMD EPYC 7763 64-Core Processor",
+        "nodeVersion": "v22.22.2",
+        "pythonVersion": "Python 3.12.13",
+        "rustVersion": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "compilerVersion": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "workflowRunId": "24631972996"
       },
       "harness": {
         "datasetGenerator": "deterministic-seeded",
-        "warmupPolicy": "2 warm-up runs",
-        "runCountPolicy": "adaptive 2-10 measured runs",
+        "datasetProfile": "small=100, medium=1000, large=10000",
+        "warmupPolicy": "5 warm-up runs",
+        "runCountPolicy": "30 measured runs",
         "timeoutPolicy": "CI-managed",
         "memoryConstraints": "runner-default",
-        "correctnessValidation": "sorted-output verification",
-        "languageRunnerContract": "python.py, rust.rs, c.c"
+        "correctnessValidation": "sorted-output and cross-language identity",
+        "languageRunnerContract": "python.py, rust.rs, c.c",
+        "dimensionWeights": {
+          "random-uniform": 1,
+          "nearly-sorted": 1,
+          "reverse-sorted": 1,
+          "many-duplicates": 1,
+          "low-value-range": 1,
+          "adversarial-pivot": 1
+        }
       },
-      "score": {}
+      "score": {
+        "rawAverageMs": 600.883,
+        "normalized": 3.4,
+        "composite": 31.9,
+        "percentile": 50,
+        "badges": [
+          "Handles Duplicates Well"
+        ],
+        "dimensionScores": {
+          "python": {
+            "random-uniform": 1.7,
+            "nearly-sorted": 0.1,
+            "reverse-sorted": 0.2,
+            "many-duplicates": 100,
+            "low-value-range": 60.7,
+            "adversarial-pivot": 0.1
+          },
+          "rust": {
+            "random-uniform": 4.5,
+            "nearly-sorted": 0.3,
+            "reverse-sorted": 0.2,
+            "many-duplicates": 100,
+            "low-value-range": 100,
+            "adversarial-pivot": 0.2
+          },
+          "c": {
+            "random-uniform": 6,
+            "nearly-sorted": 0.4,
+            "reverse-sorted": 0.3,
+            "many-duplicates": 100,
+            "low-value-range": 100,
+            "adversarial-pivot": 0.2
+          }
+        },
+        "sizeScores": {
+          "python": {
+            "small": 1,
+            "medium": 1.1,
+            "large": 1.8
+          },
+          "rust": {
+            "small": 2.8,
+            "medium": 4,
+            "large": 4.5
+          },
+          "c": {
+            "small": 3.5,
+            "medium": 6.3,
+            "large": 6
+          }
+        }
+      }
     }
   },
   {
-    "name": "Gnome Sort",
-    "slug": "gnome-sort",
+    "name": "Odd-Even Merge Sort",
+    "slug": "odd-even-merge-sort",
     "mode": "automated",
     "results": {
       "python": {
-        "small": 0.759,
-        "medium": 95.505,
-        "large": 9646.506
+        "small": 0.28,
+        "medium": 4.767,
+        "large": 122.231
       },
       "rust": {
-        "small": 0.005,
-        "medium": 0.413,
-        "large": 39.144
+        "small": 0.009,
+        "medium": 0.101,
+        "large": 1.905
       },
       "c": {
-        "small": 0.023,
-        "medium": 2.243,
-        "large": 220.88
+        "small": 0.008,
+        "medium": 0.093,
+        "large": 1.906
       }
     },
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
       "source": "github-actions",
-      "benchmarkMode": "automated"
+      "benchmarkMode": "automated",
+      "algorithmHash": "083c59a58e3b54502c64d8c4ae02a79d3a94fdeb9fa10b5c48f14f48c37bb0ff",
+      "lastRunAt": "2026-04-19T14:59:30.622Z",
+      "lastRunMode": "small"
     },
     "snapshot": {
-      "workloadProfiles": {},
+      "workloadProfiles": {
+        "random-uniform": {
+          "python": {
+            "small": 0.28,
+            "medium": 4.767,
+            "large": 122.231
+          },
+          "rust": {
+            "small": 0.009,
+            "medium": 0.101,
+            "large": 1.905
+          },
+          "c": {
+            "small": 0.008,
+            "medium": 0.093,
+            "large": 1.906
+          }
+        },
+        "nearly-sorted": {
+          "python": {
+            "small": 0.237,
+            "medium": 4.113,
+            "large": 117.411
+          },
+          "rust": {
+            "small": 0.006,
+            "medium": 0.062,
+            "large": 1.334
+          },
+          "c": {
+            "small": 0.005,
+            "medium": 0.059,
+            "large": 1.368
+          }
+        },
+        "reverse-sorted": {
+          "python": {
+            "small": 0.236,
+            "medium": 4.013,
+            "large": 114.445
+          },
+          "rust": {
+            "small": 0.005,
+            "medium": 0.049,
+            "large": 1.22
+          },
+          "c": {
+            "small": 0.005,
+            "medium": 0.046,
+            "large": 1.273
+          }
+        },
+        "many-duplicates": {
+          "python": {
+            "small": 0.249,
+            "medium": 4.116,
+            "large": 114.684
+          },
+          "rust": {
+            "small": 0.01,
+            "medium": 0.093,
+            "large": 1.568
+          },
+          "c": {
+            "small": 0.008,
+            "medium": 0.079,
+            "large": 1.575
+          }
+        },
+        "low-value-range": {
+          "python": {
+            "small": 0.251,
+            "medium": 4.259,
+            "large": 116.842
+          },
+          "rust": {
+            "small": 0.009,
+            "medium": 0.094,
+            "large": 1.692
+          },
+          "c": {
+            "small": 0.008,
+            "medium": 0.086,
+            "large": 1.691
+          }
+        },
+        "adversarial-pivot": {
+          "python": {
+            "small": 0.24,
+            "medium": 3.904,
+            "large": 112.863
+          },
+          "rust": {
+            "small": 0.005,
+            "medium": 0.055,
+            "large": 1.239
+          },
+          "c": {
+            "small": 0.005,
+            "medium": 0.045,
+            "large": 1.228
+          }
+        }
+      },
       "tiers": {},
       "environment": {
-        "benchmarkSpecVersion": "draft-v1",
+        "benchmarkSpecVersion": "draft-v2",
         "runnerOs": "Linux",
-        "workflowRunId": "24626578043"
+        "cpu": "AMD EPYC 7763 64-Core Processor",
+        "nodeVersion": "v22.22.2",
+        "pythonVersion": "Python 3.12.13",
+        "rustVersion": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "compilerVersion": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "workflowRunId": "24631972996"
       },
       "harness": {
         "datasetGenerator": "deterministic-seeded",
-        "warmupPolicy": "2 warm-up runs",
-        "runCountPolicy": "adaptive 2-10 measured runs",
+        "datasetProfile": "small=100, medium=1000, large=10000",
+        "warmupPolicy": "5 warm-up runs",
+        "runCountPolicy": "30 measured runs",
         "timeoutPolicy": "CI-managed",
         "memoryConstraints": "runner-default",
-        "correctnessValidation": "sorted-output verification",
-        "languageRunnerContract": "python.py, rust.rs, c.c"
+        "correctnessValidation": "sorted-output and cross-language identity",
+        "languageRunnerContract": "python.py, rust.rs, c.c",
+        "dimensionWeights": {
+          "random-uniform": 1,
+          "nearly-sorted": 1,
+          "reverse-sorted": 1,
+          "many-duplicates": 1,
+          "low-value-range": 1,
+          "adversarial-pivot": 1
+        }
       },
-      "score": {}
+      "score": {
+        "rawAverageMs": 13.779,
+        "normalized": 33.4,
+        "composite": 19,
+        "percentile": 33.3,
+        "badges": [],
+        "dimensionScores": {
+          "python": {
+            "random-uniform": 13.9,
+            "nearly-sorted": 12.4,
+            "reverse-sorted": 15.4,
+            "many-duplicates": 12.8,
+            "low-value-range": 21.1,
+            "adversarial-pivot": 12.9
+          },
+          "rust": {
+            "random-uniform": 31.7,
+            "nearly-sorted": 25.7,
+            "reverse-sorted": 18.8,
+            "many-duplicates": 14.4,
+            "low-value-range": 33,
+            "adversarial-pivot": 14.8
+          },
+          "c": {
+            "random-uniform": 25.3,
+            "nearly-sorted": 22.3,
+            "reverse-sorted": 15.6,
+            "many-duplicates": 12.5,
+            "low-value-range": 27.4,
+            "adversarial-pivot": 12.6
+          }
+        },
+        "sizeScores": {
+          "python": {
+            "small": 26.8,
+            "medium": 20.7,
+            "large": 13.6
+          },
+          "rust": {
+            "small": 44.4,
+            "medium": 52.5,
+            "large": 30.5
+          },
+          "c": {
+            "small": 37.5,
+            "medium": 50.5,
+            "large": 24
+          }
+        }
+      }
     }
   },
   {
-    "name": "Bogo Sort",
-    "slug": "bogo-sort",
-    "mode": "none",
-    "status": "exempt",
-    "reason": "no-benchmark",
+    "name": "Bitonic Sort",
+    "slug": "bitonic-sort",
+    "mode": "automated",
+    "results": {
+      "python": {
+        "small": 0.331,
+        "medium": 4.998,
+        "large": 127.008
+      },
+      "rust": {
+        "small": 0.012,
+        "medium": 0.134,
+        "large": 2.169
+      },
+      "c": {
+        "small": 0.014,
+        "medium": 0.131,
+        "large": 2.243
+      }
+    },
+    "unit": "ms",
+    "status": "benchmarked",
     "metadata": {
-      "source": "algorithm-meta",
-      "benchmarkMode": "none"
+      "source": "github-actions",
+      "benchmarkMode": "automated",
+      "algorithmHash": "9802609f05ede7674d274d2c312a088319aad828ebcfdc2cb77c09a52dc391f9",
+      "lastRunAt": "2026-04-19T14:59:27.374Z",
+      "lastRunMode": "small"
+    },
+    "snapshot": {
+      "workloadProfiles": {
+        "random-uniform": {
+          "python": {
+            "small": 0.331,
+            "medium": 4.998,
+            "large": 127.008
+          },
+          "rust": {
+            "small": 0.012,
+            "medium": 0.134,
+            "large": 2.169
+          },
+          "c": {
+            "small": 0.014,
+            "medium": 0.131,
+            "large": 2.243
+          }
+        },
+        "nearly-sorted": {
+          "python": {
+            "small": 0.319,
+            "medium": 4.91,
+            "large": 125.688
+          },
+          "rust": {
+            "small": 0.01,
+            "medium": 0.096,
+            "large": 1.757
+          },
+          "c": {
+            "small": 0.01,
+            "medium": 0.096,
+            "large": 1.748
+          }
+        },
+        "reverse-sorted": {
+          "python": {
+            "small": 0.317,
+            "medium": 4.938,
+            "large": 125.493
+          },
+          "rust": {
+            "small": 0.008,
+            "medium": 0.069,
+            "large": 1.498
+          },
+          "c": {
+            "small": 0.008,
+            "medium": 0.068,
+            "large": 1.505
+          }
+        },
+        "many-duplicates": {
+          "python": {
+            "small": 0.317,
+            "medium": 4.775,
+            "large": 121.203
+          },
+          "rust": {
+            "small": 0.012,
+            "medium": 0.105,
+            "large": 1.798
+          },
+          "c": {
+            "small": 0.013,
+            "medium": 0.105,
+            "large": 1.774
+          }
+        },
+        "low-value-range": {
+          "python": {
+            "small": 0.318,
+            "medium": 4.824,
+            "large": 122.793
+          },
+          "rust": {
+            "small": 0.013,
+            "medium": 0.118,
+            "large": 1.966
+          },
+          "c": {
+            "small": 0.013,
+            "medium": 0.121,
+            "large": 1.935
+          }
+        },
+        "adversarial-pivot": {
+          "python": {
+            "small": 0.31,
+            "medium": 4.846,
+            "large": 126.199
+          },
+          "rust": {
+            "small": 0.011,
+            "medium": 0.069,
+            "large": 1.493
+          },
+          "c": {
+            "small": 0.016,
+            "medium": 0.068,
+            "large": 1.541
+          }
+        }
+      },
+      "tiers": {},
+      "environment": {
+        "benchmarkSpecVersion": "draft-v2",
+        "runnerOs": "Linux",
+        "cpu": "AMD EPYC 9V74 80-Core Processor",
+        "nodeVersion": "v22.22.2",
+        "pythonVersion": "Python 3.12.13",
+        "rustVersion": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "compilerVersion": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "workflowRunId": "24631972996"
+      },
+      "harness": {
+        "datasetGenerator": "deterministic-seeded",
+        "datasetProfile": "small=100, medium=1000, large=10000",
+        "warmupPolicy": "5 warm-up runs",
+        "runCountPolicy": "30 measured runs",
+        "timeoutPolicy": "CI-managed",
+        "memoryConstraints": "runner-default",
+        "correctnessValidation": "sorted-output and cross-language identity",
+        "languageRunnerContract": "python.py, rust.rs, c.c",
+        "dimensionWeights": {
+          "random-uniform": 1,
+          "nearly-sorted": 1,
+          "reverse-sorted": 1,
+          "many-duplicates": 1,
+          "low-value-range": 1,
+          "adversarial-pivot": 1
+        }
+      },
+      "score": {
+        "rawAverageMs": 14.858,
+        "normalized": 25.9,
+        "composite": 16.3,
+        "percentile": 16.7,
+        "badges": [],
+        "dimensionScores": {
+          "python": {
+            "random-uniform": 13.3,
+            "nearly-sorted": 11.6,
+            "reverse-sorted": 14,
+            "many-duplicates": 12.1,
+            "low-value-range": 20,
+            "adversarial-pivot": 11.5
+          },
+          "rust": {
+            "random-uniform": 27.6,
+            "nearly-sorted": 19.3,
+            "reverse-sorted": 15.2,
+            "many-duplicates": 12.5,
+            "low-value-range": 28.2,
+            "adversarial-pivot": 12.2
+          },
+          "c": {
+            "random-uniform": 21.2,
+            "nearly-sorted": 17.2,
+            "reverse-sorted": 13,
+            "many-duplicates": 11,
+            "low-value-range": 23.6,
+            "adversarial-pivot": 9.9
+          }
+        },
+        "sizeScores": {
+          "python": {
+            "small": 22.7,
+            "medium": 19.7,
+            "large": 13.1
+          },
+          "rust": {
+            "small": 33.3,
+            "medium": 39.6,
+            "large": 26.8
+          },
+          "c": {
+            "small": 21.4,
+            "medium": 35.9,
+            "large": 20.4
+          }
+        }
+      }
     }
   },
   {
-    "name": "Bozo Sort",
-    "slug": "bozo-sort",
-    "mode": "none",
-    "status": "exempt",
-    "reason": "no-benchmark",
+    "name": "Library Sort",
+    "slug": "library-sort",
+    "mode": "automated",
+    "results": {
+      "python": {
+        "small": 0.936,
+        "medium": 87.375,
+        "large": 9862.607
+      },
+      "rust": {
+        "small": 0.051,
+        "medium": 1.743,
+        "large": 137.746
+      },
+      "c": {
+        "small": 0.061,
+        "medium": 3.19,
+        "large": 262.574
+      }
+    },
+    "unit": "ms",
+    "status": "benchmarked",
     "metadata": {
-      "source": "algorithm-meta",
-      "benchmarkMode": "none"
-    }
-  },
-  {
-    "name": "Manual Sort",
-    "slug": "manual-sort",
-    "mode": "none",
-    "status": "exempt",
-    "reason": "no-benchmark",
-    "metadata": {
-      "source": "algorithm-meta",
-      "benchmarkMode": "none"
-    }
-  },
-  {
-    "name": "Miracle Sort",
-    "slug": "miracle-sort",
-    "mode": "none",
-    "status": "exempt",
-    "reason": "no-benchmark",
-    "metadata": {
-      "source": "algorithm-meta",
-      "benchmarkMode": "none"
-    }
-  },
-  {
-    "name": "Sleep Sort",
-    "slug": "sleep-sort",
-    "mode": "none",
-    "status": "exempt",
-    "reason": "no-benchmark",
-    "metadata": {
-      "source": "algorithm-meta",
-      "benchmarkMode": "none"
-    }
-  },
-  {
-    "name": "Slowsort",
-    "slug": "slowsort",
-    "mode": "none",
-    "status": "exempt",
-    "reason": "no-benchmark",
-    "metadata": {
-      "source": "algorithm-meta",
-      "benchmarkMode": "none"
-    }
-  },
-  {
-    "name": "Stalin Sort",
-    "slug": "stalin-sort",
-    "mode": "none",
-    "status": "exempt",
-    "reason": "no-benchmark",
-    "metadata": {
-      "source": "algorithm-meta",
-      "benchmarkMode": "none"
-    }
-  },
-  {
-    "name": "Stooge Sort",
-    "slug": "stooge-sort",
-    "mode": "none",
-    "status": "exempt",
-    "reason": "auto-excluded-unusual",
-    "metadata": {
-      "source": "auto-scan",
-      "benchmarkMode": "none"
+      "source": "github-actions",
+      "benchmarkMode": "automated",
+      "algorithmHash": "a63c334dea9196e6448770c17e5216af8ded3bc4b1a536f7a2df1ee5c8b88e91",
+      "lastRunAt": "2026-04-19T14:59:29.895Z",
+      "lastRunMode": "small"
+    },
+    "snapshot": {
+      "workloadProfiles": {
+        "random-uniform": {
+          "python": {
+            "small": 0.936,
+            "medium": 87.375,
+            "large": 9862.607
+          },
+          "rust": {
+            "small": 0.051,
+            "medium": 1.743,
+            "large": 137.746
+          },
+          "c": {
+            "small": 0.061,
+            "medium": 3.19,
+            "large": 262.574
+          }
+        },
+        "nearly-sorted": {
+          "python": {
+            "small": 1.29,
+            "medium": 150.578,
+            "large": 17784.153
+          },
+          "rust": {
+            "small": 0.064,
+            "medium": 3.148,
+            "large": 269.876
+          },
+          "c": {
+            "small": 0.072,
+            "medium": 5.343,
+            "large": 495.327
+          }
+        },
+        "reverse-sorted": {
+          "python": {
+            "small": 2.042,
+            "medium": 246.303,
+            "large": 28712.421
+          },
+          "rust": {
+            "small": 0.1,
+            "medium": 5.404,
+            "large": 479.971
+          },
+          "c": {
+            "small": 0.092,
+            "medium": 7.363,
+            "large": 712.2
+          }
+        },
+        "many-duplicates": {
+          "python": {
+            "small": 0.891,
+            "medium": 94.079,
+            "large": 10765.988
+          },
+          "rust": {
+            "small": 0.048,
+            "medium": 1.864,
+            "large": 164
+          },
+          "c": {
+            "small": 0.052,
+            "medium": 3.291,
+            "large": 281.053
+          }
+        },
+        "low-value-range": {
+          "python": {
+            "small": 0.902,
+            "medium": 87.881,
+            "large": 10298.187
+          },
+          "rust": {
+            "small": 0.05,
+            "medium": 1.704,
+            "large": 151.431
+          },
+          "c": {
+            "small": 0.052,
+            "medium": 3.184,
+            "large": 277.441
+          }
+        },
+        "adversarial-pivot": {
+          "python": {
+            "small": 1.552,
+            "medium": 184.218,
+            "large": 22289.127
+          },
+          "rust": {
+            "small": 0.076,
+            "medium": 3.933,
+            "large": 351.677
+          },
+          "c": {
+            "small": 0.085,
+            "medium": 6.066,
+            "large": 574.012
+          }
+        }
+      },
+      "tiers": {},
+      "environment": {
+        "benchmarkSpecVersion": "draft-v2",
+        "runnerOs": "Linux",
+        "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+        "nodeVersion": "v22.22.2",
+        "pythonVersion": "Python 3.12.13",
+        "rustVersion": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "compilerVersion": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "workflowRunId": "24631972996"
+      },
+      "harness": {
+        "datasetGenerator": "deterministic-seeded",
+        "datasetProfile": "small=100, medium=1000, large=10000",
+        "warmupPolicy": "5 warm-up runs",
+        "runCountPolicy": "30 measured runs",
+        "timeoutPolicy": "CI-managed",
+        "memoryConstraints": "runner-default",
+        "correctnessValidation": "sorted-output and cross-language identity",
+        "languageRunnerContract": "python.py, rust.rs, c.c",
+        "dimensionWeights": {
+          "random-uniform": 1,
+          "nearly-sorted": 1,
+          "reverse-sorted": 1,
+          "many-duplicates": 1,
+          "low-value-range": 1,
+          "adversarial-pivot": 1
+        }
+      },
+      "score": {
+        "rawAverageMs": 1940.275,
+        "normalized": 3,
+        "composite": 0.1,
+        "percentile": 0,
+        "badges": [],
+        "dimensionScores": {
+          "python": {
+            "random-uniform": 0.2,
+            "nearly-sorted": 0.1,
+            "reverse-sorted": 0.1,
+            "many-duplicates": 0.1,
+            "low-value-range": 0.2,
+            "adversarial-pivot": 0.1
+          },
+          "rust": {
+            "random-uniform": 0.5,
+            "nearly-sorted": 0.1,
+            "reverse-sorted": 0,
+            "many-duplicates": 0.1,
+            "low-value-range": 0.4,
+            "adversarial-pivot": 0.1
+          },
+          "c": {
+            "random-uniform": 0.2,
+            "nearly-sorted": 0.1,
+            "reverse-sorted": 0,
+            "many-duplicates": 0.1,
+            "low-value-range": 0.2,
+            "adversarial-pivot": 0
+          }
+        },
+        "sizeScores": {
+          "python": {
+            "small": 8,
+            "medium": 1.1,
+            "large": 0.2
+          },
+          "rust": {
+            "small": 7.8,
+            "medium": 3,
+            "large": 0.4
+          },
+          "c": {
+            "small": 4.9,
+            "medium": 1.5,
+            "large": 0.2
+          }
+        }
+      }
     }
   }
 ]
