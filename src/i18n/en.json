@@ -277,6 +277,7 @@
       "collectingTitle": "Collecting data",
       "communityPlaceholder": "Community signals are still being collected. Come back later for a real ranked list.",
       "benchmarkPlaceholder": "Benchmark runs are still being collected. Come back later for measured results.",
+      "benchmarkTestedEmpty": "No tested benchmark results are available yet.",
       "eventsPlaceholder": "Event submissions are still being collected. Come back later for the season list."
     },
     "labels": {

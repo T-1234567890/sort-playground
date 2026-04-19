@@ -277,6 +277,7 @@
       "collectingTitle": "正在收集数据",
       "communityPlaceholder": "社区信号仍在收集中。稍后再来看真实的排名列表。",
       "benchmarkPlaceholder": "基准运行结果仍在收集中。稍后再来看实测结果。",
+      "benchmarkTestedEmpty": "目前还没有可用的实测基准结果。",
       "eventsPlaceholder": "活动投稿仍在收集中。稍后再来看赛季列表。"
     },
     "labels": {

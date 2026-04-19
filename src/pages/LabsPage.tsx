@@ -394,30 +394,9 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
 
   function renderBenchmark() {
     const benchmarkDoc = benchmarkDocsLinks[0];
-    const sortedEntries = [...benchmarkEntries].sort((left, right) => {
-      if (left.mode === "automated" && right.mode !== "automated") {
-        return -1;
-      }
-
-      if (left.mode !== "automated" && right.mode === "automated") {
-        return 1;
-      }
-
-      if (left.mode === "estimated" && right.mode === "none") {
-        return -1;
-      }
-
-      if (left.mode === "none" && right.mode === "estimated") {
-        return 1;
-      }
-
-      if (left.mode === "estimated" && right.mode === "estimated") {
-        const order = { high: 0, medium: 1, low: 2 };
-        return order[left.relativeRank ?? "medium"] - order[right.relativeRank ?? "medium"];
-      }
-
-      return (left.average ?? Number.POSITIVE_INFINITY) - (right.average ?? Number.POSITIVE_INFINITY);
-    });
+    const sortedEntries = [...benchmarkEntries]
+      .filter((entry) => entry.mode === "automated" && entry.status === "benchmarked" && typeof entry.average === "number")
+      .sort((left, right) => (left.average ?? Number.POSITIVE_INFINITY) - (right.average ?? Number.POSITIVE_INFINITY));
 
     return (
       <>
@@ -439,51 +418,36 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
             </div>
           ) : (
             <div className="mt-8 overflow-hidden rounded-lg border border-zinc-950/10 bg-white/72 shadow-sm dark:border-white/10 dark:bg-white/8">
-              <ol className="divide-y divide-zinc-950/8 dark:divide-white/10">
-                {sortedEntries.map((entry, index) => (
-                  <li key={entry.slug} className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
-                    <div className="flex items-start gap-4">
-                      <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-950 text-sm font-semibold text-white dark:bg-white dark:text-zinc-950">
-                        #{index + 1}
-                      </span>
-                      <div>
-                        <a data-route href={`/algo/${entry.slug}`} className="text-lg font-semibold hover:text-teal-600 dark:hover:text-teal-300">
-                          {entry.name}
-                        </a>
-                        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                          {entry.mode === "automated"
-                            ? t("labs.benchmarkModes.automated")
-                            : entry.mode === "estimated"
-                              ? t("labs.benchmarkModes.estimated")
-                              : t("labs.benchmarkModes.none")}
+              {sortedEntries.length ? (
+                <ol className="divide-y divide-zinc-950/8 dark:divide-white/10">
+                  {sortedEntries.map((entry, index) => (
+                    <li key={entry.slug} className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="flex items-start gap-4">
+                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-950 text-sm font-semibold text-white dark:bg-white dark:text-zinc-950">
+                          #{index + 1}
+                        </span>
+                        <div>
+                          <a data-route href={`/algo/${entry.slug}`} className="text-lg font-semibold hover:text-teal-600 dark:hover:text-teal-300">
+                            {entry.name}
+                          </a>
+                          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t("labs.benchmarkModes.automated")}</p>
+                        </div>
+                      </div>
+
+                      <div className="grid gap-1 text-sm sm:text-right">
+                        <p className="font-mono font-semibold">{entry.average} {entry.unit}</p>
+                        <p className="text-zinc-500 dark:text-zinc-400">
+                          S {entry.datasets?.small ?? "-"} · M {entry.datasets?.medium ?? "-"} · L {entry.datasets?.large ?? "-"}
                         </p>
                       </div>
-                    </div>
-
-                    <div className="grid gap-1 text-sm sm:text-right">
-                      {entry.mode === "automated" ? (
-                        <>
-                          <p className="font-mono font-semibold">{entry.average} {entry.unit}</p>
-                          <p className="text-zinc-500 dark:text-zinc-400">
-                            S {entry.datasets?.small ?? "-"} · M {entry.datasets?.medium ?? "-"} · L {entry.datasets?.large ?? "-"}
-                          </p>
-                        </>
-                      ) : null}
-
-                      {entry.mode === "estimated" ? (
-                        <>
-                          <p className="font-semibold">{entry.complexity}</p>
-                          <p className="text-zinc-500 dark:text-zinc-400">{t("labs.relativeRanks." + (entry.relativeRank ?? "medium"))}</p>
-                        </>
-                      ) : null}
-
-                      {entry.mode === "none" ? (
-                        <p className="text-zinc-500 dark:text-zinc-400">{entry.reason ?? t("labs.benchmarkModes.none")}</p>
-                      ) : null}
-                    </div>
-                  </li>
-                ))}
-              </ol>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <div className="px-5 py-6 text-sm text-zinc-500 dark:text-zinc-400">
+                  {t("labs.section.benchmarkTestedEmpty")}
+                </div>
+              )}
             </div>
           )}
         </section>
