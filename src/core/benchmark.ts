@@ -57,6 +57,22 @@ export function getCompositeScore(entry: BenchmarkRankingEntry | undefined) {
   return entry?.snapshot?.score?.composite;
 }
 
+export function isBenchmarkSizeCanceled(language: BenchmarkLanguage, size: BenchmarkSize) {
+  return language === "python" && size === "large";
+}
+
+export function getBenchmarkSizeStatus(entry: BenchmarkRankingEntry | undefined, language: BenchmarkLanguage, size: BenchmarkSize) {
+  if (typeof entry?.results?.[language]?.[size] === "number") {
+    return "available";
+  }
+
+  if (isBenchmarkSizeCanceled(language, size)) {
+    return "canceled";
+  }
+
+  return "missing";
+}
+
 export function radarPoints(scores: BenchmarkProfileScores, radius: number, center: number) {
   return benchmarkProfiles
     .map((profile, index) => {

@@ -9,6 +9,8 @@ import { EmbedPage } from "./pages/EmbedPage";
 import { HomePage } from "./pages/HomePage";
 import { BenchmarkDetailPage } from "./pages/BenchmarkDetailPage";
 import { BenchmarkLandingPage } from "./pages/BenchmarkLandingPage";
+import { LanguageBenchmarkDetailPage } from "./pages/LanguageBenchmarkDetailPage";
+import { LanguageBenchmarkPage } from "./pages/LanguageBenchmarkPage";
 import { LegalPage } from "./pages/LegalPage";
 import { LabsPage } from "./pages/LabsPage";
 import { RacePage } from "./pages/RacePage";
@@ -38,6 +40,14 @@ function getRoute() {
 
   if (path === "/race") {
     return { name: null, page: "race" };
+  }
+
+  if (path.startsWith("/labs/benchmark/languages/")) {
+    return { name: decodeURIComponent(path.replace("/labs/benchmark/languages/", "")), page: "language-benchmark-detail" };
+  }
+
+  if (path === "/labs/benchmark/languages") {
+    return { name: null, page: "language-benchmark" };
   }
 
   if (path.startsWith("/labs/benchmark/")) {
@@ -122,6 +132,10 @@ export default function App() {
     <div className="min-h-screen bg-zinc-50 text-zinc-950 transition-colors dark:bg-zinc-950 dark:text-zinc-50">
       {selectedAlgorithm && route.page === "embed" ? (
         <EmbedPage algorithm={selectedAlgorithm} />
+      ) : route.page === "language-benchmark-detail" ? (
+        <LanguageBenchmarkDetailPage slug={route.name ?? ""} dark={dark} onToggleDark={() => setDark((value) => !value)} />
+      ) : route.page === "language-benchmark" ? (
+        <LanguageBenchmarkPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "benchmark-detail" ? (
         <BenchmarkDetailPage slug={route.name ?? ""} dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : selectedAlgorithm ? (

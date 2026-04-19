@@ -302,6 +302,10 @@
       "benchmarkEnvironment": "Approximate benchmark in controlled Node.js environment",
       "benchmarkAverageNote": "Results are averaged over multiple runs.",
       "benchmarkNoPoints": "No points or composite score yet.",
+      "pythonLargeCanceled": "Python large-size benchmark runs are canceled due to runtime and technical constraints.",
+      "languageBenchmarkTitle": "More Language Benchmark",
+      "languageBenchmarkDescription": "Community and experimental language implementations are benchmarked separately so the main ranking stays clean and authoritative.",
+      "languageBenchmarkCta": "Open community language benchmark",
       "eventsEyebrow": "Seasonal challenges",
       "eventsDescription": "Events group submissions around a theme, explain what the season is asking for, and give contributors one place to understand how to join.",
       "eventsExtendedDescription": "This introduction is intentionally wider and more descriptive than the ranking area because the event page should first explain the brief, the time window, the categories, and the contribution path. Standings can wait until there is enough real data to publish something trustworthy.",
@@ -442,6 +446,7 @@
     "mode": "Mode",
     "status": "Status",
     "summary": "This page shows the currently stored benchmark dataset for one algorithm. It exposes raw timing data by language and input size, plus any benchmark snapshot metadata published by CI.",
+    "pythonLargeCanceled": "Python large-size benchmark runs are intentionally canceled for this benchmark.",
     "compositeTitle": "Composite Score",
     "compositeDescription": "A normalized summary of the current stored benchmark profile for this algorithm.",
     "selectedTitle": "Selected Benchmark",
@@ -505,6 +510,32 @@
       "tiers": "Result tiers"
     }
   },
+  "languageBenchmark": {
+    "back": "Back to Benchmark",
+    "detailBack": "Back to Language Benchmark",
+    "eyebrow": "Experimental Benchmark",
+    "title": "More Language Benchmark",
+    "description": "This page compares additional language implementations that are community-provided or experimental.",
+    "note": "These results do not affect the main benchmark ranking. Python, Rust, and C remain the authoritative benchmark set.",
+    "mainCta": "View main benchmark",
+    "experimental": "Experimental",
+    "communityProvided": "Community provided",
+    "mainProvided": "Main benchmark baseline",
+    "pendingSupport": "Pending runner support",
+    "missingImplementation": "No implementation yet",
+    "notBenchmarked": "Not benchmarked",
+    "placeholder": "Experimental language benchmark data will be available after CI runs.",
+    "empty": "No experimental language benchmark results are available yet.",
+    "missingTitle": "Experimental language benchmark entry not found",
+    "detailDescription": "This page shows the stored benchmark results for main and community language implementations that share the same algorithm slug.",
+    "lastUpdated": "Last updated",
+    "viewMain": "View main benchmark",
+    "languageOverview": "Language Overview",
+    "languageOverviewDescription": "Main benchmark languages are shown as a baseline. Community and experimental languages are listed separately for comparison only.",
+    "profileTitle": "Per-profile Results",
+    "profileDescription": "Each row shows the selected benchmark size for one workload profile across the available language implementations.",
+    "profileHeader": "Workload profile"
+  },
   "code": {
     "sectionEyebrow": "Implementations",
     "sectionTitle": "Copy and ship",
@@ -555,6 +586,10 @@
     "buildBody": "Fast pages, clear steps, browser exports, and a contribution flow that stays simple."
   },
   "benchmark": {
+    "status": {
+      "canceled": "Canceled",
+      "pythonLargeCanceled": "Python large-size benchmark is intentionally unavailable."
+    },
     "back": "Sort Playground",
     "eyebrow": "BENCHMARK",
     "title": "Sort Benchmark",

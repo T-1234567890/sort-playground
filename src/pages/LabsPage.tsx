@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
+import { formatBenchmarkMetric, getBenchmarkSizeStatus, isBenchmarkSizeCanceled } from "../core/benchmark";
 import type { BenchmarkLanguage, BenchmarkRankingEntry, BenchmarkSize, CommunityRankingEntry, SortLabsEvent } from "../core/types";
 import events from "../data/events.json";
 
@@ -202,7 +203,7 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
       const [benchmarkResult, communityResult, eventResult] = await Promise.allSettled([
         readJson<BenchmarkRankingEntry[]>("/data/benchmark-ranking.json"),
         readJson<CommunityRankingEntry[]>("/data/community-ranking.json"),
-        readJson<CommunityRankingEntry[]>(`/data/event-ranking-${activeEvent.id}.json`),
+        readJson<CommunityRankingEntry[]>("/data/event-ranking.json"),
       ]);
 
       if (cancelled) {
@@ -503,7 +504,12 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
               <button
                 key={language}
                 type="button"
-                onClick={() => setBenchmarkLanguage(language)}
+                onClick={() => {
+                  setBenchmarkLanguage(language);
+                  if (language === "python" && benchmarkSize === "large") {
+                    setBenchmarkSize("medium");
+                  }
+                }}
                 className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
                   benchmarkLanguage === language
                     ? "bg-zinc-950 text-white dark:bg-white dark:text-zinc-950"
@@ -521,15 +527,30 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
                 key={size}
                 type="button"
                 onClick={() => setBenchmarkSize(size)}
+                disabled={isBenchmarkSizeCanceled(benchmarkLanguage, size)}
                 className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
                   benchmarkSize === size
                     ? "bg-zinc-950 text-white dark:bg-white dark:text-zinc-950"
-                    : "border border-zinc-950/10 bg-white/70 text-zinc-700 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15"
+                    : isBenchmarkSizeCanceled(benchmarkLanguage, size)
+                      ? "cursor-not-allowed border border-zinc-950/10 bg-zinc-100 text-zinc-400 dark:border-white/10 dark:bg-white/5 dark:text-zinc-500"
+                      : "border border-zinc-950/10 bg-white/70 text-zinc-700 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15"
                 }`}
               >
                 {t(`labs.benchmarkSizes.${size}`)}
               </button>
             ))}
+          </div>
+
+          {benchmarkLanguage === "python" ? (
+            <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">{t("labs.section.pythonLargeCanceled")}</p>
+          ) : null}
+          <div className="mt-5 rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-4 text-sm text-zinc-700 dark:border-amber-300/15 dark:bg-amber-400/10 dark:text-zinc-200">
+            <p className="font-semibold">{t("labs.section.languageBenchmarkTitle")}</p>
+            <p className="mt-1 text-zinc-600 dark:text-zinc-300">{t("labs.section.languageBenchmarkDescription")}</p>
+            <a data-route href="/labs/benchmark/languages" className="mt-3 inline-flex items-center gap-2 font-semibold text-amber-700 hover:text-amber-800 dark:text-amber-200 dark:hover:text-amber-100">
+              {t("labs.section.languageBenchmarkCta")}
+              <ArrowRight size={16} />
+            </a>
           </div>
 
           {benchmarkLoading ? (
@@ -561,16 +582,22 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
                       </div>
 
                       <div className="grid gap-1 text-sm sm:text-right">
-                        <p className="font-mono font-semibold">{entry.results?.[benchmarkLanguage]?.[benchmarkSize]?.toFixed(3)} {entry.unit}</p>
+                        <p className="font-mono font-semibold">
+                          {getBenchmarkSizeStatus(entry, benchmarkLanguage, benchmarkSize) === "available"
+                            ? `${entry.results?.[benchmarkLanguage]?.[benchmarkSize]?.toFixed(3)} ${entry.unit}`
+                            : t("benchmark.status.canceled")}
+                        </p>
                         <p className="text-zinc-500 dark:text-zinc-400">{t("labs.section.benchmarkNoPoints")}</p>
                         <p className="text-zinc-500 dark:text-zinc-400">
-                          {t("labs.benchmarkSizes.small")}: {entry.results?.[benchmarkLanguage]?.small?.toFixed(3) ?? "-"} {entry.unit}
+                          {t("labs.benchmarkSizes.small")}: {formatBenchmarkMetric(entry.results?.[benchmarkLanguage]?.small, entry.unit ?? "ms")}
                         </p>
                         <p className="text-zinc-500 dark:text-zinc-400">
-                          {t("labs.benchmarkSizes.medium")}: {entry.results?.[benchmarkLanguage]?.medium?.toFixed(3) ?? "-"} {entry.unit}
+                          {t("labs.benchmarkSizes.medium")}: {formatBenchmarkMetric(entry.results?.[benchmarkLanguage]?.medium, entry.unit ?? "ms")}
                         </p>
                         <p className="text-zinc-500 dark:text-zinc-400">
-                          {t("labs.benchmarkSizes.large")}: {entry.results?.[benchmarkLanguage]?.large?.toFixed(3) ?? "-"} {entry.unit}
+                          {t("labs.benchmarkSizes.large")}: {getBenchmarkSizeStatus(entry, benchmarkLanguage, "large") === "canceled"
+                            ? t("benchmark.status.canceled")
+                            : formatBenchmarkMetric(entry.results?.[benchmarkLanguage]?.large, entry.unit ?? "ms")}
                         </p>
                       </div>
                     </li>
@@ -584,7 +611,11 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
                 </ol>
               ) : (
                 <div className="px-5 py-6 text-sm text-zinc-500 dark:text-zinc-400">
-                  {hasAlgorithmQuery ? t("labs.search.noAlgorithms") : t("labs.section.benchmarkUnavailable")}
+                  {hasAlgorithmQuery
+                    ? t("labs.search.noAlgorithms")
+                    : isBenchmarkSizeCanceled(benchmarkLanguage, benchmarkSize)
+                      ? t("benchmark.status.pythonLargeCanceled")
+                      : t("labs.section.benchmarkUnavailable")}
                 </div>
               )}
             </div>

@@ -1,303 +1,305 @@
 # Benchmark
 
-Sort Playground Benchmark is a CI-generated benchmark dataset for deterministic sorting algorithms.
+## 1. Overview
 
-This document exists for public trust, not just contributor convenience.
-It defines what the benchmark measures, what it excludes, how results are produced, and what guarantees the project is willing to make.
+The benchmark system measures sorting algorithms across three implementation languages:
 
-## Public Trust Statement
+- Python
+- Rust
+- C
 
-The benchmark is intended to be:
+It is designed for reproducible comparative results, not scientific benchmarking.
 
-- reproducible
-- transparent
-- modest in its claims
-- useful for comparison, not marketing
+Core characteristics:
 
-The project does **not** claim that these results are universal hardware truth or a scientific performance paper.
-It claims something narrower and more defensible:
+- cross-language comparison for the same algorithm
+- deterministic datasets and workload profiles
+- incremental benchmarking that reuses existing results
+- CI-driven data generation
 
-- the same benchmark harness is used across supported algorithms
-- the same datasets are reused across languages
-- correctness is validated before timings are accepted
-- published data comes from GitHub Actions, not from ad hoc local generation
+Published benchmark data is stored in:
 
-## Source Of Truth
+- `/public/data/benchmark-ranking.json`
 
-Published benchmark data is stored at:
+The benchmark pipeline is driven by:
 
-`/public/data/benchmark-ranking.json`
+- [/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/list-algorithms.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/list-algorithms.js)
+- [/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/run.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/run.js)
+- [/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/merge-results.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/merge-results.js)
 
-This file is generated only by CI through:
+## 2. Running Benchmark Locally
 
-- [.github/workflows/benchmark.yml](/Users/2111832868qq.com/PycharmProjects/sort-playground/.github/workflows/benchmark.yml:1)
-- [.github/workflows/benchmark-direct-push.yml](/Users/2111832868qq.com/PycharmProjects/sort-playground/.github/workflows/benchmark-direct-push.yml:1)
+The benchmark runner is CI-first.
 
-The benchmark runtime entry point is:
+The entry point used by GitHub Actions is:
 
-- [scripts/benchmark/run.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/run.js:1)
+```bash
+node scripts/benchmark/run.js
+```
 
-The older [scripts/generate-benchmark-ranking.mjs](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/generate-benchmark-ranking.mjs:1) file is only a wrapper to the modular benchmark runner.
+Current constraint:
 
-## Runtime Environment
+- `run.js` requires GitHub Actions style environment variables
+- it runs one `algorithm + language` target at a time
+- it refuses to run unless `GITHUB_ACTIONS=true`
 
-The benchmark runs in GitHub Actions on `ubuntu-latest`.
+For local development, the useful commands are usually:
 
-Current benchmark toolchain:
+```bash
+BENCHMARK_RUN_MODE=small node scripts/benchmark/list-algorithms.js
+```
 
-- Node.js `22`
-- Python `3.12`
-- Rust `stable`
-- system C compiler via `cc`
+and, if you intentionally want to simulate one CI target locally:
 
-Why this matters:
+```bash
+GITHUB_ACTIONS=true ALGORITHM=quick-sort LANGUAGE=python node scripts/benchmark/run.js
+```
 
-- everyone can inspect the workflow
-- the environment is versioned in the repository
-- benchmark output includes a system snapshot with runtime metadata
+Relevant environment variables:
 
-## Benchmark Modes
+- `BENCHMARK_RUN_MODE=small`
+- `BENCHMARK_RUN_MODE=full`
 
-There are two CI benchmark modes.
+Meaning:
 
-### Small Run
+- `small` -> benchmark only algorithms that are missing reusable benchmark data
+- `full` -> include all benchmarkable algorithms in selection
 
-Default mode for normal algorithm changes.
+Important note:
 
-Rules:
+- the current published workflow uses `small`
+- `full` exists in the script layer, but normal CI publishing is incremental
 
-- runs on algorithm-related pushes and PR validation
-- benchmarks only new or changed algorithms
-- reuses existing benchmark entries when the algorithm hash matches
-- keeps previous benchmark data for unchanged algorithms
+## 3. Benchmark Modes
 
-This reduces unnecessary CI work while preserving stable published data.
+### Small Mode
 
-### Full Run
+Properties:
 
-Scheduled refresh mode.
+- incremental
+- faster
+- used by current CI workflows
 
-Rules:
+Behavior:
 
-- runs monthly via workflow schedule
-- ignores cache reuse
-- reruns all eligible automated benchmark entries
-- overwrites the full published benchmark dataset
+- loads the existing benchmark JSON
+- compares stored benchmark metadata against the current algorithm hash
+- only selects algorithms that are missing valid reusable results
 
-This prevents the benchmark from drifting forever on stale historical measurements.
+### Full Mode
 
-## Eligibility Rules
+Properties:
 
-### Automated Benchmark
+- complete selection
+- slow
+- mainly useful for manual recalculation or local/temporary maintenance work
 
-An algorithm is eligible for automated benchmarking when all of the following are true:
+Behavior:
 
-- it is deterministic enough to produce repeatable results
-- it is not explicitly excluded
-- it has `python.py`, `rust.rs`, and `c.c`
-- it passes correctness validation in all three languages
+- ignores reuse during selection
+- includes all benchmarkable algorithms
 
-### Estimated Benchmark
+## 4. Dataset and Workloads
 
-An algorithm may use estimated mode when theoretical ranking is still useful but automated three-language measurement is not available.
-
-Estimated entries are clearly labeled as estimated and are not mixed up with automated timings.
-
-### Excluded / No Benchmark
-
-An algorithm is excluded when benchmarking would be misleading or not meaningful.
-
-Common exclusions:
-
-- random or shuffle-based sorts
-- manual or user-dependent sorts
-- absurd or pathological joke sorts
-- explicitly marked `benchmark: false`
-- explicitly marked `special: "no-benchmark"`
-
-## Dataset Policy
-
-The benchmark uses fixed deterministic datasets.
-
-Standard size profile:
+Dataset sizes:
 
 - `small = 100`
 - `medium = 1000`
 - `large = 10000`
 
-Workload profiles currently benchmarked:
+Workload profiles:
 
-- random uniform
-- nearly sorted
-- reverse sorted
-- many duplicates
-- low value range
-- adversarial pivot-sensitive input
+- `random-uniform`
+- `nearly-sorted`
+- `reverse-sorted`
+- `many-duplicates`
+- `low-value-range`
+- `adversarial-pivot`
 
-The dataset generator lives in:
+These inputs exist for consistency and comparability.
 
-- [scripts/benchmark/dataset.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/dataset.js:1)
+Why this matters:
 
-Important guarantees:
+- every language runs the same datasets
+- every benchmarkable algorithm is measured under the same workload labels
+- results are easier to compare across implementations
 
-- datasets are deterministic
-- the same dataset files are reused across all languages
-- the same workload profile is measured for Python, Rust, and C
+Dataset generation lives in:
 
-## Validation Policy
+- [/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/dataset.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/dataset.js)
 
-Benchmark results are never accepted on timing alone.
+## 5. Adding a New Algorithm
 
-Validation rules:
+1. Create a folder under `/src/algorithms/<slug>`.
+2. Add the required files:
+   - `meta.json`
+   - `steps.ts`
+   - `python.py`
+   - `rust.rs`
+   - `c.c`
+3. Make sure the algorithm is discoverable by the existing loader.
+   The project reads directly from `/src/algorithms`, so there is no benchmark YAML list to edit.
+4. If the algorithm should not be benchmarked, mark it explicitly in `meta.json`:
+   - `benchmark: false`
+   - or `special: "no-benchmark"`
 
-- each language must return a sorted result
-- all three languages must return the same sorted output for the same input
-- a mismatch causes the benchmark run to fail
+Benchmark behavior after adding an algorithm:
 
-Validation logic lives in:
+- a new benchmarkable algorithm is automatically selected by the CI benchmark pipeline
+- an existing algorithm with reusable benchmark data is skipped
+- an existing algorithm whose benchmark hash changes is reselected
 
-- [scripts/benchmark/validator.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/validator.js:1)
+Benchmarkability requirements:
 
-This is a hard trust requirement.
-If implementations disagree, the benchmark should fail rather than publish a misleading timing.
+- deterministic behavior
+- working `python.py`, `rust.rs`, and `c.c`
+- consistent sorted output across languages
 
-## Timing Policy
+## 6. Benchmark Execution Model
 
-Timing logic lives in:
+The benchmark system is orchestrated by Node.js.
 
-- [scripts/benchmark/benchmark.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/benchmark.js:1)
+Execution flow:
 
-Current policy:
+1. discover benchmarkable algorithms
+2. decide whether existing JSON data can be reused
+3. create a matrix of `algorithm x language`
+4. run one target per job
+5. validate outputs
+6. merge partial results into the final ranking JSON
 
-- `5` warm-up runs
-- `30` measured runs
-- average time reported in milliseconds
+Language execution is separate:
 
-Why repeated runs are used:
+- Python runs through a Python runner
+- Rust runs through a Rust runner
+- C runs through a C runner
 
-- to reduce one-off runtime noise
-- to avoid overreacting to startup overhead
-- to make the published number more stable for display
+Validation is required before timings are accepted:
 
-## Language Runner Model
+- each implementation must return a sorted result
+- all languages for the same algorithm must agree on output
 
-Each language has a dedicated runner:
+Key files:
 
-- [runner-python.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/runner-python.js:1)
-- [runner-rust.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/runner-rust.js:1)
-- [runner-c.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/runner-c.js:1)
+- [/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/runner-python.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/runner-python.js)
+- [/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/runner-rust.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/runner-rust.js)
+- [/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/runner-c.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/runner-c.js)
+- [/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/validator.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/validator.js)
+- [/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/benchmark.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/benchmark.js)
 
-Each runner is responsible for:
+## 7. Result Storage
 
-- loading the algorithm implementation
-- executing it against benchmark datasets
-- returning timing data
-- returning full sorted output for validation mode
-- failing when output is invalid
+The final benchmark dataset is stored in:
 
-## Scoring Model
+- `/public/data/benchmark-ranking.json`
 
-Raw timings are preserved, but the benchmark also computes score snapshots for easier interpretation.
+What it contains:
 
-Scoring logic lives in:
+- benchmarkable algorithm entries
+- cross-language timing data
+- workload profile snapshots
+- score snapshots
+- environment and harness metadata
 
-- [scripts/benchmark/scoring.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/scoring.js:1)
+Storage model:
 
-Stored score fields include:
+- benchmark jobs produce partial JSON files per `algorithm/language`
+- merge step combines those partials into the final ranking file
+- unchanged valid entries are reused from the existing ranking JSON
 
-- per-dimension normalized scores
-- per-size normalized scores
-- composite score
-- percentile
-- badges
-- raw average milliseconds
+Reuse is based on:
+
+- stored benchmark completeness
+- stored `metadata.algorithmHash`
+- current source hash for `meta.json`, `python.py`, `rust.rs`, and `c.c`
+
+## 8. CI Pipeline
+
+The benchmark pipeline runs in GitHub Actions.
+
+Current workflows:
+
+- [/Users/2111832868qq.com/PycharmProjects/sort-playground/.github/workflows/benchmark.yml](/Users/2111832868qq.com/PycharmProjects/sort-playground/.github/workflows/benchmark.yml)
+- [/Users/2111832868qq.com/PycharmProjects/sort-playground/.github/workflows/benchmark-direct-push.yml](/Users/2111832868qq.com/PycharmProjects/sort-playground/.github/workflows/benchmark-direct-push.yml)
+
+Pipeline structure:
+
+1. generate algorithm matrix dynamically
+2. run benchmark jobs in parallel for each `algorithm/language`
+3. merge partial results
+4. publish the final JSON artifact
+
+Direct push workflow also commits refreshed benchmark data back to `main` when the generated JSON changes.
+
+Important detail:
+
+- adding an algorithm does not require editing workflow YAML
+- the algorithm list is generated from repository contents
+
+## 9. Limitations
+
+This benchmark is intentionally approximate.
+
+Known limitations:
+
+- results are environment-dependent
+- Python includes interpreter and process overhead
+- GitHub-hosted runners are not perfectly identical
+- cross-language jobs may not run on the exact same machine
+- this is not a scientific benchmark lab
+
+Use the results for:
+
+- relative comparison inside this project
+- regression detection
+- educational comparison across implementations
+
+Do not use the results for:
+
+- absolute hardware claims
+- language-wide performance claims
+- publication-grade benchmarking
+
+## 10. Re-running Benchmarks
+
+Normal CI behavior is incremental.
+
+That means:
+
+- already-tested unchanged algorithms are reused
+- missing or changed benchmarkable algorithms are benchmarked
+
+If you need to rerun benchmarks manually:
+
+- use the GitHub Actions workflow dispatch on the benchmark workflow
+- or temporarily run selection with `BENCHMARK_RUN_MODE=full` for maintenance work
+
+When manual reruns are useful:
+
+- benchmark schema changed
+- workload definitions changed
+- score calculation changed
+- benchmark JSON is incomplete or invalid
 
 Important note:
 
-- composite score is a convenience layer for comparison
-- raw timings remain the primary factual measurement
-- scores are derived from benchmark data, not hand-assigned
+- there is no separate always-on full benchmark publishing workflow at the moment
+- the default published path is incremental reuse plus fill-in
 
-## Published Metadata
+## 11. Design Philosophy
 
-Each automated benchmark entry may include:
+The benchmark system is built around a few priorities:
 
-- `results` for Python, Rust, and C across `small`, `medium`, `large`
-- `metadata.algorithmHash`
-- `metadata.lastRunAt`
-- `metadata.lastRunMode`
-- `snapshot.environment`
-- `snapshot.harness`
-- `snapshot.workloadProfiles`
-- `snapshot.score`
+- lightweight
+- reproducible
+- practical over perfect
+- maintainable over clever
 
-This metadata is important for public trust because it makes each result inspectable instead of opaque.
+Design choices follow that philosophy:
 
-## Workflow Policy
+- deterministic datasets instead of complex synthetic labs
+- reusable JSON state instead of rerunning everything every time
+- modular runners instead of a monolithic benchmark script
+- CI-generated output instead of ad hoc local publishing
 
-### PR Validation
-
-PR validation generates a benchmark artifact but does not publish to the main branch.
-
-Purpose:
-
-- catch correctness problems
-- catch cross-language mismatches
-- ensure the benchmark runner still works
-
-### Direct Push / Scheduled Publish
-
-Main-branch benchmark runs can publish the generated JSON back into the repository.
-
-Purpose:
-
-- keep the deployed benchmark dataset current
-- make published results auditable through Git history
-
-## What The Benchmark Does Not Claim
-
-To keep the system publicly trustworthy, these claims are **not** made:
-
-- it does not claim to represent all hardware
-- it does not claim browser performance
-- it does not claim every implementation is equally optimized by humans
-- it does not claim absolute scientific rigor
-- it does not claim fair comparison for excluded pathological or non-deterministic sorts
-
-This benchmark is a controlled comparative benchmark for this project’s supported implementations.
-
-## Failure Policy
-
-The benchmark should fail rather than silently publish questionable data when:
-
-- a required toolchain is missing
-- an automated algorithm fails to sort correctly
-- different language implementations disagree on output
-- the CI-only runner is executed outside GitHub Actions
-
-Publishing no benchmark is better than publishing a wrong benchmark.
-
-## Contributor Guidance
-
-If you want an algorithm to participate in automated benchmarking:
-
-- keep the algorithm deterministic
-- provide `python.py`, `rust.rs`, and `c.c`
-- ensure all three implementations produce identical sorted output
-- avoid special cases that depend on user interaction or randomness
-
-If benchmarking is not meaningful, mark the algorithm honestly instead of forcing it into the system.
-
-## Trust Checklist
-
-Before treating a benchmark result as credible, the project expects all of these to be true:
-
-- result was generated by CI
-- algorithm is eligible for automated benchmarking
-- validation passed
-- workload profile data exists
-- system snapshot exists
-- run metadata exists
-- raw results and composite score agree directionally
-
-If one of those is missing, treat the entry as incomplete rather than authoritative.
+The goal is a benchmark that is understandable, inspectable, and good enough to support product UI and developer iteration without over-engineering the system.

@@ -302,6 +302,10 @@
       "benchmarkEnvironment": "受控 Node.js 环境下的近似基准结果",
       "benchmarkAverageNote": "结果来自多次运行后的平均值。",
       "benchmarkNoPoints": "目前还没有积分或综合评分。",
+      "pythonLargeCanceled": "由于运行速度和技术限制，Python 的 large 规模基准已取消。",
+      "languageBenchmarkTitle": "更多语言基准",
+      "languageBenchmarkDescription": "社区和实验性语言实现会被单独基准测试，不会污染主基准榜单。",
+      "languageBenchmarkCta": "打开社区语言基准",
       "eventsEyebrow": "赛季挑战",
       "eventsDescription": "活动页围绕一个主题组织提交，先说明这个赛季要做什么、怎么参加，再逐步形成后续内容。",
       "eventsExtendedDescription": "这里的介绍区域会比排名区域更宽、更长，因为活动页首先应该解释主题、时间范围、评分类别和参与方式。只有在确实收集到足够真实的数据后，才应该展示榜单。",
@@ -442,6 +446,7 @@
     "mode": "模式",
     "status": "状态",
     "summary": "这个页面展示某个算法当前保存下来的基准数据，包括按语言和输入规模区分的原始计时结果，以及 CI 发布的快照元数据。",
+    "pythonLargeCanceled": "在当前基准策略里，Python 的 large 规模测试被有意取消。",
     "compositeTitle": "综合评分",
     "compositeDescription": "这是基于当前保存下来的基准画像计算出的标准化概览分数。",
     "selectedTitle": "当前选中的基准",
@@ -505,6 +510,32 @@
       "tiers": "结果等级"
     }
   },
+  "languageBenchmark": {
+    "back": "返回基准页",
+    "detailBack": "返回语言基准",
+    "eyebrow": "实验基准",
+    "title": "更多语言基准",
+    "description": "这个页面用于比较社区提供或实验性的额外语言实现。",
+    "note": "这些结果不会影响主基准排名。Python、Rust 和 C 仍然是权威基准集合。",
+    "mainCta": "查看主基准",
+    "experimental": "实验性",
+    "communityProvided": "社区提供",
+    "mainProvided": "主基准基线",
+    "pendingSupport": "等待运行器支持",
+    "missingImplementation": "尚无实现",
+    "notBenchmarked": "未基准测试",
+    "placeholder": "实验性语言基准数据会在 CI 运行后出现。",
+    "empty": "还没有实验性语言基准结果。",
+    "missingTitle": "没有找到这个实验性语言基准条目",
+    "detailDescription": "这里展示的是与同一算法 slug 对应的主语言和社区语言实现的已保存基准结果。",
+    "lastUpdated": "最近更新",
+    "viewMain": "查看主基准",
+    "languageOverview": "语言概览",
+    "languageOverviewDescription": "主基准语言会作为基线显示。社区和实验性语言会被单独列出，只用于对比参考。",
+    "profileTitle": "按画像拆解",
+    "profileDescription": "每一行展示一个工作负载画像在当前选中规模下、各语言实现上的结果。",
+    "profileHeader": "工作负载画像"
+  },
   "code": {
     "sectionEyebrow": "实现代码",
     "sectionTitle": "复制并使用",
@@ -555,6 +586,10 @@
     "buildBody": "快速页面、清晰步骤、浏览器导出，以及保持简单的贡献流程。"
   },
   "benchmark": {
+    "status": {
+      "canceled": "已取消",
+      "pythonLargeCanceled": "Python 的 large 规模基准目前不可用。"
+    },
     "back": "Sort Playground",
     "eyebrow": "BENCHMARK",
     "title": "Sort Benchmark",

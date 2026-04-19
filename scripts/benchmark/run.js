@@ -29,6 +29,11 @@ const toolchain = {
 const slug = process.env.ALGORITHM;
 const language = process.env.LANGUAGE;
 const outputPath = process.env.OUTPUT_PATH || `benchmark-${slug}-${language}.json`;
+const skippedSizesByLanguage = {
+  python: new Set(["large"]),
+  rust: new Set(),
+  c: new Set(),
+};
 
 function logBenchmark(message) {
   console.log(`[benchmark] ${message}`);
@@ -97,10 +102,17 @@ async function main() {
     const runner = await createRunner(tempDir, slug, language);
     const profileResults = {};
 
+    const skippedSizes = skippedSizesByLanguage[language] ?? new Set();
+
     for (const profile of benchmarkProfiles) {
       profileResults[profile] = {};
 
       for (const size of benchmarkSizes) {
+        if (skippedSizes.has(size)) {
+          logBenchmark(`${slug}/${language}: skipping ${profile}/${size} (language-size exclusion)`);
+          continue;
+        }
+
         const datasetPath = datasetPaths[profile][size];
         const label = `${slug} ${profile}/${size}/${language}`;
 

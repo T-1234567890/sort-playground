@@ -7,6 +7,7 @@ import { MEASURED_RUNS, WARMUP_RUNS } from "./benchmark.js";
 
 export const BENCHMARK_SPEC_VERSION = "draft-v2";
 export const outputPath = "public/data/benchmark-ranking.json";
+export const languageOutputPath = "public/data/benchmark-languages.json";
 
 export async function loadExistingRanking(root) {
   try {
@@ -19,6 +20,19 @@ export async function loadExistingRanking(root) {
 export async function writeRanking(root, ranking) {
   await mkdir(path.join(root, "public/data"), { recursive: true });
   await writeFile(path.join(root, outputPath), `${JSON.stringify(ranking, null, 2)}\n`);
+}
+
+export async function loadExistingLanguageRanking(root) {
+  try {
+    return JSON.parse(await readFile(path.join(root, languageOutputPath), "utf8"));
+  } catch {
+    return [];
+  }
+}
+
+export async function writeLanguageRanking(root, ranking) {
+  await mkdir(path.join(root, "public/data"), { recursive: true });
+  await writeFile(path.join(root, languageOutputPath), `${JSON.stringify(ranking, null, 2)}\n`);
 }
 
 export function buildEnvironmentSnapshot({ toolchain, tryRunCommand }) {
@@ -43,6 +57,11 @@ export function buildHarnessSnapshot() {
   return {
     datasetGenerator: "deterministic-seeded",
     datasetProfile: datasetProfileLabel(),
+    languageSizeExclusions: {
+      python: {
+        large: "Canceled due to Python runtime and technical constraints.",
+      },
+    },
     warmupPolicy: `${WARMUP_RUNS} warm-up runs`,
     runCountPolicy: `${MEASURED_RUNS} measured runs`,
     timeoutPolicy: "CI-managed",

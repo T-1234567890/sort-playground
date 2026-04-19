@@ -76,7 +76,7 @@ export type CommunityRankingEntry = {
   category: string;
   event?: string;
   why?: string;
-  source?: "discussion";
+  source?: "discussion" | "pull-request";
 };
 
 export type BenchmarkSize = "small" | "medium" | "large";
@@ -91,8 +91,8 @@ export type BenchmarkWorkloadProfile =
 export type BenchmarkTier = "lite" | "standard" | "extreme";
 export type BenchmarkRunMode = "small" | "full";
 
-export type BenchmarkResults = Record<BenchmarkSize, number>;
-export type BenchmarkLanguageResults = Record<BenchmarkLanguage, BenchmarkResults>;
+export type BenchmarkResults = Partial<Record<BenchmarkSize, number>>;
+export type BenchmarkLanguageResults = Partial<Record<BenchmarkLanguage, BenchmarkResults>>;
 export type BenchmarkProfileScores = Partial<Record<BenchmarkWorkloadProfile, number>>;
 export type BenchmarkLanguageProfileScores = Partial<Record<BenchmarkLanguage, BenchmarkProfileScores>>;
 export type BenchmarkLanguageSizeScores = Partial<Record<BenchmarkLanguage, Partial<Record<BenchmarkSize, number>>>>;
@@ -111,6 +111,7 @@ export type BenchmarkEnvironmentMetadata = {
 export type BenchmarkHarnessSnapshot = {
   datasetGenerator?: string;
   datasetProfile?: string;
+  languageSizeExclusions?: Partial<Record<BenchmarkLanguage, Partial<Record<BenchmarkSize, string>>>>;
   warmupPolicy?: string;
   runCountPolicy?: string;
   timeoutPolicy?: string;
@@ -156,4 +157,38 @@ export type BenchmarkRankingEntry = {
     lastRunMode?: BenchmarkRunMode;
   };
   snapshot?: BenchmarkSystemSnapshot;
+};
+
+export type ExperimentalBenchmarkLanguageEntry = {
+  label: string;
+  source: "main" | "community";
+  experimental: boolean;
+  communityProvided: boolean;
+  status?: "benchmarked" | "unsupported" | "missing";
+  note?: string;
+  file?: string;
+  runtime?: string;
+  results: BenchmarkResults;
+  workloadProfiles?: Partial<Record<BenchmarkWorkloadProfile, BenchmarkResults>>;
+  metadata?: {
+    lastRunAt?: string;
+    algorithmHash?: string;
+    languageHash?: string;
+    benchmarkMode?: string;
+  };
+};
+
+export type ExperimentalLanguageBenchmarkEntry = {
+  name: string;
+  slug: string;
+  unit: string;
+  status: "benchmarked";
+  labels?: {
+    experimental?: string;
+    communityProvided?: string;
+  };
+  languages: Record<string, ExperimentalBenchmarkLanguageEntry>;
+  metadata?: {
+    lastUpdatedAt?: string;
+  };
 };

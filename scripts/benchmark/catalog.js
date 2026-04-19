@@ -157,8 +157,16 @@ export function isPublishedBenchmarkEntry(entry) {
   return entry?.mode === "automated" || entry?.mode === "estimated";
 }
 
-function hasSizeMetrics(bucket) {
-  return benchmarkSizes.every((size) => typeof bucket?.[size] === "number");
+function requiredSizesForLanguage(language) {
+  if (language === "python") {
+    return benchmarkSizes.filter((size) => size !== "large");
+  }
+
+  return benchmarkSizes;
+}
+
+function hasRequiredSizeMetrics(bucket, language) {
+  return requiredSizesForLanguage(language).every((size) => typeof bucket?.[size] === "number");
 }
 
 export function automatedEntryHasCurrentData(entry, expectedAlgorithmHash) {
@@ -174,22 +182,22 @@ export function automatedEntryHasCurrentData(entry, expectedAlgorithmHash) {
     return false;
   }
 
-  if (!benchmarkLanguages.every((language) => hasSizeMetrics(entry?.results?.[language]))) {
+  if (!benchmarkLanguages.every((language) => hasRequiredSizeMetrics(entry?.results?.[language], language))) {
     return false;
   }
 
   return benchmarkProfiles.every((profile) =>
-    benchmarkLanguages.every((language) => hasSizeMetrics(entry?.snapshot?.workloadProfiles?.[profile]?.[language])),
+    benchmarkLanguages.every((language) => hasRequiredSizeMetrics(entry?.snapshot?.workloadProfiles?.[profile]?.[language], language)),
   );
 }
 
-export async function loadReferenceRanking(loadExistingRanking) {
+export async function loadReferenceRanking(loadExistingRanking, fallbackPath = "public/data/benchmark-ranking.json") {
   const localRanking = await loadExistingRanking(root);
 
   if (localRanking.length > 0) {
     return localRanking;
   }
 
-  const fromOriginMain = tryRunCommand("git", ["show", "origin/main:public/data/benchmark-ranking.json"]);
+  const fromOriginMain = tryRunCommand("git", ["show", `origin/main:${fallbackPath}`]);
   return parseRankingJson(fromOriginMain);
 }
