@@ -1,0 +1,9 @@
+{
+  "name": "Gnome Sort",
+  "category": "weird",
+  "complexity": "O(n^2)",
+  "space": "O(1)",
+  "stability": "Stable",
+  "description": "Walks through the list and swaps elements when out of order, stepping backward when needed.",
+  "visualization": "default"
+}

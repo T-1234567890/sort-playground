@@ -1,4 +1,4 @@
-export type StepAction = "compare" | "swap" | "delete" | "sorted";
+export type StepAction = "compare" | "swap" | "overwrite" | "delete" | "sorted";
 
 export type Step = {
   array: number[];
@@ -13,8 +13,10 @@ export type AlgorithmMeta = {
   category: AlgorithmCategory;
   complexity: string;
   description: string;
+  space?: string;
   spaceComplexity?: string;
   stability?: string;
+  visualization?: "default" | "custom";
   author?: string;
   contributors?: string[];
   added?: string;

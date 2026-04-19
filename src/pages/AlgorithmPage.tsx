@@ -129,11 +129,11 @@ export function AlgorithmPage({ algorithm, dark, onToggleDark }: AlgorithmPagePr
                 </span>
               </InfoItem>
             </dl>
-            <div className="mt-4 flex flex-col gap-3 rounded-lg bg-zinc-950/5 p-3 dark:bg-white/10 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mt-4 flex items-center justify-between gap-3 rounded-lg bg-zinc-950/5 p-3 dark:bg-white/10">
               <p className="text-sm font-medium text-zinc-600 dark:text-zinc-300">{t("algorithm.contributeHint")}</p>
               <a
                 href="https://github.com/T-1234567890/sort-playground"
-                className="inline-flex justify-center rounded-lg bg-zinc-950 px-3 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-zinc-950"
+                className="inline-flex shrink-0 justify-center rounded-lg bg-zinc-950 px-3 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-zinc-950"
               >
                 {t("algorithm.contribute")}
               </a>

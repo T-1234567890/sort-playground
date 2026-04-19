@@ -1,0 +1,9 @@
+{
+  "name": "Miracle Sort",
+  "category": "meme",
+  "complexity": "Undefined",
+  "space": "O(1)",
+  "stability": "N/A",
+  "description": "Checks if the array is sorted. If not, waits and checks again, hoping it becomes sorted.",
+  "visualization": "custom"
+}

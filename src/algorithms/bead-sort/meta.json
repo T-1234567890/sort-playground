@@ -1,0 +1,9 @@
+{
+  "name": "Bead Sort",
+  "category": "weird",
+  "complexity": "O(n)",
+  "space": "O(n)",
+  "stability": "Stable",
+  "description": "Simulates beads falling under gravity to naturally arrange values in order.",
+  "visualization": "custom"
+}

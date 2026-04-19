@@ -1,0 +1,9 @@
+{
+  "name": "Insertion Sort",
+  "category": "classic",
+  "complexity": "O(n^2)",
+  "space": "O(1)",
+  "stability": "Stable",
+  "description": "Builds a sorted list one element at a time by inserting each new value into its correct position.",
+  "visualization": "default"
+}

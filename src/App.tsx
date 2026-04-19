@@ -3,6 +3,7 @@ import { algorithms } from "./core/algorithms";
 import { AlgorithmPage } from "./pages/AlgorithmPage";
 import { AboutPage } from "./pages/AboutPage";
 import { AllAlgorithmsPage } from "./pages/AllAlgorithmsPage";
+import { EmbedPage } from "./pages/EmbedPage";
 import { HomePage } from "./pages/HomePage";
 import { LegalPage } from "./pages/LegalPage";
 
@@ -29,12 +30,28 @@ function getRoute() {
     return { name: decodeURIComponent(path.replace("/algo/", "")), page: "algorithm" };
   }
 
+  if (path.startsWith("/embed/algo/")) {
+    return { name: decodeURIComponent(path.replace("/embed/algo/", "")), page: "embed" };
+  }
+
   return { name: null, page: "home" };
 }
 
 export default function App() {
   const [route, setRoute] = useState(getRoute);
-  const [dark, setDark] = useState(() => window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const [dark, setDark] = useState(() => {
+    const theme = new URLSearchParams(window.location.search).get("theme");
+
+    if (theme === "dark") {
+      return true;
+    }
+
+    if (theme === "light") {
+      return false;
+    }
+
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
@@ -73,7 +90,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-950 transition-colors dark:bg-zinc-950 dark:text-zinc-50">
-      {selectedAlgorithm ? (
+      {selectedAlgorithm && route.page === "embed" ? (
+        <EmbedPage algorithm={selectedAlgorithm} />
+      ) : selectedAlgorithm ? (
         <AlgorithmPage algorithm={selectedAlgorithm} dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "allalgo" ? (
         <AllAlgorithmsPage algorithms={algorithms} dark={dark} onToggleDark={() => setDark((value) => !value)} />

@@ -1,6 +1,7 @@
 import { Check, Download, Film, Image, Pause, Play, RotateCcw, Share2, Shuffle, Volume2, VolumeX } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { EmbedShare } from "./EmbedShare";
 import { ExportCard } from "./ExportCard";
 import { exportGif, exportPng, exportShareCard } from "../core/exporters";
 import { createAudioContext, playStepSound, resumeAudioContext, type SortAudioContext } from "../core/sound";
@@ -10,6 +11,7 @@ import type { Algorithm, Step } from "../core/types";
 const actionLabels = {
   compare: "Compare",
   swap: "Swap",
+  overwrite: "Overwrite",
   delete: "Delete",
   sorted: "Sorted",
 };
@@ -17,6 +19,7 @@ const actionLabels = {
 const actionColors = {
   compare: "bg-amber-400",
   swap: "bg-rose-500",
+  overwrite: "bg-sky-500",
   delete: "bg-rose-500",
   sorted: "bg-emerald-400",
 };
@@ -43,6 +46,12 @@ function explainStep(step: Step, stepIndex: number) {
     return values.length > 1
       ? `Moving values ${values.join(" and ")} into their next positions.`
       : `Writing value ${values[0] ?? ""} into the next sorted position.`;
+  }
+
+  if (step.action === "overwrite") {
+    return values.length
+      ? `Writing value ${values[0]} into index ${indices[0] ?? 0}.`
+      : "Writing the next value into the working array.";
   }
 
   if (values.length > 1) {
@@ -221,8 +230,9 @@ export function Visualizer({ algorithm }: VisualizerProps) {
   }
 
   return (
-    <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-      <div className="rounded-lg border border-zinc-950/10 bg-white/72 p-4 shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-white/8 sm:p-6">
+    <section className="space-y-6">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="rounded-lg border border-zinc-950/10 bg-white/72 p-4 shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-white/8 sm:p-6">
         <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="text-xl font-semibold tracking-tight">{t("visualizer.title")}</h2>
@@ -288,6 +298,8 @@ export function Visualizer({ algorithm }: VisualizerProps) {
                 ? "bg-amber-400"
                 : isActive && (activeStep.action === "swap" || activeStep.action === "delete")
                   ? "bg-rose-500"
+                  : isActive && activeStep.action === "overwrite"
+                    ? "bg-sky-500"
                   : "bg-zinc-400 dark:bg-zinc-600";
 
             return (
@@ -329,159 +341,164 @@ export function Visualizer({ algorithm }: VisualizerProps) {
             {sortedResult.join(" ")}
           </code>
         </div>
+        </div>
+
+        <aside className="rounded-lg border border-zinc-950/10 bg-white/72 p-5 shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-white/8">
+          <h2 className="text-lg font-semibold tracking-tight">{t("controls.title")}</h2>
+          <div className="mt-5 grid gap-3">
+            <button
+              type="button"
+              onClick={generate}
+              disabled={isRunning}
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-950 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 dark:bg-white dark:text-zinc-950"
+            >
+              <Shuffle size={16} />
+              {t("controls.random")}
+            </button>
+            <div>
+              <label htmlFor="array-input" className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
+                {t("controls.customInput")}
+              </label>
+              <textarea
+                id="array-input"
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                disabled={isRunning}
+                rows={3}
+                className="mt-2 w-full resize-none rounded-lg border border-zinc-950/10 bg-white px-3 py-2 text-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 disabled:opacity-45 dark:border-white/10 dark:bg-zinc-900"
+              />
+              <button
+                type="button"
+                onClick={applyInput}
+                disabled={isRunning}
+                className="mt-2 w-full rounded-lg border border-zinc-950/10 px-4 py-2 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
+              >
+                {t("controls.apply")}
+              </button>
+            </div>
+            <div>
+              <div className="flex items-center justify-between text-sm">
+                <label htmlFor="speed" className="font-medium text-zinc-600 dark:text-zinc-300">
+                  {t("controls.speed")}
+                </label>
+                <span className="font-mono">{speed.toFixed(1)}x</span>
+              </div>
+              <input
+                id="speed"
+                type="range"
+                min="0.5"
+                max="5"
+                step="0.5"
+                value={speed}
+                onChange={(event) => setSpeed(Number(event.target.value))}
+                className="mt-3 w-full accent-teal-500"
+              />
+            </div>
+            <div className="rounded-lg border border-zinc-950/10 p-3 dark:border-white/10">
+              <div className="flex items-center justify-between gap-3">
+                <label htmlFor="volume" className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
+                  {t("controls.sound")}
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setSoundEnabled((enabled) => !enabled)}
+                  className="inline-flex items-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-2 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
+                  aria-pressed={soundEnabled}
+                >
+                  {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
+                  {soundEnabled ? t("controls.on") : t("controls.off")}
+                </button>
+              </div>
+              <input
+                id="volume"
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={volume}
+                onChange={(event) => setVolume(Number(event.target.value))}
+                disabled={!soundEnabled}
+                className="mt-3 w-full accent-teal-500 disabled:opacity-45"
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-2 pt-2">
+              <button
+                type="button"
+                onClick={start}
+                disabled={isRunning}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-teal-500 px-3 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-teal-400 disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                <Play size={15} />
+                {t("controls.start")}
+              </button>
+              <button
+                type="button"
+                onClick={pause}
+                disabled={!isRunning}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-3 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
+              >
+                <Pause size={15} />
+                {t("controls.pause")}
+              </button>
+              <button
+                type="button"
+                onClick={reset}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-3 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
+              >
+                <RotateCcw size={15} />
+                {t("controls.reset")}
+              </button>
+            </div>
+          </div>
+        </aside>
       </div>
 
-      <aside className="rounded-lg border border-zinc-950/10 bg-white/72 p-5 shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-white/8">
-        <h2 className="text-lg font-semibold tracking-tight">{t("controls.title")}</h2>
-        <div className="mt-5 grid gap-3">
-          <button
-            type="button"
-            onClick={generate}
-            disabled={isRunning}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-950 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 dark:bg-white dark:text-zinc-950"
-          >
-            <Shuffle size={16} />
-            {t("controls.random")}
-          </button>
+      <div className="rounded-lg border border-zinc-950/10 bg-white/72 p-5 shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-white/8">
+        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
           <div>
-            <label htmlFor="array-input" className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
-              {t("controls.customInput")}
-            </label>
-            <textarea
-              id="array-input"
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              disabled={isRunning}
-              rows={3}
-              className="mt-2 w-full resize-none rounded-lg border border-zinc-950/10 bg-white px-3 py-2 text-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 disabled:opacity-45 dark:border-white/10 dark:bg-zinc-900"
-            />
+            <p className="text-sm font-semibold uppercase text-teal-700 dark:text-teal-300">{t("export.title")}</p>
+            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-300">{t("export.hint")}</p>
+          </div>
+          {exportStatus !== "idle" ? (
+            <span className="inline-flex items-center gap-1 self-start rounded-lg bg-teal-100 px-2 py-1 text-xs font-semibold text-teal-900 dark:bg-teal-300/15 dark:text-teal-200">
+              <Check size={13} />
+              {t("export.ready")}
+            </span>
+          ) : null}
+        </div>
+        <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)]">
+          <div className="grid gap-2 sm:grid-cols-3">
             <button
               type="button"
-              onClick={applyInput}
+              onClick={handleExportPng}
               disabled={isRunning}
-              className="mt-2 w-full rounded-lg border border-zinc-950/10 px-4 py-2 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
-            >
-              {t("controls.apply")}
-            </button>
-          </div>
-          <div>
-            <div className="flex items-center justify-between text-sm">
-              <label htmlFor="speed" className="font-medium text-zinc-600 dark:text-zinc-300">
-                {t("controls.speed")}
-              </label>
-              <span className="font-mono">{speed.toFixed(1)}x</span>
-            </div>
-            <input
-              id="speed"
-              type="range"
-              min="0.5"
-              max="5"
-              step="0.5"
-              value={speed}
-              onChange={(event) => setSpeed(Number(event.target.value))}
-              className="mt-3 w-full accent-teal-500"
-            />
-          </div>
-          <div className="rounded-lg border border-zinc-950/10 p-3 dark:border-white/10">
-            <div className="flex items-center justify-between gap-3">
-              <label htmlFor="volume" className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
-                {t("controls.sound")}
-              </label>
-              <button
-                type="button"
-                onClick={() => setSoundEnabled((enabled) => !enabled)}
-                className="inline-flex items-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-2 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
-                aria-pressed={soundEnabled}
-              >
-                {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
-                {soundEnabled ? t("controls.on") : t("controls.off")}
-              </button>
-            </div>
-            <input
-              id="volume"
-              type="range"
-              min="0"
-              max="1"
-              step="0.05"
-              value={volume}
-              onChange={(event) => setVolume(Number(event.target.value))}
-              disabled={!soundEnabled}
-              className="mt-3 w-full accent-teal-500 disabled:opacity-45"
-            />
-          </div>
-          <div className="grid grid-cols-3 gap-2 pt-2">
-            <button
-              type="button"
-              onClick={start}
-              disabled={isRunning}
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-teal-500 px-3 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-teal-400 disabled:cursor-not-allowed disabled:opacity-45"
-            >
-              <Play size={15} />
-              {t("controls.start")}
-            </button>
-            <button
-              type="button"
-              onClick={pause}
-              disabled={!isRunning}
               className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-3 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
             >
-              <Pause size={15} />
-              {t("controls.pause")}
+              <Image size={15} />
+              {t("export.png")}
             </button>
             <button
               type="button"
-              onClick={reset}
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-3 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
+              onClick={handleExportShareCard}
+              disabled={isRunning}
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-3 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
             >
-              <RotateCcw size={15} />
-              {t("controls.reset")}
+              <Share2 size={15} />
+              {t("export.share")}
+            </button>
+            <button
+              type="button"
+              onClick={handleExportGif}
+              disabled={isRunning || isGifExporting}
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-3 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
+            >
+              {isGifExporting ? <Download size={15} className="animate-pulse" /> : <Film size={15} />}
+              {isGifExporting ? t("export.buildingGif") : t("export.gif")}
             </button>
           </div>
-          <div className="rounded-lg border border-zinc-950/10 p-3 dark:border-white/10">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold">{t("export.title")}</p>
-                <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{t("export.hint")}</p>
-              </div>
-              {exportStatus !== "idle" ? (
-                <span className="inline-flex items-center gap-1 rounded-lg bg-teal-100 px-2 py-1 text-xs font-semibold text-teal-900 dark:bg-teal-300/15 dark:text-teal-200">
-                  <Check size={13} />
-                  {t("export.ready")}
-                </span>
-              ) : null}
-            </div>
-            <div className="mt-3 grid gap-2">
-              <button
-                type="button"
-                onClick={handleExportPng}
-                disabled={isRunning}
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-2 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
-              >
-                <Image size={15} />
-                {t("export.png")}
-              </button>
-              <button
-                type="button"
-                onClick={handleExportShareCard}
-                disabled={isRunning}
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-2 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
-              >
-                <Share2 size={15} />
-                {t("export.share")}
-              </button>
-              <button
-                type="button"
-                onClick={handleExportGif}
-                disabled={isRunning || isGifExporting}
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-2 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
-              >
-                {isGifExporting ? <Download size={15} className="animate-pulse" /> : <Film size={15} />}
-                {isGifExporting ? t("export.buildingGif") : t("export.gif")}
-              </button>
-            </div>
-          </div>
+          <EmbedShare algorithm={algorithm} />
         </div>
-      </aside>
+      </div>
       <ExportCard algorithm={algorithm} result={sortedResult} />
     </section>
   );

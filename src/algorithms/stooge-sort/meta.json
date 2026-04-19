@@ -1,0 +1,9 @@
+{
+  "name": "Stooge Sort",
+  "category": "weird",
+  "complexity": "O(n^2.7)",
+  "space": "O(n)",
+  "stability": "Unstable",
+  "description": "Recursively sorts overlapping sections of the array, making the process intentionally inefficient.",
+  "visualization": "default"
+}

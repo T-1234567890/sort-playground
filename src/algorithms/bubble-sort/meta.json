@@ -1,0 +1,9 @@
+{
+  "name": "Bubble Sort",
+  "category": "classic",
+  "complexity": "O(n^2)",
+  "space": "O(1)",
+  "stability": "Stable",
+  "description": "Repeatedly compares adjacent elements and swaps them if needed, gradually pushing larger values to the end.",
+  "visualization": "default"
+}

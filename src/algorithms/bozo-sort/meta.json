@@ -1,0 +1,9 @@
+{
+  "name": "Bozo Sort",
+  "category": "meme",
+  "complexity": "Extremely slow",
+  "space": "O(1)",
+  "stability": "Unstable",
+  "description": "Randomly swaps two elements until the array happens to be sorted.",
+  "visualization": "default"
+}

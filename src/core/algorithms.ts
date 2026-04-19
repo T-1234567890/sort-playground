@@ -4,6 +4,14 @@ import { mergeSortSteps } from "../algorithms/merge-sort/steps";
 import { stalinSortSteps } from "../algorithms/stalin-sort/steps";
 import { bogoSortSteps } from "../algorithms/bogo-sort/steps";
 import { sleepSortSteps } from "../algorithms/sleep-sort/steps";
+import { bubbleSortSteps } from "../algorithms/bubble-sort/steps";
+import { insertionSortSteps } from "../algorithms/insertion-sort/steps";
+import { gnomeSortSteps } from "../algorithms/gnome-sort/steps";
+import { stoogeSortSteps } from "../algorithms/stooge-sort/steps";
+import { bozoSortSteps } from "../algorithms/bozo-sort/steps";
+import { slowsortSteps } from "../algorithms/slowsort/steps";
+import { miracleSortSteps } from "../algorithms/miracle-sort/steps";
+import { beadSortSteps } from "../algorithms/bead-sort/steps";
 
 const metaModules = import.meta.glob<AlgorithmMeta>("../algorithms/*/meta.json", {
   eager: true,
@@ -34,6 +42,14 @@ const stepModules = {
   "stalin-sort": stalinSortSteps,
   "bogo-sort": bogoSortSteps,
   "sleep-sort": sleepSortSteps,
+  "bubble-sort": bubbleSortSteps,
+  "insertion-sort": insertionSortSteps,
+  "gnome-sort": gnomeSortSteps,
+  "stooge-sort": stoogeSortSteps,
+  "bozo-sort": bozoSortSteps,
+  slowsort: slowsortSteps,
+  "miracle-sort": miracleSortSteps,
+  "bead-sort": beadSortSteps,
 };
 
 function slugFromPath(path: string) {
@@ -55,6 +71,7 @@ export const algorithms: Algorithm[] = Object.entries(metaModules)
 
     return [{
       ...meta,
+      spaceComplexity: meta.spaceComplexity ?? meta.space,
       slug,
       steps,
       code: {

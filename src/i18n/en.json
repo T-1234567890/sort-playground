@@ -64,7 +64,7 @@
     "off": "Off",
     "start": "Start",
     "pause": "Pause",
-    "reset": "Recover"
+    "reset": "Reset"
   },
   "visualizer": {
     "title": "Step viewer",
@@ -80,6 +80,7 @@
     "actions": {
       "compare": "Compare",
       "swap": "Swap",
+      "overwrite": "Overwrite",
       "delete": "Delete",
       "sorted": "Sorted"
     }
@@ -92,6 +93,13 @@
     "share": "Export Share Card",
     "gif": "Export GIF",
     "buildingGif": "Building GIF"
+  },
+  "embed": {
+    "shareTitle": "Embed this sort",
+    "shareDescription": "Copy a lightweight iframe for docs, posts, or project pages.",
+    "copy": "Copy embed",
+    "copied": "Copied ✓",
+    "showCode": "Show iframe code"
   },
   "code": {
     "sectionEyebrow": "Implementations",

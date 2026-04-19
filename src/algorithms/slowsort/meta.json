@@ -1,0 +1,9 @@
+{
+  "name": "Slowsort",
+  "category": "meme",
+  "complexity": "Worse than exponential",
+  "space": "O(n)",
+  "stability": "Unstable",
+  "description": "A parody of divide-and-conquer that recursively sorts and then re-sorts sections for no good reason.",
+  "visualization": "default"
+}
