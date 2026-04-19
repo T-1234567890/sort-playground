@@ -1,8 +1,9 @@
 import { ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, FileText, FlaskConical, Gauge, GitPullRequest, MessageSquare, Trophy } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
-import type { SortLabsEvent } from "../core/types";
+import type { BenchmarkRankingEntry, SortLabsEvent } from "../core/types";
 import events from "../data/events.json";
 
 type LabsPageProps = {
@@ -38,6 +39,16 @@ function formatDate(date?: string) {
   }
 
   return new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(`${date}T00:00:00`));
+}
+
+async function readJson<T>(path: string): Promise<T> {
+  const response = await fetch(path);
+
+  if (!response.ok) {
+    throw new Error(`Failed to load ${path}`);
+  }
+
+  return response.json() as Promise<T>;
 }
 
 function ResourceList({
@@ -163,6 +174,38 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
   const section = currentSection();
   const allEvents = events as SortLabsEvent[];
   const activeEvent = allEvents.find((event) => event.status === "active") ?? allEvents[0];
+  const [benchmarkEntries, setBenchmarkEntries] = useState<BenchmarkRankingEntry[]>([]);
+  const [benchmarkLoading, setBenchmarkLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadBenchmark() {
+      setBenchmarkLoading(true);
+
+      try {
+        const data = await readJson<BenchmarkRankingEntry[]>("/data/benchmark-ranking.json");
+
+        if (!cancelled) {
+          setBenchmarkEntries(data);
+        }
+      } catch {
+        if (!cancelled) {
+          setBenchmarkEntries([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setBenchmarkLoading(false);
+        }
+      }
+    }
+
+    void loadBenchmark();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const featureBlocks = [
     {
@@ -351,15 +394,99 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
 
   function renderBenchmark() {
     const benchmarkDoc = benchmarkDocsLinks[0];
+    const sortedEntries = [...benchmarkEntries].sort((left, right) => {
+      if (left.mode === "automated" && right.mode !== "automated") {
+        return -1;
+      }
+
+      if (left.mode !== "automated" && right.mode === "automated") {
+        return 1;
+      }
+
+      if (left.mode === "estimated" && right.mode === "none") {
+        return -1;
+      }
+
+      if (left.mode === "none" && right.mode === "estimated") {
+        return 1;
+      }
+
+      if (left.mode === "estimated" && right.mode === "estimated") {
+        const order = { high: 0, medium: 1, low: 2 };
+        return order[left.relativeRank ?? "medium"] - order[right.relativeRank ?? "medium"];
+      }
+
+      return (left.average ?? Number.POSITIVE_INFINITY) - (right.average ?? Number.POSITIVE_INFINITY);
+    });
 
     return (
       <>
-        <PlaceholderRanking
-          title={t("labs.blocks.benchmark.title")}
-          description={t("labs.section.benchmarkDescription")}
-          loadingTitle={t("labs.section.collectingTitle")}
-          loadingBody={t("labs.section.benchmarkPlaceholder")}
-        />
+        <section className="mx-auto max-w-6xl px-5 py-16">
+          <div className="max-w-3xl">
+            <h3 className="text-3xl font-semibold tracking-tight">{t("labs.blocks.benchmark.title")}</h3>
+            <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("labs.section.benchmarkDescription")}</p>
+          </div>
+
+          {benchmarkLoading ? (
+            <div className="mt-8 rounded-lg border border-zinc-950/10 bg-white/72 p-6 shadow-sm dark:border-white/10 dark:bg-white/8">
+              <div className="flex items-start gap-4">
+                <span className="mt-1 inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-zinc-300 border-t-teal-500 animate-spin dark:border-zinc-700 dark:border-t-teal-300" />
+                <div>
+                  <p className="text-lg font-semibold">{t("labs.section.collectingTitle")}</p>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("labs.section.benchmarkPlaceholder")}</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-8 overflow-hidden rounded-lg border border-zinc-950/10 bg-white/72 shadow-sm dark:border-white/10 dark:bg-white/8">
+              <ol className="divide-y divide-zinc-950/8 dark:divide-white/10">
+                {sortedEntries.map((entry, index) => (
+                  <li key={entry.slug} className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="flex items-start gap-4">
+                      <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-950 text-sm font-semibold text-white dark:bg-white dark:text-zinc-950">
+                        #{index + 1}
+                      </span>
+                      <div>
+                        <a data-route href={`/algo/${entry.slug}`} className="text-lg font-semibold hover:text-teal-600 dark:hover:text-teal-300">
+                          {entry.name}
+                        </a>
+                        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                          {entry.mode === "automated"
+                            ? t("labs.benchmarkModes.automated")
+                            : entry.mode === "estimated"
+                              ? t("labs.benchmarkModes.estimated")
+                              : t("labs.benchmarkModes.none")}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid gap-1 text-sm sm:text-right">
+                      {entry.mode === "automated" ? (
+                        <>
+                          <p className="font-mono font-semibold">{entry.average} {entry.unit}</p>
+                          <p className="text-zinc-500 dark:text-zinc-400">
+                            S {entry.datasets?.small ?? "-"} · M {entry.datasets?.medium ?? "-"} · L {entry.datasets?.large ?? "-"}
+                          </p>
+                        </>
+                      ) : null}
+
+                      {entry.mode === "estimated" ? (
+                        <>
+                          <p className="font-semibold">{entry.complexity}</p>
+                          <p className="text-zinc-500 dark:text-zinc-400">{t("labs.relativeRanks." + (entry.relativeRank ?? "medium"))}</p>
+                        </>
+                      ) : null}
+
+                      {entry.mode === "none" ? (
+                        <p className="text-zinc-500 dark:text-zinc-400">{entry.reason ?? t("labs.benchmarkModes.none")}</p>
+                      ) : null}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+        </section>
         {benchmarkDoc ? <SectionDocButton link={benchmarkDoc} /> : null}
       </>
     );

@@ -322,6 +322,16 @@
         "description": "阅读赛季活动页面应如何说明主题、参与方式和排名规则。"
       }
     },
+    "benchmarkModes": {
+      "automated": "自动基准",
+      "estimated": "估算基准",
+      "none": "不参与基准"
+    },
+    "relativeRanks": {
+      "high": "高相对等级",
+      "medium": "中相对等级",
+      "low": "低相对等级"
+    },
     "github": {
       "contributing": {
         "title": "贡献指南",

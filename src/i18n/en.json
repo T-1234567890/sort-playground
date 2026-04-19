@@ -322,6 +322,16 @@
         "description": "Read how seasonal event pages should explain the theme, participation, and ranking policy."
       }
     },
+    "benchmarkModes": {
+      "automated": "Automated benchmark",
+      "estimated": "Estimated benchmark",
+      "none": "No benchmark"
+    },
+    "relativeRanks": {
+      "high": "High relative rank",
+      "medium": "Medium relative rank",
+      "low": "Low relative rank"
+    },
     "github": {
       "contributing": {
         "title": "Contribution Guide",
