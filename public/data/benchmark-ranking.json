@@ -3,7 +3,7 @@
     "name": "Insertion Sort",
     "slug": "insertion-sort",
     "mode": "automated",
-    "average": 0.177,
+    "average": 0.174,
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
@@ -11,21 +11,21 @@
       "benchmarkMode": "automated"
     },
     "runs": [
-      0.282,
-      0.202,
-      0.048
+      0.291,
+      0.221,
+      0.01
     ],
     "datasets": {
       "small": 0.001,
       "medium": 0.006,
-      "large": 0.02
+      "large": 0.032
     }
   },
   {
     "name": "Gnome Sort",
     "slug": "gnome-sort",
     "mode": "automated",
-    "average": 0.391,
+    "average": 0.385,
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
@@ -33,21 +33,21 @@
       "benchmarkMode": "automated"
     },
     "runs": [
-      0.55,
-      0.451,
-      0.173
+      0.986,
+      0.11,
+      0.06
     ],
     "datasets": {
       "small": 0.002,
-      "medium": 0.036,
-      "large": 0.152
+      "medium": 0.035,
+      "large": 0.183
     }
   },
   {
     "name": "Bubble Sort",
     "slug": "bubble-sort",
     "mode": "automated",
-    "average": 0.547,
+    "average": 0.615,
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
@@ -55,21 +55,21 @@
       "benchmarkMode": "automated"
     },
     "runs": [
-      1.032,
-      0.423,
-      0.187
+      1.138,
+      0.512,
+      0.194
     ],
     "datasets": {
-      "small": 0.004,
-      "medium": 0.139,
-      "large": 0.12
+      "small": 0.003,
+      "medium": 0.103,
+      "large": 0.128
     }
   },
   {
     "name": "Bead Sort",
     "slug": "bead-sort",
     "mode": "automated",
-    "average": 2.459,
+    "average": 3.25,
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
@@ -77,21 +77,21 @@
       "benchmarkMode": "automated"
     },
     "runs": [
-      3.14,
-      2.778,
-      1.459
+      4.255,
+      4.009,
+      1.486
     ],
     "datasets": {
-      "small": 0.251,
-      "medium": 1.281,
-      "large": 2.711
+      "small": 0.255,
+      "medium": 1.278,
+      "large": 2.716
     }
   },
   {
     "name": "Stooge Sort",
     "slug": "stooge-sort",
     "mode": "automated",
-    "average": 6.637,
+    "average": 6.688,
     "unit": "ms",
     "status": "benchmarked",
     "metadata": {
@@ -99,14 +99,14 @@
       "benchmarkMode": "automated"
     },
     "runs": [
-      7.112,
-      6.382,
-      6.418
+      7.313,
+      6.368,
+      6.384
     ],
     "datasets": {
       "small": 0.027,
-      "medium": 1.947,
-      "large": 17.375
+      "medium": 1.943,
+      "large": 17.33
     }
   },
   {
