@@ -174,6 +174,41 @@ No mystery animation. Just values changing, one move at a time.
 
 Open the page. Run the sort. Export the result.
 
+## Benchmark
+
+Sort Playground includes a benchmark system for comparing sorting algorithms across multiple languages.
+
+The goal is not to provide perfect measurements, but to offer consistent and reproducible comparisons.
+
+### What is measured
+
+- Python, Rust, and C implementations
+- Multiple input sizes (small, medium, large)
+- Repeated runs with averaging
+- Controlled execution environment (CI)
+
+### How it works
+
+Benchmarks are executed automatically using GitHub Actions.
+
+- Each algorithm is tested in a standardized environment  
+- Results are averaged over multiple runs  
+- Data is generated as static JSON and displayed in the site  
+
+Some algorithms may opt out of benchmarking if measurement is not meaningful.
+
+### Notes
+
+- Results are approximate and environment-dependent  
+- Benchmarks are designed for comparison, not absolute performance  
+- Implementation details may affect results across languages  
+
+### Documentation
+
+For full methodology and benchmark details, see:
+
+👉 `/docs/benchmark.md`
+
 ## Embed
 
 You can embed any algorithm directly into your own website using a lightweight iframe.
