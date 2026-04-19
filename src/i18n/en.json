@@ -120,6 +120,30 @@
     "title": "Go deeper when you want the full grid.",
     "description": "Browse every algorithm, switch into compare or race mode, and use the full search and filter system without overloading the homepage."
   },
+  "homeBenchmark": {
+    "eyebrow": "Benchmark",
+    "title": "Read the benchmark methodology before you read the numbers.",
+    "description": "The benchmark has its own entry page that explains scope, fairness rules, execution environment, and what the published results do and do not claim.",
+    "details": "Use it as the trust and methodology page first, then move into Labs when you want the current benchmark data and per-algorithm detail views.",
+    "cardLabel": "Benchmark System",
+    "cardTitle": "Methodology, scope, and trust notes",
+    "cardDescription": "Open the benchmark page for the public benchmark definition, then continue to Labs when you want the current results.",
+    "highlights": {
+      "methodology": {
+        "label": "Method",
+        "value": "Controlled CI benchmark with documented rules"
+      },
+      "languages": {
+        "label": "Platforms",
+        "value": "Python, Rust, and C implementations"
+      },
+      "results": {
+        "label": "Results",
+        "value": "Benchmarks live in Labs with algorithm detail pages"
+      }
+    },
+    "explore": "Open Benchmark"
+  },
   "pagination": {
     "page": "Page {{current}} of {{total}}",
     "previous": "Previous",
@@ -545,17 +569,17 @@
         "c": "C implementations",
         "deterministic": "Deterministic algorithms",
         "comparable": "Comparable implementations across languages"
-      }
-    },
-    "exclusions": {
-      "label": "Exclusions",
-      "title": "What is excluded",
-      "description": "Some entries are intentionally excluded so the benchmark remains comparable and credible.",
+      },
       "excluded": {
         "nondeterministic": "Non-deterministic algorithms",
         "visualOnly": "Visualization-only or manual sorting workflows",
         "noBenchmark": "Algorithms explicitly marked as no benchmark"
       }
+    },
+    "exclusions": {
+      "label": "Exclusions",
+      "title": "What is excluded",
+      "description": "Some entries are intentionally excluded so the benchmark remains comparable and credible."
     },
     "navigation": {
       "label": "Navigation",

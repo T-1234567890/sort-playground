@@ -120,6 +120,30 @@
     "title": "需要完整视图时，再进入全量网格。",
     "description": "浏览全部算法，切换到对比或竞速模式，并使用完整的搜索和筛选能力，而不用把首页堆得太满。"
   },
+  "homeBenchmark": {
+    "eyebrow": "基准",
+    "title": "先看基准方法，再看结果数字。",
+    "description": "Benchmark 现在有独立入口页，用来解释范围、公平性规则、执行环境，以及这些公开结果到底能说明什么、不能说明什么。",
+    "details": "先把它当作可信性和方法说明页，再进入 Labs 查看当前基准数据和每个算法的详细结果页。",
+    "cardLabel": "Benchmark System",
+    "cardTitle": "方法、范围与可信性说明",
+    "cardDescription": "先打开 benchmark 页面阅读公开方法说明，想看当前结果时再进入 Labs。",
+    "highlights": {
+      "methodology": {
+        "label": "方法",
+        "value": "受控 CI 环境下运行，并带有公开规则"
+      },
+      "languages": {
+        "label": "平台",
+        "value": "覆盖 Python、Rust 和 C 实现"
+      },
+      "results": {
+        "label": "结果",
+        "value": "实际结果在 Labs 中，并提供算法详情页"
+      }
+    },
+    "explore": "打开 Benchmark"
+  },
   "pagination": {
     "page": "第 {{current}} 页，共 {{total}} 页",
     "previous": "上一页",
@@ -545,17 +569,17 @@
         "c": "C 实现",
         "deterministic": "确定性算法",
         "comparable": "跨语言可对比的实现"
-      }
-    },
-    "exclusions": {
-      "label": "排除项",
-      "title": "不包含什么",
-      "description": "有些条目会被刻意排除，以保证基准结果仍然具有可比性和可信度。",
+      },
       "excluded": {
         "nondeterministic": "非确定性算法",
         "visualOnly": "仅用于可视化或需要人工参与的排序流程",
         "noBenchmark": "被显式标记为 no benchmark 的算法"
       }
+    },
+    "exclusions": {
+      "label": "排除项",
+      "title": "不包含什么",
+      "description": "有些条目会被刻意排除，以保证基准结果仍然具有可比性和可信度。"
     },
     "navigation": {
       "label": "导航",

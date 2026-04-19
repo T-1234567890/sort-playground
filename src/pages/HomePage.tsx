@@ -207,6 +207,45 @@ export function HomePage({ algorithms, dark, onToggleDark }: HomePageProps) {
           </div>
         </section>
 
+        <section className="mx-auto max-w-6xl px-5 py-16">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold uppercase text-teal-700 dark:text-teal-300">{t("homeBenchmark.eyebrow")}</p>
+              <h2 className="mt-2 text-3xl font-semibold tracking-tight">{t("homeBenchmark.title")}</h2>
+            </div>
+            <div className="max-w-xl">
+              <p className="text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("homeBenchmark.description")}</p>
+              <p className="mt-2 text-sm leading-6 text-zinc-500 dark:text-zinc-400">{t("homeBenchmark.details")}</p>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-lg border border-zinc-950/10 bg-zinc-950/[0.02] px-4 py-3 dark:border-white/10 dark:bg-white/[0.03]">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">{t("homeBenchmark.highlights.methodology.label")}</p>
+              <p className="mt-1 text-sm font-medium text-zinc-900 dark:text-zinc-100">{t("homeBenchmark.highlights.methodology.value")}</p>
+            </div>
+            <div className="rounded-lg border border-zinc-950/10 bg-zinc-950/[0.02] px-4 py-3 dark:border-white/10 dark:bg-white/[0.03]">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">{t("homeBenchmark.highlights.languages.label")}</p>
+              <p className="mt-1 text-sm font-medium text-zinc-900 dark:text-zinc-100">{t("homeBenchmark.highlights.languages.value")}</p>
+            </div>
+            <div className="rounded-lg border border-zinc-950/10 bg-zinc-950/[0.02] px-4 py-3 dark:border-white/10 dark:bg-white/[0.03]">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">{t("homeBenchmark.highlights.results.label")}</p>
+              <p className="mt-1 text-sm font-medium text-zinc-900 dark:text-zinc-100">{t("homeBenchmark.highlights.results.value")}</p>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <a
+              data-route
+              href="/benchmark"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-950 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-zinc-950"
+            >
+              {t("homeBenchmark.explore")}
+              <ArrowUpRight size={16} />
+            </a>
+          </div>
+        </section>
+
         <section className="mx-auto max-w-6xl px-5 pb-16">
           <div className="flex flex-col justify-between gap-4 border-t border-zinc-950/10 pt-12 dark:border-white/10 sm:flex-row sm:items-end">
             <div>
