@@ -73,7 +73,18 @@
     "eyebrow": "全部算法",
     "title": "全部算法",
     "description": "通过搜索、筛选和清晰的实现信息浏览完整算法集合。",
-    "count": "{{count}} 个算法"
+    "count": "{{count}} 个算法",
+    "toolsTitle": "选择操作",
+    "toolsDescription": "正常浏览，或选择两个算法卡片进入对比或竞速模式。",
+    "selectionHint": "从网格中准确选择两个算法卡片。",
+    "raceSelectionHint": "从网格中选择 2 到 8 个算法卡片。",
+    "browse": "浏览",
+    "compare": "对比",
+    "race": "竞速",
+    "selected": "已选择 {{count}} / 2",
+    "raceSelected": "已选择 {{count}} / 8",
+    "startCompare": "对比所选算法",
+    "startRace": "竞速所选算法"
   },
   "homeAlgorithms": {
     "eyebrow": "最新",
@@ -133,6 +144,58 @@
     "copied": "已复制 ✓",
     "showCode": "显示 iframe 代码"
   },
+  "compare": {
+    "eyebrow": "对比模式",
+    "title": "对比算法",
+    "description": "用同一个数组同步运行两个排序算法，并查看逐步统计。",
+    "sharedInput": "共享输入",
+    "left": "左侧算法",
+    "right": "右侧算法",
+    "steps": "步骤",
+    "compares": "比较",
+    "moves": "移动",
+    "swaps": "交换",
+    "overwrites": "覆写",
+    "deletes": "删除",
+    "visualization": "可视化",
+    "detail": "详情",
+    "changeSelection": "选择其他算法"
+  },
+  "race": {
+    "eyebrow": "竞速模式",
+    "title": "算法竞速",
+    "description": "选择一组算法，让它们同时开始，看看谁先完成。",
+    "pick": "选择 2 到 6 个算法",
+    "done": "已完成",
+    "speedBoost": "竞速速度",
+    "changeRacers": "选择其他参赛算法",
+    "timeline": "时间线",
+    "timerBar": "完成计时条",
+    "elapsed": "已用时间",
+    "leader": "领先",
+    "completeAt": "完成于",
+    "complete": "完成",
+    "running": "运行中",
+    "hoverForResult": "悬停",
+    "raceEnd": "竞速结束"
+  },
+  "community": {
+    "eyebrow": "社区",
+    "title": "贡献与讨论",
+    "description": "使用贡献向导，阅读文档，或在 GitHub Discussions 讨论新算法和想法。",
+    "contribute": {
+      "title": "贡献向导",
+      "description": "了解算法结构，并开始你的 pull request。"
+    },
+    "docs": {
+      "title": "文档目录",
+      "description": "阅读架构说明、导出文档和算法贡献指南。"
+    },
+    "discussions": {
+      "title": "GitHub Discussions",
+      "description": "提出想法、询问问题，并讨论奇怪的排序算法。"
+    }
+  },
   "code": {
     "sectionEyebrow": "实现代码",
     "sectionTitle": "复制并使用",
@@ -191,6 +254,9 @@
     },
     "about": "关于",
     "allAlgorithms": "全部算法",
+    "compare": "对比",
+    "race": "竞速",
+    "contribute": "贡献",
     "privacy": "隐私政策",
     "terms": "服务条款",
     "github": "GitHub",

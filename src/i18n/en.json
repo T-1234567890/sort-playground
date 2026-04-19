@@ -73,7 +73,18 @@
     "eyebrow": "All algorithms",
     "title": "All algorithms",
     "description": "Browse the full algorithm collection with search, filters, and clear implementation details.",
-    "count": "{{count}} algorithms"
+    "count": "{{count}} algorithms",
+    "toolsTitle": "Choose what to do",
+    "toolsDescription": "Browse normally, or choose two algorithm cards for compare or race mode.",
+    "selectionHint": "Select exactly two algorithm cards from the grid.",
+    "raceSelectionHint": "Select 2 to 8 algorithm cards from the grid.",
+    "browse": "Browse",
+    "compare": "Compare",
+    "race": "Race",
+    "selected": "{{count}} of 2 selected",
+    "raceSelected": "{{count}} of 8 selected",
+    "startCompare": "Compare selected",
+    "startRace": "Race selected"
   },
   "homeAlgorithms": {
     "eyebrow": "Latest",
@@ -133,6 +144,58 @@
     "copied": "Copied ✓",
     "showCode": "Show iframe code"
   },
+  "compare": {
+    "eyebrow": "Compare Mode",
+    "title": "Compare algorithms",
+    "description": "Run two sorting algorithms on the same array with synced controls and step-by-step stats.",
+    "sharedInput": "Shared input",
+    "left": "Left algorithm",
+    "right": "Right algorithm",
+    "steps": "Steps",
+    "compares": "Compares",
+    "moves": "Moves",
+    "swaps": "Swaps",
+    "overwrites": "Overwrites",
+    "deletes": "Deletes",
+    "visualization": "Visualization",
+    "detail": "Detail",
+    "changeSelection": "Choose different algorithms"
+  },
+  "race": {
+    "eyebrow": "Race Mode",
+    "title": "Race algorithms",
+    "description": "Pick a field of algorithms, start them together, and watch the fastest run finish first.",
+    "pick": "Pick 2 to 6 algorithms",
+    "done": "Finished",
+    "speedBoost": "Race speed",
+    "changeRacers": "Choose different racers",
+    "timeline": "Timeline",
+    "timerBar": "Completion timer",
+    "elapsed": "Elapsed",
+    "leader": "Leader",
+    "completeAt": "complete at",
+    "complete": "complete",
+    "running": "running",
+    "hoverForResult": "hover",
+    "raceEnd": "Race end"
+  },
+  "community": {
+    "eyebrow": "Community",
+    "title": "Contribute and discuss",
+    "description": "Use the contribution guide, read the docs, or join the GitHub discussion around new algorithms and ideas.",
+    "contribute": {
+      "title": "Contribution Wizard",
+      "description": "Learn how algorithms are structured and start your own pull request."
+    },
+    "docs": {
+      "title": "Docs folder",
+      "description": "Read architecture notes, export docs, and the algorithm contribution guide."
+    },
+    "discussions": {
+      "title": "GitHub Discussions",
+      "description": "Suggest ideas, ask questions, and talk about weird sorting algorithms."
+    }
+  },
   "code": {
     "sectionEyebrow": "Implementations",
     "sectionTitle": "Copy and ship",
@@ -191,6 +254,9 @@
     },
     "about": "About",
     "allAlgorithms": "All Algorithms",
+    "compare": "Compare",
+    "race": "Race",
+    "contribute": "Contribute",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "github": "GitHub",

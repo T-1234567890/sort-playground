@@ -1,4 +1,4 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Check } from "lucide-react";
 import type { Algorithm } from "../core/types";
 
 const categoryStyles = {
@@ -9,15 +9,15 @@ const categoryStyles = {
 
 type AlgorithmCardProps = {
   algorithm: Algorithm;
+  selectable?: boolean;
+  selected?: boolean;
+  disabled?: boolean;
+  onSelect?: (slug: string) => void;
 };
 
-export function AlgorithmCard({ algorithm }: AlgorithmCardProps) {
+function CardBody({ algorithm, selected }: { algorithm: Algorithm; selected?: boolean }) {
   return (
-    <a
-      data-route
-      href={`/algo/${algorithm.slug}`}
-      className="group flex h-full min-h-[356px] flex-col rounded-lg border border-zinc-950/10 bg-white/74 p-5 shadow-sm backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:shadow-soft dark:border-white/10 dark:bg-white/8"
-    >
+    <>
       <div className="flex items-start justify-between gap-4">
         <div>
           <span className={`rounded-lg px-2.5 py-1 text-xs font-semibold uppercase ${categoryStyles[algorithm.category]}`}>
@@ -25,7 +25,13 @@ export function AlgorithmCard({ algorithm }: AlgorithmCardProps) {
           </span>
           <h2 className="mt-5 text-2xl font-semibold tracking-tight">{algorithm.name}</h2>
         </div>
-        <ArrowUpRight className="mt-1 text-zinc-400 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-teal-600" />
+        {selected ? (
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-teal-500 text-zinc-950">
+            <Check size={17} />
+          </span>
+        ) : (
+          <ArrowUpRight className="mt-1 text-zinc-400 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-teal-600" />
+        )}
       </div>
       <p className="mt-4 line-clamp-3 min-h-[72px] text-sm leading-6 text-zinc-600 dark:text-zinc-300">{algorithm.description}</p>
       {algorithm.keywords?.length ? (
@@ -52,6 +58,28 @@ export function AlgorithmCard({ algorithm }: AlgorithmCardProps) {
           </div>
         ) : null}
       </div>
+    </>
+  );
+}
+
+export function AlgorithmCard({ algorithm, selectable = false, selected = false, disabled = false, onSelect }: AlgorithmCardProps) {
+  const className = `group flex h-full min-h-[356px] flex-col rounded-lg border p-5 text-left shadow-sm backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:shadow-soft disabled:cursor-not-allowed disabled:opacity-50 ${
+    selected
+      ? "border-teal-500 bg-teal-50/90 ring-2 ring-teal-500/30 dark:bg-teal-300/10"
+      : "border-zinc-950/10 bg-white/74 dark:border-white/10 dark:bg-white/8"
+  }`;
+
+  if (selectable) {
+    return (
+      <button type="button" disabled={disabled} onClick={() => onSelect?.(algorithm.slug)} className={className}>
+        <CardBody algorithm={algorithm} selected={selected} />
+      </button>
+    );
+  }
+
+  return (
+    <a data-route href={`/algo/${algorithm.slug}`} className={className}>
+      <CardBody algorithm={algorithm} />
     </a>
   );
 }

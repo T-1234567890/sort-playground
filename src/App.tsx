@@ -3,9 +3,12 @@ import { algorithms } from "./core/algorithms";
 import { AlgorithmPage } from "./pages/AlgorithmPage";
 import { AboutPage } from "./pages/AboutPage";
 import { AllAlgorithmsPage } from "./pages/AllAlgorithmsPage";
+import { ContributePage } from "./pages/ContributePage";
+import { ComparePage } from "./pages/ComparePage";
 import { EmbedPage } from "./pages/EmbedPage";
 import { HomePage } from "./pages/HomePage";
 import { LegalPage } from "./pages/LegalPage";
+import { RacePage } from "./pages/RacePage";
 
 function getRoute() {
   const path = window.location.pathname;
@@ -16,6 +19,18 @@ function getRoute() {
 
   if (path === "/allalgo") {
     return { name: null, page: "allalgo" };
+  }
+
+  if (path === "/contribute") {
+    return { name: null, page: "contribute" };
+  }
+
+  if (path === "/compare") {
+    return { name: null, page: "compare" };
+  }
+
+  if (path === "/race") {
+    return { name: null, page: "race" };
   }
 
   if (path === "/privacy") {
@@ -67,7 +82,7 @@ export default function App() {
       }
 
       event.preventDefault();
-      window.history.pushState({}, "", anchor.pathname);
+      window.history.pushState({}, "", `${anchor.pathname}${anchor.search}`);
       setRoute(getRoute());
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
@@ -98,6 +113,12 @@ export default function App() {
         <AllAlgorithmsPage algorithms={algorithms} dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "about" ? (
         <AboutPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+      ) : route.page === "contribute" ? (
+        <ContributePage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+      ) : route.page === "compare" ? (
+        <ComparePage algorithms={algorithms} dark={dark} onToggleDark={() => setDark((value) => !value)} />
+      ) : route.page === "race" ? (
+        <RacePage algorithms={algorithms} dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "privacy" || route.page === "terms" ? (
         <LegalPage type={route.page} dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : (

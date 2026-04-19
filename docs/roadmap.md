@@ -8,17 +8,17 @@ Priorities may change as contributors join, but these are the main directions fo
 
 ## Status
 
-| Item | Status | Notes |
-| --- | --- | --- |
-| Compare Mode | In progress | First target is a two-algorithm side-by-side view with shared input and synced controls. |
-| Race Mode | Planned | Depends on reusable compare/progress primitives from Compare Mode. |
-| Permalink Sharing | Planned | Needed for shareable demos and better embeds. |
-| More Meme Algorithms | Planned | Good first-issue candidate. |
-| Contribution Leaderboard | Planned | Should remain static and GitHub-friendly. |
-| Better Embed Customization | Planned | Builds on current embed route. |
-| Contribution Wizard | In progress | First target is an educational `/contribute` page with copyable starter templates. |
-| Step Scrubber | Planned | Should integrate with Visual Mode and Explain Mode. |
-| Community Language Examples | Planned | Optional panel below required Python / Rust / C snippets. |
+| Item | Status    | Notes |
+| --- |-----------| --- |
+| Compare Mode | Shipped   | Two-algorithm side-by-side view with shared input, synced controls, and basic stats. |
+| Race Mode | Shipped | Multi-algorithm race view with shared input, synced controls, progress, and finish ranking. |
+| Permalink Sharing | Planned   | Needed for shareable demos and better embeds. |
+| More Meme Algorithms | Planned   | Good first-issue candidate. |
+| Contribution Leaderboard | Planned   | Should remain static and GitHub-friendly. |
+| Better Embed Customization | Planned   | Builds on current embed route. |
+| Contribution Wizard | Shipped | First target is an educational `/contribute` page with copyable starter templates. |
+| Step Scrubber | Planned   | Should integrate with Visual Mode and Explain Mode. |
+| Community Language Examples | Planned   | Optional panel below required Python / Rust / C snippets. |
 
 ## 1. Compare Mode
 

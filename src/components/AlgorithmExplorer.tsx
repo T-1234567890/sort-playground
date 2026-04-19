@@ -9,9 +9,20 @@ const tags = ["All", "Classic", "Weird", "Meme", "Fast", "Slow", "Chaos"] as con
 type AlgorithmExplorerProps = {
   algorithms: Algorithm[];
   pageSize?: number;
+  selectionMode?: "compare" | "race";
+  selectedSlugs?: string[];
+  onToggleSelection?: (slug: string) => void;
+  maxSelections?: number;
 };
 
-export function AlgorithmExplorer({ algorithms, pageSize = 6 }: AlgorithmExplorerProps) {
+export function AlgorithmExplorer({
+  algorithms,
+  pageSize = 6,
+  selectionMode,
+  selectedSlugs = [],
+  onToggleSelection,
+  maxSelections = 2,
+}: AlgorithmExplorerProps) {
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState<(typeof tags)[number]>("All");
@@ -108,9 +119,21 @@ export function AlgorithmExplorer({ algorithms, pageSize = 6 }: AlgorithmExplore
       </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {visibleAlgorithms.map((algorithm) => (
-          <AlgorithmCard key={algorithm.slug} algorithm={algorithm} />
-        ))}
+        {visibleAlgorithms.map((algorithm) => {
+          const selected = selectedSlugs.includes(algorithm.slug);
+          const disabled = Boolean(selectionMode && !selected && selectedSlugs.length >= maxSelections);
+
+          return (
+            <AlgorithmCard
+              key={algorithm.slug}
+              algorithm={algorithm}
+              selectable={Boolean(selectionMode)}
+              selected={selected}
+              disabled={disabled}
+              onSelect={onToggleSelection}
+            />
+          );
+        })}
       </div>
 
       {visibleAlgorithms.length === 0 ? (

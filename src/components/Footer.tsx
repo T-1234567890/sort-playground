@@ -15,6 +15,7 @@ export function Footer() {
       links: [
         { label: t("footer.allAlgorithms"), href: "/allalgo", route: true },
         { label: t("footer.about"), href: "/about", route: true },
+        { label: t("footer.contribute"), href: "/contribute", route: true },
       ],
     },
     {
