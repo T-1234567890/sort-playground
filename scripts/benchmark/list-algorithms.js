@@ -27,7 +27,7 @@ async function main() {
 
     if (BENCHMARK_RUN_MODE === "small") {
       const existingEntry = existingBySlug.get(algorithm.slug);
-      if (automatedEntryHasCurrentData(existingEntry)) {
+      if (automatedEntryHasCurrentData(existingEntry, algorithm.algorithmHash)) {
         continue;
       }
     }

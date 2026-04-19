@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { execFileSync, spawnSync } from "node:child_process";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
+import { benchmarkLanguages, benchmarkProfiles, benchmarkSizes } from "./dataset.js";
 
 export const root = process.cwd();
 export const algorithmsDir = path.join(root, "src/algorithms");
@@ -156,14 +157,29 @@ export function isPublishedBenchmarkEntry(entry) {
   return entry?.mode === "automated" || entry?.mode === "estimated";
 }
 
-export function automatedEntryHasCurrentData(entry) {
-  return Boolean(
-    entry?.results &&
-      entry?.snapshot?.workloadProfiles &&
-      entry?.snapshot?.score?.dimensionScores &&
-      typeof entry?.snapshot?.score?.composite === "number" &&
-      entry?.metadata?.algorithmHash &&
-      entry?.metadata?.lastRunAt,
+function hasSizeMetrics(bucket) {
+  return benchmarkSizes.every((size) => typeof bucket?.[size] === "number");
+}
+
+export function automatedEntryHasCurrentData(entry, expectedAlgorithmHash) {
+  if (entry?.mode !== "automated") {
+    return false;
+  }
+
+  if (!entry?.metadata?.lastRunAt || !entry?.metadata?.algorithmHash) {
+    return false;
+  }
+
+  if (expectedAlgorithmHash && entry.metadata.algorithmHash !== expectedAlgorithmHash) {
+    return false;
+  }
+
+  if (!benchmarkLanguages.every((language) => hasSizeMetrics(entry?.results?.[language]))) {
+    return false;
+  }
+
+  return benchmarkProfiles.every((profile) =>
+    benchmarkLanguages.every((language) => hasSizeMetrics(entry?.snapshot?.workloadProfiles?.[profile]?.[language])),
   );
 }
 

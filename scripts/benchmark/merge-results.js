@@ -138,7 +138,7 @@ async function main() {
       continue;
     }
 
-    if (automatedEntryHasCurrentData(existingEntry)) {
+    if (automatedEntryHasCurrentData(existingEntry, algorithm.algorithmHash)) {
       ranking.push(JSON.parse(JSON.stringify(existingEntry)));
       continue;
     }
