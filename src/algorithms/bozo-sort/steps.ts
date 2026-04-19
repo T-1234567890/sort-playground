@@ -4,21 +4,14 @@ function isSorted(array: number[]) {
   return array.every((value, index) => index === 0 || array[index - 1] <= value);
 }
 
-function nextState(state: number) {
-  return (state * 1103515245 + 12345) & 0x7fffffff;
-}
-
 export function bozoSortSteps(input: number[]): Step[] {
   const array = input.slice(0, 7);
   const steps: Step[] = [{ array: [...array], action: "compare", indices: [] }];
-  let seed = array.length + 13;
   let attempts = 0;
 
   while (!isSorted(array) && attempts < 40) {
-    seed = nextState(seed);
-    const i = seed % array.length;
-    seed = nextState(seed);
-    const j = seed % array.length;
+    const i = Math.floor(Math.random() * array.length);
+    const j = Math.floor(Math.random() * array.length);
 
     steps.push({ array: [...array], action: "compare", indices: [i, j] });
     if (i !== j) {

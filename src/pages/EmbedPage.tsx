@@ -38,6 +38,7 @@ export function EmbedPage({ algorithm }: EmbedPageProps) {
   const pauseUntilRef = useRef<number | null>(null);
   const controlsMode = getControlsMode();
   const showControls = controlsMode !== "none";
+  const isMinimal = controlsMode === "minimal";
 
   const steps = useMemo(() => algorithm.steps(baseArray), [algorithm, baseArray]);
   const activeStep: Step = steps[Math.min(stepIndex, steps.length - 1)] ?? {
@@ -112,8 +113,8 @@ export function EmbedPage({ algorithm }: EmbedPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-50 p-4 text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50">
-      <section className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-3xl flex-col rounded-lg border border-zinc-950/10 bg-white/80 p-4 shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-white/8 sm:p-5">
+    <main className="h-screen overflow-hidden bg-zinc-50 p-0 text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50">
+      <section className={`mx-auto flex h-full flex-col ${isMinimal ? "max-w-none rounded-none border-0 bg-transparent p-4 shadow-none backdrop-blur-0 sm:p-5" : "max-w-3xl rounded-lg border border-zinc-950/10 bg-white/80 p-4 shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-white/8 sm:p-5"}`}>
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase text-teal-700 dark:text-teal-300">Sort Playground</p>
@@ -129,19 +130,21 @@ export function EmbedPage({ algorithm }: EmbedPageProps) {
           </span>
         </div>
 
-        <div
-          className="mt-5 h-2 overflow-hidden rounded-lg bg-zinc-200 dark:bg-zinc-800"
-          role="progressbar"
-          aria-label={t("visualizer.progress")}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={Math.round(progress)}
-        >
+        {showControls ? (
           <div
-            className="h-full rounded-lg bg-teal-500 transition-[width] duration-300 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+            className="mt-5 h-2 overflow-hidden rounded-lg bg-zinc-200 dark:bg-zinc-800"
+            role="progressbar"
+            aria-label={t("visualizer.progress")}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(progress)}
+          >
+            <div
+              className="h-full rounded-lg bg-teal-500 transition-[width] duration-300 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        ) : null}
 
         <div className="mt-6 flex min-h-0 flex-1 items-stretch gap-2 overflow-hidden rounded-lg bg-zinc-100/80 p-4 dark:bg-zinc-900">
           {activeStep.array.map((value, index) => {

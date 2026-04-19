@@ -141,6 +141,8 @@
   "visualizer": {
     "title": "步骤查看器",
     "progress": "进度",
+    "randomizedRun": "随机运行",
+    "randomizedHint": "这次运行是实时生成的，接下来的路径本来就不可预测。",
     "visualMode": "可视模式",
     "explainMode": "解释模式",
     "stepExplanation": "步骤说明",
@@ -162,18 +164,38 @@
   "export": {
     "title": "导出",
     "hint": "动画运行时不可导出。",
-    "ready": "已准备",
+    "exported": "已导出 ✓",
     "png": "导出 PNG",
     "share": "导出分享卡片",
     "gif": "导出 GIF",
-    "buildingGif": "正在生成 GIF"
+    "video": "视频（即将推出）",
+    "videoSoon": "即将推出",
+    "buildingGif": "正在生成 GIF",
+    "sections": {
+      "images": "图片",
+      "animation": "动画",
+      "embed": "嵌入"
+    },
+    "hints": {
+      "png": "适合静态分享",
+      "share": "适合分享卡片",
+      "gif": "适合快速动画",
+      "video": "即将推出",
+      "html": "嵌入网站"
+    }
   },
   "embed": {
     "shareTitle": "嵌入这个排序",
     "shareDescription": "复制轻量 iframe，用于文档、文章或项目页面。",
+    "hint": "提供适合部署的 HTML iframe 嵌入代码和尺寸预设。",
     "copy": "复制嵌入代码",
     "copied": "已复制 ✓",
-    "showCode": "显示 iframe 代码"
+    "showCode": "显示 iframe 代码",
+    "sizes": {
+      "small": "小",
+      "medium": "中",
+      "large": "大"
+    }
   },
   "compare": {
     "eyebrow": "对比模式",

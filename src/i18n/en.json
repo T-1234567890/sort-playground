@@ -141,6 +141,8 @@
   "visualizer": {
     "title": "Step viewer",
     "progress": "Progress",
+    "randomizedRun": "Randomized run",
+    "randomizedHint": "This run is generated live. The path is intentionally unpredictable.",
     "visualMode": "Visual Mode",
     "explainMode": "Explain Mode",
     "stepExplanation": "Step explanation",
@@ -162,18 +164,38 @@
   "export": {
     "title": "Export",
     "hint": "Disabled while animation is running.",
-    "ready": "Ready",
+    "exported": "Exported ✓",
     "png": "Export PNG",
     "share": "Export Share Card",
     "gif": "Export GIF",
-    "buildingGif": "Building GIF"
+    "video": "Video (coming soon)",
+    "videoSoon": "Coming soon",
+    "buildingGif": "Building GIF",
+    "sections": {
+      "images": "Images",
+      "animation": "Animation",
+      "embed": "Embed"
+    },
+    "hints": {
+      "png": "Best for static sharing",
+      "share": "Best for social cards",
+      "gif": "Best for quick animation",
+      "video": "Coming soon",
+      "html": "Embed in websites"
+    }
   },
   "embed": {
     "shareTitle": "Embed this sort",
     "shareDescription": "Copy a lightweight iframe for docs, posts, or project pages.",
+    "hint": "HTML iframe export with deployment-friendly sizing presets.",
     "copy": "Copy embed",
     "copied": "Copied ✓",
-    "showCode": "Show iframe code"
+    "showCode": "Show iframe code",
+    "sizes": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    }
   },
   "compare": {
     "eyebrow": "Compare Mode",

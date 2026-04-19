@@ -85,6 +85,7 @@ export function Visualizer({ algorithm }: VisualizerProps) {
   const [volume, setVolume] = useState(0.55);
   const [exportStatus, setExportStatus] = useState<"idle" | "png" | "share" | "gif">("idle");
   const [isGifExporting, setIsGifExporting] = useState(false);
+  const [exportSection, setExportSection] = useState<"images" | "animation" | "embed">("images");
   const [manualArray, setManualArray] = useState(DEFAULT_ARRAY);
   const [manualStep, setManualStep] = useState<Step>({ array: DEFAULT_ARRAY, action: "compare", indices: [] });
   const [dragIndex, setDragIndex] = useState<number | null>(null);
@@ -94,6 +95,7 @@ export function Visualizer({ algorithm }: VisualizerProps) {
   const timerRef = useRef(0);
   const audioRef = useRef<SortAudioContext | null>(null);
   const isManualSort = algorithm.slug === "manual-sort";
+  const isRandomizedRun = algorithm.slug === "bogo-sort" || algorithm.slug === "bozo-sort";
 
   const steps = useMemo(() => (isManualSort ? [manualStep] : algorithm.steps(baseArray)), [algorithm, baseArray, isManualSort, manualStep]);
   const activeStep: Step = steps[Math.min(stepIndex, steps.length - 1)] ?? {
@@ -286,13 +288,14 @@ export function Visualizer({ algorithm }: VisualizerProps) {
     flashExportStatus("share");
   }
 
-  function handleExportGif() {
+  async function handleExportGif() {
     setIsGifExporting(true);
-    window.setTimeout(() => {
-      exportGif(exportPayload());
-      setIsGifExporting(false);
+    try {
+      await exportGif(exportPayload());
       flashExportStatus("gif");
-    }, 40);
+    } finally {
+      setIsGifExporting(false);
+    }
   }
 
   function handleScrub(nextIndex: number) {
@@ -348,7 +351,9 @@ export function Visualizer({ algorithm }: VisualizerProps) {
           <div>
             <h2 className="text-xl font-semibold tracking-tight">{t("visualizer.title")}</h2>
             <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-300">
-              {t(`visualizer.actions.${activeStep.action}`)} · {t("visualizer.step")} {Math.min(stepIndex + 1, steps.length)} {t("visualizer.of")} {steps.length}
+              {isRandomizedRun
+                ? `${t(`visualizer.actions.${activeStep.action}`)} · ${t("visualizer.randomizedRun")}`
+                : `${t(`visualizer.actions.${activeStep.action}`)} · ${t("visualizer.step")} ${Math.min(stepIndex + 1, steps.length)} ${t("visualizer.of")} ${steps.length}`}
             </p>
           </div>
           <span
@@ -378,47 +383,53 @@ export function Visualizer({ algorithm }: VisualizerProps) {
           ))}
         </div>
 
-        <div className="mt-5">
-          <div className="flex items-center justify-between text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-            <span>{t("visualizer.progress")}</span>
-            <span className="font-mono">{Math.round(progress)}%</span>
+        {isRandomizedRun ? (
+          <div className="mt-5 rounded-lg border border-dashed border-zinc-950/10 bg-zinc-950/[0.03] px-3 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-400">
+            {t("visualizer.randomizedHint")}
           </div>
-          <div
-            className="relative mt-2 h-2 overflow-visible rounded-lg bg-zinc-200 dark:bg-zinc-800"
-            role="progressbar"
-            aria-label="Sorting progress"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.round(progress)}
-            onMouseLeave={() => setScrubHover(null)}
-            onMouseMove={(event) => {
-              if (isManualSort) {
-                return;
-              }
-              handleProgressPointer(event.clientX, event.currentTarget.getBoundingClientRect());
-            }}
-            onClick={(event) => {
-              if (isManualSort) {
-                return;
-              }
-              const index = handleProgressPointer(event.clientX, event.currentTarget.getBoundingClientRect());
-              handleScrub(index);
-            }}
-          >
+        ) : (
+          <div className="mt-5">
+            <div className="flex items-center justify-between text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+              <span>{t("visualizer.progress")}</span>
+              <span className="font-mono">{Math.round(progress)}%</span>
+            </div>
             <div
-              className="h-full rounded-lg bg-teal-500 transition-[width] duration-300 ease-out"
-              style={{ width: `${progress}%` }}
-            />
-            {!isManualSort && scrubHover ? (
+              className="relative mt-2 h-2 overflow-visible rounded-lg bg-zinc-200 dark:bg-zinc-800"
+              role="progressbar"
+              aria-label="Sorting progress"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(progress)}
+              onMouseLeave={() => setScrubHover(null)}
+              onMouseMove={(event) => {
+                if (isManualSort) {
+                  return;
+                }
+                handleProgressPointer(event.clientX, event.currentTarget.getBoundingClientRect());
+              }}
+              onClick={(event) => {
+                if (isManualSort) {
+                  return;
+                }
+                const index = handleProgressPointer(event.clientX, event.currentTarget.getBoundingClientRect());
+                handleScrub(index);
+              }}
+            >
               <div
-                className="pointer-events-none absolute bottom-4 -translate-x-1/2 rounded-lg bg-zinc-950 px-2 py-1 text-[11px] font-semibold text-white shadow-lg dark:bg-white dark:text-zinc-950"
-                style={{ left: scrubHover.x }}
-              >
-                {t("visualizer.step")} {Math.min(scrubHover.index + 1, steps.length)}
-              </div>
-            ) : null}
+                className="h-full rounded-lg bg-teal-500 transition-[width] duration-300 ease-out"
+                style={{ width: `${progress}%` }}
+              />
+              {!isManualSort && scrubHover ? (
+                <div
+                  className="pointer-events-none absolute bottom-4 -translate-x-1/2 rounded-lg bg-zinc-950 px-2 py-1 text-[11px] font-semibold text-white shadow-lg dark:bg-white dark:text-zinc-950"
+                  style={{ left: scrubHover.x }}
+                >
+                  {t("visualizer.step")} {Math.min(scrubHover.index + 1, steps.length)}
+                </div>
+              ) : null}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="mt-8 flex h-80 items-stretch gap-2 overflow-hidden rounded-lg border border-zinc-950/10 bg-zinc-100/80 p-4 dark:border-white/10 dark:bg-zinc-900">
           {activeStep.array.map((value, index) => {
@@ -629,41 +640,94 @@ export function Visualizer({ algorithm }: VisualizerProps) {
           {exportStatus !== "idle" ? (
             <span className="inline-flex items-center gap-1 self-start rounded-lg bg-teal-100 px-2 py-1 text-xs font-semibold text-teal-900 dark:bg-teal-300/15 dark:text-teal-200">
               <Check size={13} />
-              {t("export.ready")}
+              {t("export.exported")}
             </span>
           ) : null}
         </div>
-        <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)]">
+        <div className="mt-4">
           <div className="grid gap-2 sm:grid-cols-3">
-            <button
-              type="button"
-              onClick={handleExportPng}
-              disabled={isRunning}
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-3 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
-            >
-              <Image size={15} />
-              {t("export.png")}
-            </button>
-            <button
-              type="button"
-              onClick={handleExportShareCard}
-              disabled={isRunning}
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-3 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
-            >
-              <Share2 size={15} />
-              {t("export.share")}
-            </button>
-            <button
-              type="button"
-              onClick={handleExportGif}
-              disabled={isRunning || isGifExporting}
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-3 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
-            >
-              {isGifExporting ? <Download size={15} className="animate-pulse" /> : <Film size={15} />}
-              {isGifExporting ? t("export.buildingGif") : t("export.gif")}
-            </button>
+            {(["images", "animation", "embed"] as const).map((section) => (
+              <button
+                key={section}
+                type="button"
+                onClick={() => setExportSection(section)}
+                className={`rounded-lg border px-3 py-3 text-sm font-semibold transition ${
+                  exportSection === section
+                    ? "border-zinc-950 bg-zinc-950 text-white dark:border-white dark:bg-white dark:text-zinc-950"
+                    : "border-zinc-950/10 bg-white/60 text-zinc-700 hover:bg-white dark:border-white/10 dark:bg-white/6 dark:text-zinc-300 dark:hover:bg-white/10"
+                }`}
+              >
+                {t(`export.sections.${section}`)}
+              </button>
+            ))}
           </div>
-          <EmbedShare algorithm={algorithm} />
+
+          <div className="mt-3 rounded-lg border border-zinc-950/10 p-4 dark:border-white/10">
+            {exportSection === "images" ? (
+              <div>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={handleExportPng}
+                    disabled={isRunning}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-3 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
+                  >
+                    <Image size={15} />
+                    {t("export.png")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleExportShareCard}
+                    disabled={isRunning}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-3 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
+                  >
+                    <Share2 size={15} />
+                    {t("export.share")}
+                  </button>
+                </div>
+                <div className="mt-3 grid gap-2 text-xs text-zinc-500 dark:text-zinc-400 sm:grid-cols-2">
+                  <p>{t("export.hints.png")}</p>
+                  <p>{t("export.hints.share")}</p>
+                </div>
+              </div>
+            ) : null}
+
+            {exportSection === "animation" ? (
+              <div>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={handleExportGif}
+                    disabled={isRunning || isGifExporting}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-3 text-sm font-semibold transition hover:bg-zinc-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-45 dark:border-white/10 dark:hover:bg-white dark:hover:text-zinc-950"
+                  >
+                    {isGifExporting ? <Download size={15} className="animate-pulse" /> : <Film size={15} />}
+                    {isGifExporting ? t("export.buildingGif") : t("export.gif")}
+                  </button>
+                  <button
+                    type="button"
+                    disabled
+                    title={t("export.videoSoon")}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-950/10 px-3 py-3 text-sm font-semibold opacity-45 dark:border-white/10"
+                  >
+                    <Film size={15} />
+                    {t("export.video")}
+                  </button>
+                </div>
+                <div className="mt-3 grid gap-2 text-xs text-zinc-500 dark:text-zinc-400 sm:grid-cols-2">
+                  <p>{t("export.hints.gif")}</p>
+                  <p>{t("export.hints.video")}</p>
+                </div>
+              </div>
+            ) : null}
+
+            {exportSection === "embed" ? (
+              <div>
+                <p className="mb-3 text-xs text-zinc-500 dark:text-zinc-400">{t("export.hints.html")}</p>
+                <EmbedShare algorithm={algorithm} />
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
       <ExportCard algorithm={algorithm} result={sortedResult} />
