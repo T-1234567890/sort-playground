@@ -263,6 +263,13 @@
       "benchmark": "基准测试",
       "events": "活动"
     },
+    "search": {
+      "label": "搜索算法",
+      "placeholder": "搜索 Labs...",
+      "algorithmsPlaceholder": "在排名、基准和活动中搜索算法...",
+      "empty": "没有匹配的 Labs 功能。",
+      "noAlgorithms": "没有匹配的算法。"
+    },
     "section": {
       "communityEyebrow": "社区信号",
       "communityDescription": "社区排名最终会以列表形式展示最有意思的算法，依据会来自 GitHub 点赞反应、讨论内容和活动参与情况。",
@@ -275,10 +282,11 @@
       "eventRankingTitle": "活动排名",
       "eventsRankingDescription": "当真实投稿被收集并审核后，本赛季的榜单会显示在这里。",
       "collectingTitle": "正在收集数据",
-      "communityPlaceholder": "社区信号仍在收集中。稍后再来看真实的排名列表。",
+      "communityPlaceholder": "数据正在计算和处理中。",
       "benchmarkPlaceholder": "基准运行结果仍在收集中。稍后再来看实测结果。",
       "benchmarkTestedEmpty": "目前还没有可用的实测基准结果。",
-      "eventsPlaceholder": "活动投稿仍在收集中。稍后再来看赛季列表。"
+      "eventsPlaceholder": "数据正在计算和处理中。",
+      "moreComing": "更多算法即将加入"
     },
     "labels": {
       "dates": "日期",

@@ -158,6 +158,7 @@ export function AlgorithmPage({ algorithm, dark, onToggleDark }: AlgorithmPagePr
           </div>
           <CodeTabs algorithm={algorithm} snippets={algorithm.code} />
         </section>
+
       </main>
       <Footer />
     </Shell>

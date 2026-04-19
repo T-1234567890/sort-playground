@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
-import type { BenchmarkRankingEntry, SortLabsEvent } from "../core/types";
+import type { BenchmarkRankingEntry, CommunityRankingEntry, SortLabsEvent } from "../core/types";
 import events from "../data/events.json";
 
 type LabsPageProps = {
@@ -110,11 +110,13 @@ function PlaceholderRanking({
   description,
   loadingTitle,
   loadingBody,
+  trailingLabel,
 }: {
   title: string;
   description: string;
   loadingTitle: string;
   loadingBody: string;
+  trailingLabel: string;
 }) {
   return (
     <section className="mx-auto max-w-6xl px-5 py-16">
@@ -147,6 +149,12 @@ function PlaceholderRanking({
               </div>
             </li>
           ))}
+          <li className="flex items-center gap-4 py-4">
+            <span className="inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-dashed border-zinc-950/15 px-2 text-xs font-semibold text-zinc-500 dark:border-white/15 dark:text-zinc-400">
+              ...
+            </span>
+            <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">{trailingLabel}</p>
+          </li>
         </ol>
       </div>
     </section>
@@ -174,38 +182,54 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
   const section = currentSection();
   const allEvents = events as SortLabsEvent[];
   const activeEvent = allEvents.find((event) => event.status === "active") ?? allEvents[0];
+  const [algorithmQuery, setAlgorithmQuery] = useState("");
+  const [communityEntries, setCommunityEntries] = useState<CommunityRankingEntry[]>([]);
+  const [communityLoading, setCommunityLoading] = useState(true);
+  const [eventEntries, setEventEntries] = useState<CommunityRankingEntry[]>([]);
+  const [eventLoading, setEventLoading] = useState(true);
   const [benchmarkEntries, setBenchmarkEntries] = useState<BenchmarkRankingEntry[]>([]);
   const [benchmarkLoading, setBenchmarkLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
 
-    async function loadBenchmark() {
+    async function loadData() {
       setBenchmarkLoading(true);
-
+      setCommunityLoading(true);
+      setEventLoading(true);
       try {
-        const data = await readJson<BenchmarkRankingEntry[]>("/data/benchmark-ranking.json");
+        const [benchmarkData, communityData, eventData] = await Promise.all([
+          readJson<BenchmarkRankingEntry[]>("/data/benchmark-ranking.json"),
+          readJson<CommunityRankingEntry[]>("/data/community-ranking.json"),
+          readJson<CommunityRankingEntry[]>(`/data/event-ranking-${activeEvent.id}.json`),
+        ]);
 
         if (!cancelled) {
-          setBenchmarkEntries(data);
+          setBenchmarkEntries(benchmarkData);
+          setCommunityEntries(communityData);
+          setEventEntries(eventData);
         }
       } catch {
         if (!cancelled) {
           setBenchmarkEntries([]);
+          setCommunityEntries([]);
+          setEventEntries([]);
         }
       } finally {
         if (!cancelled) {
           setBenchmarkLoading(false);
+          setCommunityLoading(false);
+          setEventLoading(false);
         }
       }
     }
 
-    void loadBenchmark();
+    void loadData();
 
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [activeEvent.id]);
 
   const featureBlocks = [
     {
@@ -317,11 +341,23 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
     },
   ];
 
+  const normalizedAlgorithmQuery = algorithmQuery.trim().toLowerCase();
+  const hasAlgorithmQuery = normalizedAlgorithmQuery.length > 0;
+  const filteredCommunityEntries = communityEntries.filter((entry) =>
+    `${entry.name} ${entry.slug} ${entry.category} ${entry.author}`.toLowerCase().includes(normalizedAlgorithmQuery),
+  );
+  const filteredEventEntries = eventEntries.filter((entry) =>
+    `${entry.name} ${entry.slug} ${entry.category} ${entry.author} ${entry.event ?? ""}`.toLowerCase().includes(normalizedAlgorithmQuery),
+  );
+  const filteredBenchmarkEntries = benchmarkEntries.filter((entry) =>
+    `${entry.name} ${entry.slug} ${entry.reason ?? ""} ${entry.complexity ?? ""}`.toLowerCase().includes(normalizedAlgorithmQuery),
+  );
+
   function renderOverview() {
     return (
       <>
         <section className="mx-auto max-w-6xl px-5 py-16">
-          <div className="grid gap-5 lg:grid-cols-3">
+          <div className="grid auto-rows-fr gap-5 lg:grid-cols-3">
             {featureBlocks.map((block) => {
               const Icon = block.icon;
 
@@ -378,15 +414,64 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
 
   function renderCommunity() {
     const communityDoc = communityDocsLinks[0];
+    const visibleEntries = hasAlgorithmQuery ? filteredCommunityEntries : communityEntries;
 
     return (
       <>
-        <PlaceholderRanking
-          title={t("labs.blocks.community.title")}
-          description={t("labs.section.communityDescription")}
-          loadingTitle={t("labs.section.collectingTitle")}
-          loadingBody={t("labs.section.communityPlaceholder")}
-        />
+        <section className="mx-auto max-w-6xl px-5 py-16">
+          <div className="max-w-3xl">
+            <h3 className="text-3xl font-semibold tracking-tight">{t("labs.blocks.community.title")}</h3>
+            <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("labs.section.communityDescription")}</p>
+          </div>
+
+          {communityLoading ? (
+            <div className="mt-8 rounded-lg border border-zinc-950/10 bg-white/72 p-6 shadow-sm dark:border-white/10 dark:bg-white/8">
+              <div className="flex items-start gap-4">
+                <span className="mt-1 inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-zinc-300 border-t-teal-500 animate-spin dark:border-zinc-700 dark:border-t-teal-300" />
+                <div>
+                  <p className="text-lg font-semibold">{t("labs.section.collectingTitle")}</p>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("labs.section.communityPlaceholder")}</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-8 overflow-hidden rounded-lg border border-zinc-950/10 bg-white/72 shadow-sm dark:border-white/10 dark:bg-white/8">
+              {visibleEntries.length ? (
+                <ol className="divide-y divide-zinc-950/8 dark:divide-white/10">
+                  {visibleEntries.map((entry, index) => (
+                    <li key={`${entry.slug}-${entry.category}`} className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="flex items-start gap-4">
+                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-950 text-sm font-semibold text-white dark:bg-white dark:text-zinc-950">
+                          #{index + 1}
+                        </span>
+                        <div>
+                          <a data-route href={`/algo/${entry.slug}`} className="text-lg font-semibold hover:text-teal-600 dark:hover:text-teal-300">
+                            {entry.name}
+                          </a>
+                          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{entry.category}</p>
+                        </div>
+                      </div>
+                      <div className="grid gap-1 text-sm sm:text-right">
+                        <p className="font-mono font-semibold">{entry.score}</p>
+                        <p className="text-zinc-500 dark:text-zinc-400">{entry.author}</p>
+                      </div>
+                    </li>
+                  ))}
+                  <li className="flex items-center gap-4 px-5 py-4">
+                    <span className="inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-dashed border-zinc-950/15 px-2 text-xs font-semibold text-zinc-500 dark:border-white/15 dark:text-zinc-400">
+                      ...
+                    </span>
+                    <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">{t("labs.section.moreComing")}</p>
+                  </li>
+                </ol>
+              ) : (
+                <div className="px-5 py-6 text-sm text-zinc-500 dark:text-zinc-400">
+                  {hasAlgorithmQuery ? t("labs.search.noAlgorithms") : t("labs.section.communityPlaceholder")}
+                </div>
+              )}
+            </div>
+          )}
+        </section>
         {communityDoc ? <SectionDocButton link={communityDoc} /> : null}
       </>
     );
@@ -394,8 +479,14 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
 
   function renderBenchmark() {
     const benchmarkDoc = benchmarkDocsLinks[0];
-    const sortedEntries = [...benchmarkEntries]
-      .filter((entry) => entry.mode === "automated" && entry.status === "benchmarked" && typeof entry.average === "number")
+    const sourceEntries = hasAlgorithmQuery ? filteredBenchmarkEntries : benchmarkEntries;
+    const sortedEntries = [...sourceEntries]
+      .filter((entry) =>
+        entry.mode === "automated" &&
+        entry.status === "benchmarked" &&
+        entry.metadata?.source === "github-actions" &&
+        typeof entry.average === "number",
+      )
       .sort((left, right) => (left.average ?? Number.POSITIVE_INFINITY) - (right.average ?? Number.POSITIVE_INFINITY));
 
     return (
@@ -442,10 +533,16 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
                       </div>
                     </li>
                   ))}
+                  <li className="flex items-center gap-4 px-5 py-4">
+                    <span className="inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-dashed border-zinc-950/15 px-2 text-xs font-semibold text-zinc-500 dark:border-white/15 dark:text-zinc-400">
+                      ...
+                    </span>
+                    <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">{t("labs.section.moreComing")}</p>
+                  </li>
                 </ol>
               ) : (
                 <div className="px-5 py-6 text-sm text-zinc-500 dark:text-zinc-400">
-                  {t("labs.section.benchmarkTestedEmpty")}
+                  {hasAlgorithmQuery ? t("labs.search.noAlgorithms") : t("labs.section.benchmarkTestedEmpty")}
                 </div>
               )}
             </div>
@@ -458,6 +555,7 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
 
   function renderEvents() {
     const eventsDoc = eventsDocsLinks[0];
+    const visibleEntries = hasAlgorithmQuery ? filteredEventEntries : eventEntries;
 
     return (
       <>
@@ -497,12 +595,60 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
           </div>
         </section>
 
-        <PlaceholderRanking
-          title={t("labs.section.eventRankingTitle")}
-          description={t("labs.section.eventsRankingDescription")}
-          loadingTitle={t("labs.section.collectingTitle")}
-          loadingBody={t("labs.section.eventsPlaceholder")}
-        />
+        <section className="mx-auto max-w-6xl px-5 py-16">
+          <div className="max-w-3xl">
+            <h3 className="text-3xl font-semibold tracking-tight">{t("labs.section.eventRankingTitle")}</h3>
+            <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("labs.section.eventsRankingDescription")}</p>
+          </div>
+
+          {eventLoading ? (
+            <div className="mt-8 rounded-lg border border-zinc-950/10 bg-white/72 p-6 shadow-sm dark:border-white/10 dark:bg-white/8">
+              <div className="flex items-start gap-4">
+                <span className="mt-1 inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-zinc-300 border-t-teal-500 animate-spin dark:border-zinc-700 dark:border-t-teal-300" />
+                <div>
+                  <p className="text-lg font-semibold">{t("labs.section.collectingTitle")}</p>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("labs.section.eventsPlaceholder")}</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-8 overflow-hidden rounded-lg border border-zinc-950/10 bg-white/72 shadow-sm dark:border-white/10 dark:bg-white/8">
+              {visibleEntries.length ? (
+                <ol className="divide-y divide-zinc-950/8 dark:divide-white/10">
+                  {visibleEntries.map((entry, index) => (
+                    <li key={`${entry.slug}-${entry.category}`} className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="flex items-start gap-4">
+                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-950 text-sm font-semibold text-white dark:bg-white dark:text-zinc-950">
+                          #{index + 1}
+                        </span>
+                        <div>
+                          <a data-route href={`/algo/${entry.slug}`} className="text-lg font-semibold hover:text-teal-600 dark:hover:text-teal-300">
+                            {entry.name}
+                          </a>
+                          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{entry.category}</p>
+                        </div>
+                      </div>
+                      <div className="grid gap-1 text-sm sm:text-right">
+                        <p className="font-mono font-semibold">{entry.score}</p>
+                        <p className="text-zinc-500 dark:text-zinc-400">{entry.event ?? activeEvent?.name}</p>
+                      </div>
+                    </li>
+                  ))}
+                  <li className="flex items-center gap-4 px-5 py-4">
+                    <span className="inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-dashed border-zinc-950/15 px-2 text-xs font-semibold text-zinc-500 dark:border-white/15 dark:text-zinc-400">
+                      ...
+                    </span>
+                    <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">{t("labs.section.moreComing")}</p>
+                  </li>
+                </ol>
+              ) : (
+                <div className="px-5 py-6 text-sm text-zinc-500 dark:text-zinc-400">
+                  {hasAlgorithmQuery ? t("labs.search.noAlgorithms") : t("labs.section.eventsPlaceholder")}
+                </div>
+              )}
+            </div>
+          )}
+        </section>
         {eventsDoc ? <SectionDocButton link={eventsDoc} /> : null}
       </>
     );
@@ -549,6 +695,21 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
                 </a>
               ))}
             </div>
+            {section !== "overview" ? (
+              <div className="mt-6 max-w-xl">
+                <label htmlFor="labs-algorithm-search" className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">
+                  {t("labs.search.label")}
+                </label>
+                <input
+                  id="labs-algorithm-search"
+                  type="search"
+                  value={algorithmQuery}
+                  onChange={(event) => setAlgorithmQuery(event.target.value)}
+                  placeholder={t("labs.search.algorithmsPlaceholder")}
+                  className="mt-3 w-full rounded-lg border border-zinc-950/10 bg-white/70 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 dark:border-white/10 dark:bg-white/10"
+                />
+              </div>
+            ) : null}
           </div>
         </section>
 

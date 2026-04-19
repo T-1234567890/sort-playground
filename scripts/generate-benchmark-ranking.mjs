@@ -359,7 +359,7 @@ async function main() {
       unit: "ms",
       status: "benchmarked",
       metadata: {
-        source: benchmarkDecision.source === "algorithm-meta" ? "algorithm-meta" : "auto-scan",
+        source: "github-actions",
         benchmarkMode: "automated",
       },
       runs,

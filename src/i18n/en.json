@@ -263,6 +263,13 @@
       "benchmark": "Benchmark",
       "events": "Events"
     },
+    "search": {
+      "label": "Search algorithms",
+      "placeholder": "Search Labs...",
+      "algorithmsPlaceholder": "Search algorithms across rankings, benchmark, and events...",
+      "empty": "No Labs features match this search yet.",
+      "noAlgorithms": "No algorithms match this search."
+    },
     "section": {
       "communityEyebrow": "Community signal",
       "communityDescription": "Community Ranking will eventually surface the most interesting algorithms as a clean list, based on GitHub reactions, discussions, and event participation.",
@@ -275,10 +282,11 @@
       "eventRankingTitle": "Event Ranking",
       "eventsRankingDescription": "Season standings will appear here once real submissions have been collected and reviewed.",
       "collectingTitle": "Collecting data",
-      "communityPlaceholder": "Community signals are still being collected. Come back later for a real ranked list.",
+      "communityPlaceholder": "Data is calculating and processing.",
       "benchmarkPlaceholder": "Benchmark runs are still being collected. Come back later for measured results.",
       "benchmarkTestedEmpty": "No tested benchmark results are available yet.",
-      "eventsPlaceholder": "Event submissions are still being collected. Come back later for the season list."
+      "eventsPlaceholder": "Data is calculating and processing.",
+      "moreComing": "More algorithms coming soon"
     },
     "labels": {
       "dates": "Dates",
