@@ -30,6 +30,8 @@ Rules:
 - run multiple times
 - compute average
 - runs in GitHub Actions
+- existing algorithms already on the website are scanned from `src/algorithms/**`
+- classic algorithms without an explicit exclusion are included automatically
 
 ## Mode B - Estimated Benchmark
 
@@ -66,6 +68,7 @@ Allowed when:
 - random sorts
 - manual sorts
 - algorithms whose main value is visual or conceptual rather than measurable performance
+- unusual sorting methods that do not produce a fair benchmark comparison
 
 Use:
 
@@ -92,6 +95,17 @@ Only one path should be chosen for an algorithm submission.
 - `mode` (`automated` / `estimated` / `none`)
 - `average` or `complexity`
 - `metadata`
+
+## Auto-Scan Behavior
+
+The benchmark generator scans all algorithms already present in `src/algorithms/`.
+
+Default behavior:
+
+- classic algorithms: included automatically
+- explicit `benchmarkMode: "estimated"`: included as estimated
+- explicit `special: "no-benchmark"`: excluded
+- weird, meme, randomized, manual, custom-visualization, or otherwise unusual methods: excluded automatically
 
 ## No-Data Rule
 

@@ -209,6 +209,72 @@ async function loadAlgorithms() {
   return algorithms.sort((a, b) => a.name.localeCompare(b.name));
 }
 
+function inferBenchmarkDecision(algorithm) {
+  if (algorithm.benchmarkMode === "none" || algorithm.benchmark === false || algorithm.special === "no-benchmark") {
+    return {
+      mode: "none",
+      reason: algorithm.special || "benchmark=false",
+      source: "algorithm-meta",
+    };
+  }
+
+  if (algorithm.benchmarkMode === "estimated") {
+    return {
+      mode: "estimated",
+      reason: "estimated-classic",
+      source: "algorithm-meta",
+    };
+  }
+
+  if (algorithm.benchmarkMode === "automated") {
+    return {
+      mode: "automated",
+      reason: "automated-explicit",
+      source: "algorithm-meta",
+    };
+  }
+
+  const keywords = (algorithm.keywords ?? []).map((keyword) => String(keyword).toLowerCase());
+  const text = [algorithm.name, algorithm.description, algorithm.complexity, ...keywords]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  if (
+    algorithm.category === "meme" ||
+    algorithm.category === "weird" ||
+    algorithm.visualization === "custom" ||
+    text.includes("random") ||
+    text.includes("shuffle") ||
+    text.includes("drag") ||
+    text.includes("manual") ||
+    text.includes("timing") ||
+    text.includes("gravity") ||
+    text.includes("depends on you") ||
+    text.includes("undefined")
+  ) {
+    return {
+      mode: "none",
+      reason: "auto-excluded-unusual",
+      source: "auto-scan",
+    };
+  }
+
+  if (algorithm.category === "classic") {
+    return {
+      mode: "automated",
+      reason: "auto-included-classic",
+      source: "auto-scan",
+    };
+  }
+
+  return {
+    mode: "none",
+    reason: "auto-excluded-unclassified",
+    source: "auto-scan",
+  };
+}
+
 function measure(fn, dataset) {
   const started = performance.now();
   const result = fn(dataset);
@@ -226,15 +292,17 @@ async function main() {
   const ranking = [];
 
   for (const algorithm of algorithms) {
-    if (algorithm.benchmarkMode === "none" || algorithm.benchmark === false || algorithm.special === "no-benchmark") {
+    const benchmarkDecision = inferBenchmarkDecision(algorithm);
+
+    if (benchmarkDecision.mode === "none") {
       ranking.push({
         name: algorithm.name,
         slug: algorithm.slug,
         mode: "none",
         status: "exempt",
-        reason: algorithm.special || "benchmark=false",
+        reason: benchmarkDecision.reason,
         metadata: {
-          source: "algorithm-meta",
+          source: benchmarkDecision.source,
           benchmarkMode: "none",
         },
         runs: [],
@@ -242,7 +310,7 @@ async function main() {
       continue;
     }
 
-    if (algorithm.benchmarkMode === "estimated") {
+    if (benchmarkDecision.mode === "estimated") {
       ranking.push({
         name: algorithm.name,
         slug: algorithm.slug,
@@ -251,7 +319,7 @@ async function main() {
         relativeRank: algorithm.benchmarkRelativeRank || "medium",
         status: "estimated",
         metadata: {
-          source: "algorithm-meta",
+          source: benchmarkDecision.source,
           benchmarkMode: "estimated",
         },
         runs: [],
@@ -291,7 +359,7 @@ async function main() {
       unit: "ms",
       status: "benchmarked",
       metadata: {
-        source: "github-actions",
+        source: benchmarkDecision.source === "algorithm-meta" ? "algorithm-meta" : "auto-scan",
         benchmarkMode: "automated",
       },
       runs,
