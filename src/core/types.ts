@@ -35,10 +35,25 @@ export type CodeSnippets = {
   c: string;
 };
 
+export type CommunityCodeExampleMeta = {
+  id: string;
+  language: string;
+  file: string;
+  contributor: string;
+  contributorUrl?: string;
+  label?: string;
+  sourceUrl?: string;
+};
+
+export type CommunityCodeExample = CommunityCodeExampleMeta & {
+  code: string;
+};
+
 export type Algorithm = AlgorithmMeta & {
   slug: string;
   steps: (input: number[]) => Step[];
   code: CodeSnippets;
+  communityExamples?: CommunityCodeExample[];
 };
 
 export type SortLabsEvent = {

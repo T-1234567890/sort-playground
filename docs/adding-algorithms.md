@@ -84,3 +84,40 @@ The three language files are displayed directly in the UI and can be downloaded 
 - `c.c`
 
 Keep snippets readable, standalone, and educational.
+
+## Optional Community Language Examples
+
+Algorithms can also include optional community-contributed examples.
+
+Use:
+
+```text
+src/algorithms/<algorithm-slug>/
+  community-examples.json
+  community/
+    <algorithm-slug>.js
+    <algorithm-slug>.ts
+```
+
+`community-examples.json` should describe each optional example with language, file, contributor, and optional source link.
+
+Required reminder:
+
+- community examples are optional
+- `python.py`, `rust.rs`, and `c.c` are still required for every algorithm
+
+Working examples in this repo:
+
+- `src/algorithms/quick-sort/community-examples.json`
+- `src/algorithms/quick-sort/community/quick-sort.js`
+- `src/algorithms/merge-sort/community-examples.json`
+- `src/algorithms/merge-sort/community/merge-sort.ts`
+- `src/algorithms/bubble-sort/community-examples.json`
+- `src/algorithms/bubble-sort/community/bubble-sort.js`
+- `src/algorithms/bubble-sort/community/bubble-sort.go`
+
+These are examples of the feature, not required extra files.
+
+Full details:
+
+- [Community Language Examples](./community-language-examples.md)

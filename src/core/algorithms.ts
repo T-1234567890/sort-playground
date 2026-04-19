@@ -1,4 +1,4 @@
-import type { Algorithm, AlgorithmMeta } from "./types";
+import type { Algorithm, AlgorithmMeta, CommunityCodeExample, CommunityCodeExampleMeta } from "./types";
 import { quickSortSteps } from "../algorithms/quick-sort/steps";
 import { mergeSortSteps } from "../algorithms/merge-sort/steps";
 import { stalinSortSteps } from "../algorithms/stalin-sort/steps";
@@ -37,6 +37,23 @@ const cModules = import.meta.glob<string>("../algorithms/*/c.c", {
   import: "default",
 });
 
+const communityExampleMetaModules = import.meta.glob<CommunityCodeExampleMeta[]>("../algorithms/*/community-examples.json", {
+  eager: true,
+  import: "default",
+});
+
+const communityCodeModules = {
+  ...import.meta.glob<string>("../algorithms/*/community/*.js", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/community/*.ts", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/community/*.go", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/community/*.java", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/community/*.cpp", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/community/*.swift", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/community/*.kt", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/community/*.zig", { eager: true, query: "?raw", import: "default" }),
+  ...import.meta.glob<string>("../algorithms/*/community/*.rb", { eager: true, query: "?raw", import: "default" }),
+};
+
 const stepModules = {
   "quick-sort": quickSortSteps,
   "merge-sort": mergeSortSteps,
@@ -62,6 +79,23 @@ function rawFor(modules: Record<string, string>, slug: string, file: string) {
   return modules[`../algorithms/${slug}/${file}`] ?? "";
 }
 
+function communityExamplesFor(slug: string): CommunityCodeExample[] {
+  const meta = communityExampleMetaModules[`../algorithms/${slug}/community-examples.json`] ?? [];
+
+  return meta.flatMap((example) => {
+    const code = communityCodeModules[`../algorithms/${slug}/community/${example.file}`];
+
+    if (!code) {
+      return [];
+    }
+
+    return [{
+      ...example,
+      code,
+    }];
+  });
+}
+
 export const algorithms: Algorithm[] = Object.entries(metaModules)
   .flatMap(([path, meta]) => {
     const slug = slugFromPath(path);
@@ -81,6 +115,7 @@ export const algorithms: Algorithm[] = Object.entries(metaModules)
         rust: rawFor(rustModules, slug, "rust.rs"),
         c: rawFor(cModules, slug, "c.c"),
       },
+      communityExamples: communityExamplesFor(slug),
     }];
   })
   .sort((a, b) => {
