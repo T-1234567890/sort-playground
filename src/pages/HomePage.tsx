@@ -16,7 +16,7 @@ type HomePageProps = {
 export function HomePage({ algorithms, dark, onToggleDark }: HomePageProps) {
   const { t } = useTranslation();
   const newestAlgorithms = useMemo(
-    () => [...algorithms].sort((a, b) => (b.added ?? "").localeCompare(a.added ?? "") || a.name.localeCompare(b.name)).slice(0, 9),
+    () => [...algorithms].sort((a, b) => (b.added ?? "").localeCompare(a.added ?? "") || a.name.localeCompare(b.name)).slice(0, 6),
     [algorithms],
   );
 

@@ -12,6 +12,38 @@
     "explore": "Explore Algorithms",
     "github": "View on GitHub"
   },
+  "heroShowcase": {
+    "previous": "Previous feature",
+    "next": "Next feature",
+    "previousShort": "Prev",
+    "nextShort": "Next",
+    "goTo": "Show {{name}}",
+    "live": {
+      "label": "Live preview",
+      "title": "Watch Quick Sort move",
+      "description": "Follow comparisons, swaps, and progress without leaving the homepage."
+    },
+    "code": {
+      "label": "Code export",
+      "title": "Copy real implementations",
+      "description": "Jump from visualization to Python, Rust, and C reference code."
+    },
+    "export": {
+      "label": "Share tools",
+      "title": "Export and embed results",
+      "description": "Turn a run into a PNG, GIF, share card, or iframe embed.",
+      "png": "Save a clean visual result.",
+      "gif": "Capture the animation.",
+      "embed": "Place the sorter in another page."
+    },
+    "contribute": {
+      "label": "Open source",
+      "title": "Add a sort by PR",
+      "description": "Drop in metadata, steps, and code files to grow the playground.",
+      "metadata": "Metadata",
+      "steps": "Visual steps"
+    }
+  },
   "explorer": {
     "eyebrow": "Explorer",
     "title": "Pick an algorithm",

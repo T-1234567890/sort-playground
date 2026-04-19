@@ -12,6 +12,38 @@
     "explore": "探索算法",
     "github": "查看 GitHub"
   },
+  "heroShowcase": {
+    "previous": "上一个功能",
+    "next": "下一个功能",
+    "previousShort": "上一个",
+    "nextShort": "下一个",
+    "goTo": "显示 {{name}}",
+    "live": {
+      "label": "实时预览",
+      "title": "观看 Quick Sort 运行",
+      "description": "在首页直接查看比较、交换和进度。"
+    },
+    "code": {
+      "label": "代码导出",
+      "title": "复制真实实现",
+      "description": "从可视化快速跳到 Python、Rust 和 C 参考代码。"
+    },
+    "export": {
+      "label": "分享工具",
+      "title": "导出并嵌入结果",
+      "description": "把一次运行变成 PNG、GIF、分享卡片或 iframe 嵌入。",
+      "png": "保存干净的视觉结果。",
+      "gif": "捕捉排序动画。",
+      "embed": "把排序器放进其他页面。"
+    },
+    "contribute": {
+      "label": "开源贡献",
+      "title": "通过 PR 添加排序",
+      "description": "提交元数据、步骤和代码文件，让 Playground 继续成长。",
+      "metadata": "元数据",
+      "steps": "可视步骤"
+    }
+  },
   "explorer": {
     "eyebrow": "探索器",
     "title": "选择一个算法",
