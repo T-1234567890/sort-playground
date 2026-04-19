@@ -173,6 +173,38 @@ No mystery animation. Just values changing, one move at a time.
 
 Open the page. Run the sort. Export the result.
 
+## Embed
+
+You can embed any algorithm directly into your own website using a lightweight iframe.
+
+This makes it easy to showcase sorting behavior, visualizations, or demos in blogs, docs, or README files.
+
+### Example
+
+```
+<iframe
+  src="https://sorting.1234567890.dev/embed/algo/bubble-sort?controls=minimal"
+  title="Sort Playground - Bubble Sort"
+  width="100%"
+  height="520"
+  style="border:0;border-radius:16px;overflow:hidden;"
+  loading="lazy"
+></iframe>
+```
+
+### Use cases
+
+- Blog posts explaining algorithms
+- Documentation and tutorials
+- GitHub README demos
+- Interactive learning content
+
+### Notes
+
+- Embeds are fully client-side and require no backend
+- Works on any static site
+- Optimized for performance and simplicity
+
 ## Maintainer
 
 Maintained by [@T-1234567890](https://github.com/T-1234567890). <br>
