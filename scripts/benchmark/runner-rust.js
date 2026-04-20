@@ -5,6 +5,7 @@ import { writeFile } from "node:fs/promises";
 const rustCallConfig = {
   "merge-sort": { mode: "return-vec", type: "i32" },
   "bead-sort": { mode: "return-vec", type: "usize" },
+  "bucket-sort": { mode: "return-vec", type: "i32" },
 };
 
 function runCommand(command, args, cwd) {
