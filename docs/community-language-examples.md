@@ -111,9 +111,17 @@ Recommended pull request scope:
 Current examples:
 
 - `src/algorithms/quick-sort/js.js`
+- `src/algorithms/quick-sort/ts.ts`
 - `src/algorithms/merge-sort/ts.ts`
+- `src/algorithms/merge-sort/swift.swift`
 - `src/algorithms/bubble-sort/js.js`
 - `src/algorithms/bubble-sort/go.go`
+- `src/algorithms/insertion-sort/ts.ts`
+- `src/algorithms/heap-sort/swift.swift`
+- `src/algorithms/selection-sort/cpp.cpp`
+- `src/algorithms/comb-sort/cpp.cpp`
+- `src/algorithms/bucket-sort/java.java`
+- `src/algorithms/cocktail-shaker-sort/java.java`
 
 These are example community submissions included in the repo to show the intended structure and naming pattern.
 
@@ -123,6 +131,13 @@ In particular, Bubble Sort now includes two example community versions:
 - Go
 
 They exist as examples for contributors, not as extra required files.
+
+Additional example coverage now includes:
+
+- TypeScript on Quick Sort and Insertion Sort
+- Swift on Merge Sort and Heap Sort
+- C++ on Selection Sort and Comb Sort
+- Java on Bucket Sort and Cocktail Shaker Sort
 
 ## Frontend Behavior
 
