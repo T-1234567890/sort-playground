@@ -1,0 +1,14 @@
+{
+  "name": "Radix Sort",
+  "category": "classic",
+  "complexity": "O(d(n + b))",
+  "spaceComplexity": "O(n + b)",
+  "stability": "Stable",
+  "description": "Sorts values digit by digit, which makes the passes visually clear and ideal for teaching non-comparison sorting.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-20",
+  "keywords": ["radix", "digits", "non-comparison", "stable"],
+  "benchmarkRelativeRank": "high",
+  "funRank": 4
+}

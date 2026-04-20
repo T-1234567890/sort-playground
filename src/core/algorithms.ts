@@ -20,6 +20,11 @@ import { librarySortSteps } from "../algorithms/library-sort/steps";
 import { smoothsortSteps } from "../algorithms/smoothsort/steps";
 import { quantumBogosortSteps } from "../algorithms/quantum-bogosort/steps";
 import { thanosSortSteps } from "../algorithms/thanos-sort/steps";
+import { heapSortSteps } from "../algorithms/heap-sort/steps";
+import { shellSortSteps } from "../algorithms/shell-sort/steps";
+import { countingSortSteps } from "../algorithms/counting-sort/steps";
+import { radixSortSteps } from "../algorithms/radix-sort/steps";
+import { introSortSteps } from "../algorithms/intro-sort/steps";
 
 const metaModules = import.meta.glob<AlgorithmMeta>("../algorithms/*/meta.json", {
   eager: true,
@@ -95,6 +100,11 @@ const stepModules = {
   smoothsort: smoothsortSteps,
   "quantum-bogosort": quantumBogosortSteps,
   "thanos-sort": thanosSortSteps,
+  "heap-sort": heapSortSteps,
+  "shell-sort": shellSortSteps,
+  "counting-sort": countingSortSteps,
+  "radix-sort": radixSortSteps,
+  "intro-sort": introSortSteps,
 };
 
 function slugFromPath(path: string) {

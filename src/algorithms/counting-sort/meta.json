@@ -1,0 +1,14 @@
+{
+  "name": "Counting Sort",
+  "category": "classic",
+  "complexity": "O(n + k)",
+  "spaceComplexity": "O(n + k)",
+  "stability": "Stable",
+  "description": "Counts occurrences across a value range, making it a clean way to explain when linear-time sorting is possible.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-20",
+  "keywords": ["counting", "non-comparison", "linear", "range"],
+  "benchmarkRelativeRank": "high",
+  "funRank": 3
+}

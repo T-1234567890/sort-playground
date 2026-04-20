@@ -1,0 +1,15 @@
+{
+  "name": "IntroSort",
+  "category": "classic",
+  "complexity": "O(n log n)",
+  "spaceComplexity": "O(log n)",
+  "stability": "Unstable",
+  "description": "Begins with quicksort, switches to heapsort for bad recursion depth, and finishes small partitions with insertion sort to show practical hybrid engineering.",
+  "benchmarkMode": "estimated",
+  "benchmarkRelativeRank": "high",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-20",
+  "keywords": ["hybrid", "introsort", "quicksort", "heapsort", "practical"],
+  "funRank": 4
+}

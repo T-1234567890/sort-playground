@@ -1,0 +1,14 @@
+{
+  "name": "Shell Sort",
+  "category": "classic",
+  "complexity": "O(n log^2 n) typical",
+  "spaceComplexity": "O(1)",
+  "stability": "Unstable",
+  "description": "Runs insertion sort over shrinking gaps, making it ideal for showing how gapped passes improve on plain insertion sort.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-20",
+  "keywords": ["gap", "insertion", "adaptive", "in-place"],
+  "benchmarkRelativeRank": "medium",
+  "funRank": 3
+}

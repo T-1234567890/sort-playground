@@ -1,0 +1,14 @@
+{
+  "name": "Heap Sort",
+  "category": "classic",
+  "complexity": "O(n log n)",
+  "spaceComplexity": "O(1)",
+  "stability": "Unstable",
+  "description": "Builds a max heap, then repeatedly extracts the largest element to the end, making heap construction and extraction easy to teach visually.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-20",
+  "keywords": ["heap", "tree", "in-place", "selection"],
+  "benchmarkRelativeRank": "medium",
+  "funRank": 3
+}
