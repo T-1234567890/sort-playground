@@ -31,6 +31,10 @@ The benchmark pipeline is driven by:
 - [/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/run.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/run.js)
 - [/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/merge-results.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/merge-results.js)
 
+Scoring details are documented in:
+
+- [Benchmark Scoring](./benchmark-scoring.md)
+
 ## 2. Running Benchmark Locally
 
 The benchmark runner is CI-first.

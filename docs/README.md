@@ -15,6 +15,7 @@ Sort Playground is a static React/Vite app for exploring sorting algorithms thro
 - [Sort Labs: Special Cases](./labs-special-cases.md)
 - [Community Ranking](./community-ranking.md)
 - [Benchmark](./benchmark.md)
+- [Benchmark Scoring](./benchmark-scoring.md)
 - [Events](./events.md)
 
 ## Local Development

@@ -73,6 +73,42 @@ export function getBenchmarkSizeStatus(entry: BenchmarkRankingEntry | undefined,
   return "missing";
 }
 
+export function getBenchmarkProfileMetric(
+  entry: BenchmarkRankingEntry | undefined,
+  profile: BenchmarkWorkloadProfile,
+  language: BenchmarkLanguage,
+  size: BenchmarkSize,
+) {
+  const profileValue = entry?.snapshot?.workloadProfiles?.[profile]?.[language]?.[size];
+
+  if (typeof profileValue === "number") {
+    return profileValue;
+  }
+
+  if (profile === "random-uniform") {
+    return entry?.results?.[language]?.[size];
+  }
+
+  return undefined;
+}
+
+export function getBenchmarkProfileStatus(
+  entry: BenchmarkRankingEntry | undefined,
+  profile: BenchmarkWorkloadProfile,
+  language: BenchmarkLanguage,
+  size: BenchmarkSize,
+) {
+  if (typeof getBenchmarkProfileMetric(entry, profile, language, size) === "number") {
+    return "available";
+  }
+
+  if (isBenchmarkSizeCanceled(language, size)) {
+    return "canceled";
+  }
+
+  return "missing";
+}
+
 export function radarPoints(scores: BenchmarkProfileScores, radius: number, center: number) {
   return benchmarkProfiles
     .map((profile, index) => {

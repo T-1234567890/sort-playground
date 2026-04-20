@@ -301,7 +301,10 @@
       "benchmarkDescription": "Benchmark will eventually compare algorithms that can be measured fairly and repeatably under the same controlled setup.",
       "benchmarkEnvironment": "Approximate benchmark in controlled Node.js environment",
       "benchmarkAverageNote": "Results are averaged over multiple runs.",
+      "benchmarkProfileNote": "Displayed timings depend on the selected workload profile: {{profile}}.",
+      "benchmarkSelectionNote": "Current view: {{language}}, {{size}}, {{profile}}.",
       "benchmarkNoPoints": "No points or composite score yet.",
+      "profileTimingOnly": "This timing is profile-specific. Size score remains tied to the random-uniform result snapshot.",
       "pythonLargeCanceled": "Python large-size benchmark runs are canceled due to runtime and technical constraints.",
       "languageBenchmarkTitle": "More Language Benchmark",
       "languageBenchmarkDescription": "Community and experimental language implementations are benchmarked separately so the main ranking stays clean and authoritative.",
@@ -539,8 +542,12 @@
     "languageOverview": "Language Overview",
     "languageOverviewDescription": "Main benchmark languages are shown as a baseline. Community and experimental languages are listed separately for comparison only.",
     "profileTitle": "Per-profile Results",
-    "profileDescription": "Each row shows the selected benchmark size for one workload profile across the available language implementations.",
+    "profileDescription": "Each row shows the {{size}} benchmark result for one workload profile across the available language implementations.",
+    "profileColumnsNote": "Each column is a language implementation. Read each workload profile across the row and compare languages by column.",
     "profileHeader": "Workload profile"
+  },
+  "languageBenchmarkCompare": {
+    "selectionNote": "Current comparison size: {{size}}. Each metric row is a language, and each algorithm column shows that language's result."
   },
   "code": {
     "sectionEyebrow": "Implementations",

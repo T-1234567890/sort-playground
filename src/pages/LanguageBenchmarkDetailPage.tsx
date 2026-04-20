@@ -211,7 +211,12 @@ export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: Langua
 
             <section className="mt-8 rounded-2xl border border-zinc-950/10 bg-white/72 p-6 shadow-sm dark:border-white/10 dark:bg-white/8">
               <h2 className="text-2xl font-semibold tracking-tight">{t("languageBenchmark.profileTitle")}</h2>
-              <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("languageBenchmark.profileDescription")}</p>
+              <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                {t("languageBenchmark.profileDescription", {
+                  size: t(`labs.benchmarkSizes.${size}`),
+                })}
+              </p>
+              <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{t("languageBenchmark.profileColumnsNote")}</p>
 
               <div className="mt-6 overflow-hidden rounded-lg border border-zinc-950/8 dark:border-white/10">
                 <div className="grid gap-3 bg-zinc-950/[0.03] px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:bg-white/[0.03] dark:text-zinc-400" style={profileGridStyle}>

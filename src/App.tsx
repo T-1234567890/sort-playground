@@ -8,7 +8,9 @@ import { ComparePage } from "./pages/ComparePage";
 import { EmbedPage } from "./pages/EmbedPage";
 import { HomePage } from "./pages/HomePage";
 import { BenchmarkDetailPage } from "./pages/BenchmarkDetailPage";
+import { BenchmarkComparePage } from "./pages/BenchmarkComparePage";
 import { BenchmarkLandingPage } from "./pages/BenchmarkLandingPage";
+import { LanguageBenchmarkComparePage } from "./pages/LanguageBenchmarkComparePage";
 import { LanguageBenchmarkDetailPage } from "./pages/LanguageBenchmarkDetailPage";
 import { LanguageBenchmarkPage } from "./pages/LanguageBenchmarkPage";
 import { LegalPage } from "./pages/LegalPage";
@@ -36,6 +38,14 @@ function getRoute() {
 
   if (path === "/benchmark") {
     return { name: null, page: "benchmark" };
+  }
+
+  if (path === "/labs/benchmark/languages/compare") {
+    return { name: null, page: "language-benchmark-compare" };
+  }
+
+  if (path === "/labs/benchmark/compare") {
+    return { name: null, page: "benchmark-compare" };
   }
 
   if (path === "/race") {
@@ -132,10 +142,14 @@ export default function App() {
     <div className="min-h-screen bg-zinc-50 text-zinc-950 transition-colors dark:bg-zinc-950 dark:text-zinc-50">
       {selectedAlgorithm && route.page === "embed" ? (
         <EmbedPage algorithm={selectedAlgorithm} />
+      ) : route.page === "language-benchmark-compare" ? (
+        <LanguageBenchmarkComparePage dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "language-benchmark-detail" ? (
         <LanguageBenchmarkDetailPage slug={route.name ?? ""} dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "language-benchmark" ? (
         <LanguageBenchmarkPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+      ) : route.page === "benchmark-compare" ? (
+        <BenchmarkComparePage dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "benchmark-detail" ? (
         <BenchmarkDetailPage slug={route.name ?? ""} dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : selectedAlgorithm ? (

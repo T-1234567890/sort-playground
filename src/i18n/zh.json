@@ -301,7 +301,10 @@
       "benchmarkDescription": "基准页最终会比较那些能在相同受控环境下被公平、稳定测量的算法。",
       "benchmarkEnvironment": "受控 Node.js 环境下的近似基准结果",
       "benchmarkAverageNote": "结果来自多次运行后的平均值。",
+      "benchmarkProfileNote": "当前显示的耗时取决于所选工作负载画像：{{profile}}。",
+      "benchmarkSelectionNote": "当前视图：{{language}}、{{size}}、{{profile}}。",
       "benchmarkNoPoints": "目前还没有积分或综合评分。",
+      "profileTimingOnly": "这个耗时是当前画像下的结果。size score 仍然对应 random-uniform 的结果快照。",
       "pythonLargeCanceled": "由于运行速度和技术限制，Python 的 large 规模基准已取消。",
       "languageBenchmarkTitle": "更多语言基准",
       "languageBenchmarkDescription": "社区和实验性语言实现会被单独基准测试，不会污染主基准榜单。",
@@ -539,8 +542,12 @@
     "languageOverview": "语言概览",
     "languageOverviewDescription": "主基准语言会作为基线显示。社区和实验性语言会被单独列出，只用于对比参考。",
     "profileTitle": "按画像拆解",
-    "profileDescription": "每一行展示一个工作负载画像在当前选中规模下、各语言实现上的结果。",
+    "profileDescription": "每一行展示一个工作负载画像在当前 {{size}} 规模下、各语言实现上的结果。",
+    "profileColumnsNote": "每一列都是一个语言实现。横向看一行是同一画像下的语言对比，纵向看一列是同一语言在不同画像下的结果。",
     "profileHeader": "工作负载画像"
+  },
+  "languageBenchmarkCompare": {
+    "selectionNote": "当前对比规模：{{size}}。每一行指标代表一种语言，每一列算法展示该语言下的结果。"
   },
   "code": {
     "sectionEyebrow": "实现代码",

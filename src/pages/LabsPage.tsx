@@ -3,8 +3,16 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
-import { formatBenchmarkMetric, getBenchmarkSizeStatus, getCompositeScore, getSizeScore, isBenchmarkSizeCanceled } from "../core/benchmark";
-import type { BenchmarkLanguage, BenchmarkRankingEntry, BenchmarkSize, CommunityRankingEntry, SortLabsEvent } from "../core/types";
+import {
+  benchmarkProfiles,
+  formatBenchmarkMetric,
+  getBenchmarkProfileMetric,
+  getBenchmarkProfileStatus,
+  getCompositeScore,
+  getSizeScore,
+  isBenchmarkSizeCanceled,
+} from "../core/benchmark";
+import type { BenchmarkLanguage, BenchmarkRankingEntry, BenchmarkSize, BenchmarkWorkloadProfile, CommunityRankingEntry, SortLabsEvent } from "../core/types";
 import events from "../data/events.json";
 
 type LabsPageProps = {
@@ -196,6 +204,9 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
   const [benchmarkLoading, setBenchmarkLoading] = useState(true);
   const [benchmarkLanguage, setBenchmarkLanguage] = useState<BenchmarkLanguage>("python");
   const [benchmarkSize, setBenchmarkSize] = useState<BenchmarkSize>("medium");
+  const [benchmarkProfile, setBenchmarkProfile] = useState<BenchmarkWorkloadProfile>("random-uniform");
+  const [benchmarkCompareSlugs, setBenchmarkCompareSlugs] = useState<string[]>([]);
+  const [benchmarkSelectMode, setBenchmarkSelectMode] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -359,6 +370,30 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
     [eventEntries],
   );
 
+  function toggleBenchmarkCompare(slug: string) {
+    setBenchmarkCompareSlugs((current) => {
+      if (current.includes(slug)) {
+        return current.filter((item) => item !== slug);
+      }
+
+      if (current.length >= 4) {
+        return current;
+      }
+
+      return [...current, slug];
+    });
+  }
+
+  function toggleBenchmarkSelectMode() {
+    setBenchmarkSelectMode((current) => {
+      if (current) {
+        setBenchmarkCompareSlugs([]);
+      }
+
+      return !current;
+    });
+  }
+
   function renderOverview() {
     return (
       <>
@@ -488,16 +523,17 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
     const sourceEntries = hasAlgorithmQuery ? filteredBenchmarkEntries : benchmarkEntries;
     const languageLabels: BenchmarkLanguage[] = ["python", "rust", "c"];
     const sizeLabels: BenchmarkSize[] = ["small", "medium", "large"];
+    const profileLabels: BenchmarkWorkloadProfile[] = benchmarkProfiles;
     const fullSortedEntries = [...benchmarkEntries]
       .filter((entry) =>
         entry.mode === "automated" &&
         entry.status === "benchmarked" &&
-        typeof entry.results?.[benchmarkLanguage]?.[benchmarkSize] === "number",
+        typeof getBenchmarkProfileMetric(entry, benchmarkProfile, benchmarkLanguage, benchmarkSize) === "number",
       )
       .sort(
         (left, right) =>
-          (left.results?.[benchmarkLanguage]?.[benchmarkSize] ?? Number.POSITIVE_INFINITY) -
-            (right.results?.[benchmarkLanguage]?.[benchmarkSize] ?? Number.POSITIVE_INFINITY) ||
+          (getBenchmarkProfileMetric(left, benchmarkProfile, benchmarkLanguage, benchmarkSize) ?? Number.POSITIVE_INFINITY) -
+            (getBenchmarkProfileMetric(right, benchmarkProfile, benchmarkLanguage, benchmarkSize) ?? Number.POSITIVE_INFINITY) ||
           left.name.localeCompare(right.name),
       );
     const benchmarkRankMap = new Map(fullSortedEntries.map((entry, index) => [entry.slug, index + 1]));
@@ -505,12 +541,12 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
       .filter((entry) =>
         entry.mode === "automated" &&
         entry.status === "benchmarked" &&
-        typeof entry.results?.[benchmarkLanguage]?.[benchmarkSize] === "number",
+        typeof getBenchmarkProfileMetric(entry, benchmarkProfile, benchmarkLanguage, benchmarkSize) === "number",
       )
       .sort(
         (left, right) =>
-          (left.results?.[benchmarkLanguage]?.[benchmarkSize] ?? Number.POSITIVE_INFINITY) -
-            (right.results?.[benchmarkLanguage]?.[benchmarkSize] ?? Number.POSITIVE_INFINITY) ||
+          (getBenchmarkProfileMetric(left, benchmarkProfile, benchmarkLanguage, benchmarkSize) ?? Number.POSITIVE_INFINITY) -
+            (getBenchmarkProfileMetric(right, benchmarkProfile, benchmarkLanguage, benchmarkSize) ?? Number.POSITIVE_INFINITY) ||
           left.name.localeCompare(right.name),
       );
 
@@ -522,6 +558,19 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
             <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("labs.section.benchmarkDescription")}</p>
             <p className="mt-4 text-sm font-medium text-zinc-700 dark:text-zinc-200">{t("labs.section.benchmarkEnvironment")}</p>
             <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{t("labs.section.benchmarkAverageNote")}</p>
+            <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+              {t("labs.section.benchmarkProfileNote", { profile: t(`benchmark.profiles.${benchmarkProfile}`) })}
+            </p>
+            <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+              {t("labs.section.benchmarkSelectionNote", {
+                language: t(`labs.benchmarkLanguages.${benchmarkLanguage}`),
+                size: t(`labs.benchmarkSizes.${benchmarkSize}`),
+                profile: t(`benchmark.profiles.${benchmarkProfile}`),
+              })}
+            </p>
+            {benchmarkProfile !== "random-uniform" ? (
+              <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{t("labs.section.profileTimingOnly")}</p>
+            ) : null}
           </div>
 
           <div className="mt-6 flex flex-wrap gap-2">
@@ -566,9 +615,77 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
             ))}
           </div>
 
+          <div className="mt-3 flex flex-wrap gap-2">
+            {profileLabels.map((profile) => (
+              <button
+                key={profile}
+                type="button"
+                onClick={() => setBenchmarkProfile(profile)}
+                className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                  benchmarkProfile === profile
+                    ? "bg-zinc-950 text-white dark:bg-white dark:text-zinc-950"
+                    : "border border-zinc-950/10 bg-white/70 text-zinc-700 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15"
+                }`}
+              >
+                {t(`benchmark.profiles.${profile}`)}
+              </button>
+            ))}
+          </div>
+
           {benchmarkLanguage === "python" ? (
             <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">{t("labs.section.pythonLargeCanceled")}</p>
           ) : null}
+          <div className="mt-5 rounded-lg border border-zinc-950/10 bg-zinc-50/80 px-4 py-4 dark:border-white/10 dark:bg-white/5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold">{t("benchmarkCompare.selectionTitle", { defaultValue: "Compare benchmark entries" })}</p>
+                <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-300">
+                  {t("benchmarkCompare.selectionDescription", {
+                    defaultValue: "Select 2 to 4 algorithms, then open the compare view.",
+                  })}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={toggleBenchmarkSelectMode}
+                  className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                    benchmarkSelectMode
+                      ? "bg-teal-500 text-zinc-950 hover:bg-teal-400"
+                      : "border border-zinc-950/10 bg-white text-zinc-700 hover:bg-zinc-950 hover:text-white dark:border-white/10 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white dark:hover:text-zinc-950"
+                  }`}
+                >
+                  {benchmarkSelectMode
+                    ? t("benchmarkCompare.cancel", { defaultValue: "Cancel" })
+                    : t("benchmarkCompare.selectMode", { defaultValue: "Select" })}
+                </button>
+                <a
+                  data-route={benchmarkSelectMode && benchmarkCompareSlugs.length >= 2 ? true : undefined}
+                  href={`/labs/benchmark/compare?items=${encodeURIComponent(benchmarkCompareSlugs.join(","))}`}
+                  className={`inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                    benchmarkSelectMode && benchmarkCompareSlugs.length >= 2
+                      ? "bg-zinc-950 text-white hover:-translate-y-0.5 dark:bg-white dark:text-zinc-950"
+                      : "cursor-not-allowed border border-zinc-950/10 bg-zinc-100 text-zinc-400 dark:border-white/10 dark:bg-white/5 dark:text-zinc-500"
+                  }`}
+                >
+                  {t("benchmarkCompare.open", {
+                    defaultValue: "Compare {{count}} selected",
+                    count: benchmarkCompareSlugs.length,
+                  })}
+                </a>
+              </div>
+            </div>
+            {benchmarkSelectMode ? (
+              <div className="mt-4 border-t border-zinc-950/10 pt-4 dark:border-white/10">
+                <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-300">
+                  {t("benchmarkCompare.selectedCount", {
+                    defaultValue: "{{count}} selected",
+                    count: benchmarkCompareSlugs.length,
+                  })}
+                </p>
+              </div>
+            ) : null}
+          </div>
           <div className="mt-5 rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-4 text-sm text-zinc-700 dark:border-amber-300/15 dark:bg-amber-400/10 dark:text-zinc-200">
             <p className="font-semibold">{t("labs.section.languageBenchmarkTitle")}</p>
             <p className="mt-1 text-zinc-600 dark:text-zinc-300">{t("labs.section.languageBenchmarkDescription")}</p>
@@ -593,23 +710,63 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
               {sortedEntries.length ? (
                 <ol className="divide-y divide-zinc-950/8 dark:divide-white/10">
                   {sortedEntries.map((entry) => (
-                    <li key={entry.slug} className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
-                      <div className="flex items-start gap-4">
-                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-950 text-sm font-semibold text-white dark:bg-white dark:text-zinc-950">
-                          #{benchmarkRankMap.get(entry.slug) ?? "-"}
-                        </span>
-                        <div>
-                          <a data-route href={`/labs/benchmark/${entry.slug}`} className="text-lg font-semibold hover:text-teal-600 dark:hover:text-teal-300">
-                            {entry.name}
-                          </a>
-                          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t("labs.benchmarkModes.automated")}</p>
+                    <li
+                      key={entry.slug}
+                      onClick={benchmarkSelectMode ? () => toggleBenchmarkCompare(entry.slug) : undefined}
+                      role={benchmarkSelectMode ? "button" : undefined}
+                      tabIndex={benchmarkSelectMode ? 0 : undefined}
+                      onKeyDown={benchmarkSelectMode ? (event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          toggleBenchmarkCompare(entry.slug);
+                        }
+                      } : undefined}
+                      className={`flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-start sm:justify-between ${
+                        benchmarkSelectMode && benchmarkCompareSlugs.includes(entry.slug)
+                          ? "bg-teal-50/70 dark:bg-teal-400/10"
+                          : ""
+                      } ${
+                        benchmarkSelectMode
+                          ? "cursor-pointer hover:bg-teal-50/50 dark:hover:bg-teal-400/5"
+                          : ""
+                      }`}
+                    >
+                      <div className={`flex gap-4 ${benchmarkSelectMode ? "items-center justify-between" : "items-start"}`}>
+                        <div className="flex items-start gap-4">
+                          <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-950 text-sm font-semibold text-white dark:bg-white dark:text-zinc-950">
+                            #{benchmarkRankMap.get(entry.slug) ?? "-"}
+                          </span>
+                          <div>
+                            {benchmarkSelectMode ? (
+                              <p className="text-lg font-semibold">{entry.name}</p>
+                            ) : (
+                              <a data-route href={`/labs/benchmark/${entry.slug}`} className="text-lg font-semibold hover:text-teal-600 dark:hover:text-teal-300">
+                                {entry.name}
+                              </a>
+                            )}
+                            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t("labs.benchmarkModes.automated")}</p>
+                          </div>
                         </div>
+                        {benchmarkSelectMode ? (
+                          <span
+                            className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                              benchmarkCompareSlugs.includes(entry.slug)
+                                ? "bg-teal-500 text-zinc-950"
+                                : "bg-zinc-950/5 text-zinc-600 dark:bg-white/10 dark:text-zinc-300"
+                            }`}
+                          >
+                            {benchmarkCompareSlugs.includes(entry.slug)
+                              ? t("benchmarkCompare.selected", { defaultValue: "Selected" })
+                              : t("benchmarkCompare.tapToSelect", { defaultValue: "Tap to select" })}
+                          </span>
+                        ) : null}
                       </div>
 
-                      <div className="grid gap-1 text-sm sm:text-right">
+                      <div className="grid gap-3 text-sm sm:text-right">
+                        <div className="grid gap-1">
                         <p className="font-mono font-semibold">
-                          {getBenchmarkSizeStatus(entry, benchmarkLanguage, benchmarkSize) === "available"
-                            ? `${entry.results?.[benchmarkLanguage]?.[benchmarkSize]?.toFixed(3)} ${entry.unit}`
+                          {getBenchmarkProfileStatus(entry, benchmarkProfile, benchmarkLanguage, benchmarkSize) === "available"
+                            ? formatBenchmarkMetric(getBenchmarkProfileMetric(entry, benchmarkProfile, benchmarkLanguage, benchmarkSize), entry.unit ?? "ms")
                             : t("benchmark.status.canceled")}
                         </p>
                         {typeof getCompositeScore(entry) === "number" ? (
@@ -619,22 +776,29 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
                         ) : (
                           <p className="text-zinc-500 dark:text-zinc-400">{t("labs.section.benchmarkNoPoints")}</p>
                         )}
-                        {typeof getSizeScore(entry, benchmarkLanguage, benchmarkSize) === "number" ? (
+                        {benchmarkProfile === "random-uniform" && typeof getSizeScore(entry, benchmarkLanguage, benchmarkSize) === "number" ? (
                           <p className="text-zinc-500 dark:text-zinc-400">
                             {t("benchmarkDetail.sizeScore")} {getSizeScore(entry, benchmarkLanguage, benchmarkSize)?.toFixed(1)}
                           </p>
                         ) : null}
                         <p className="text-zinc-500 dark:text-zinc-400">
-                          {t("labs.benchmarkSizes.small")}: {formatBenchmarkMetric(entry.results?.[benchmarkLanguage]?.small, entry.unit ?? "ms")}
+                          {t("labs.benchmarkSizes.small")}: {formatBenchmarkMetric(
+                            getBenchmarkProfileMetric(entry, benchmarkProfile, benchmarkLanguage, "small"),
+                            entry.unit ?? "ms",
+                          )}
                         </p>
                         <p className="text-zinc-500 dark:text-zinc-400">
-                          {t("labs.benchmarkSizes.medium")}: {formatBenchmarkMetric(entry.results?.[benchmarkLanguage]?.medium, entry.unit ?? "ms")}
+                          {t("labs.benchmarkSizes.medium")}: {formatBenchmarkMetric(
+                            getBenchmarkProfileMetric(entry, benchmarkProfile, benchmarkLanguage, "medium"),
+                            entry.unit ?? "ms",
+                          )}
                         </p>
                         <p className="text-zinc-500 dark:text-zinc-400">
-                          {t("labs.benchmarkSizes.large")}: {getBenchmarkSizeStatus(entry, benchmarkLanguage, "large") === "canceled"
+                          {t("labs.benchmarkSizes.large")}: {getBenchmarkProfileStatus(entry, benchmarkProfile, benchmarkLanguage, "large") === "canceled"
                             ? t("benchmark.status.canceled")
-                            : formatBenchmarkMetric(entry.results?.[benchmarkLanguage]?.large, entry.unit ?? "ms")}
+                            : formatBenchmarkMetric(getBenchmarkProfileMetric(entry, benchmarkProfile, benchmarkLanguage, "large"), entry.unit ?? "ms")}
                         </p>
+                        </div>
                       </div>
                     </li>
                   ))}
