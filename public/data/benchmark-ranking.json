@@ -1,5 +1,649 @@
 [
   {
+    "name": "Counting Sort",
+    "slug": "counting-sort",
+    "mode": "automated",
+    "results": {
+      "python": {
+        "small": 0.218,
+        "medium": 0.357
+      },
+      "rust": {
+        "small": 0.006,
+        "medium": 0.022,
+        "large": 0.066
+      },
+      "c": {
+        "small": 0.004,
+        "medium": 0.012,
+        "large": 0.028
+      }
+    },
+    "unit": "ms",
+    "status": "benchmarked",
+    "metadata": {
+      "source": "github-actions",
+      "benchmarkMode": "automated",
+      "algorithmHash": "842c28d2c8ef3a73c5c1e6b2ad14d2d93cbe429b3c2ac4e393b89210ebbb9939",
+      "lastRunAt": "2026-04-20T05:38:42.950Z",
+      "lastRunMode": "small"
+    },
+    "snapshot": {
+      "workloadProfiles": {
+        "random-uniform": {
+          "python": {
+            "small": 0.218,
+            "medium": 0.357
+          },
+          "rust": {
+            "small": 0.006,
+            "medium": 0.022,
+            "large": 0.066
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.012,
+            "large": 0.028
+          }
+        },
+        "nearly-sorted": {
+          "python": {
+            "small": 0.034,
+            "medium": 0.324
+          },
+          "rust": {
+            "small": 0.001,
+            "medium": 0.01,
+            "large": 0.074
+          },
+          "c": {
+            "small": 0.001,
+            "medium": 0.007,
+            "large": 0.068
+          }
+        },
+        "reverse-sorted": {
+          "python": {
+            "small": 0.034,
+            "medium": 0.327
+          },
+          "rust": {
+            "small": 0.001,
+            "medium": 0.009,
+            "large": 0.074
+          },
+          "c": {
+            "small": 0.001,
+            "medium": 0.007,
+            "large": 0.06
+          }
+        },
+        "many-duplicates": {
+          "python": {
+            "small": 0.019,
+            "medium": 0.093
+          },
+          "rust": {
+            "small": 0.002,
+            "medium": 0.006,
+            "large": 0.054
+          },
+          "c": {
+            "small": 0.001,
+            "medium": 0.002,
+            "large": 0.016
+          }
+        },
+        "low-value-range": {
+          "python": {
+            "small": 0.026,
+            "medium": 0.1
+          },
+          "rust": {
+            "small": 0.001,
+            "medium": 0.007,
+            "large": 0.054
+          },
+          "c": {
+            "small": 0.001,
+            "medium": 0.003,
+            "large": 0.017
+          }
+        },
+        "adversarial-pivot": {
+          "python": {
+            "small": 0.035,
+            "medium": 0.324
+          },
+          "rust": {
+            "small": 0.001,
+            "medium": 0.011,
+            "large": 0.071
+          },
+          "c": {
+            "small": 0.001,
+            "medium": 0.006,
+            "large": 0.06
+          }
+        }
+      },
+      "tiers": {},
+      "environment": {
+        "benchmarkSpecVersion": "draft-v2",
+        "runnerOs": "Linux",
+        "cpu": "AMD EPYC 9V74 80-Core Processor",
+        "nodeVersion": "v22.22.2",
+        "pythonVersion": "Python 3.12.13",
+        "rustVersion": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "compilerVersion": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "workflowRunId": "24650297313"
+      },
+      "harness": {
+        "datasetGenerator": "deterministic-seeded",
+        "datasetProfile": "small=100, medium=1000, large=10000",
+        "languageSizeExclusions": {
+          "python": {
+            "large": "Canceled due to Python runtime and technical constraints."
+          }
+        },
+        "warmupPolicy": "5 warm-up runs",
+        "runCountPolicy": "30 measured runs",
+        "timeoutPolicy": "CI-managed",
+        "memoryConstraints": "runner-default",
+        "correctnessValidation": "sorted-output and cross-language identity",
+        "languageRunnerContract": "python.py, rust.rs, c.c",
+        "dimensionWeights": {
+          "random-uniform": 1,
+          "nearly-sorted": 1,
+          "reverse-sorted": 1,
+          "many-duplicates": 1,
+          "low-value-range": 1,
+          "adversarial-pivot": 1
+        }
+      },
+      "score": {
+        "rawAverageMs": 0.055,
+        "normalized": 78.5,
+        "composite": 100,
+        "percentile": 100,
+        "badges": [
+          "Fast Random",
+          "Handles Duplicates Well",
+          "Adversarial Ready",
+          "Top Overall"
+        ],
+        "dimensionScores": {
+          "python": {
+            "random-uniform": 100,
+            "nearly-sorted": 100,
+            "reverse-sorted": 100,
+            "many-duplicates": 100,
+            "low-value-range": 100,
+            "adversarial-pivot": 100
+          },
+          "rust": {
+            "random-uniform": 100,
+            "nearly-sorted": 100,
+            "reverse-sorted": 100,
+            "many-duplicates": 100,
+            "low-value-range": 100,
+            "adversarial-pivot": 100
+          },
+          "c": {
+            "random-uniform": 100,
+            "nearly-sorted": 100,
+            "reverse-sorted": 100,
+            "many-duplicates": 100,
+            "low-value-range": 100,
+            "adversarial-pivot": 100
+          }
+        },
+        "sizeScores": {
+          "python": {
+            "small": 28.4,
+            "medium": 100
+          },
+          "rust": {
+            "small": 50,
+            "medium": 100,
+            "large": 100
+          },
+          "c": {
+            "small": 50,
+            "medium": 100,
+            "large": 100
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "Radix Sort",
+    "slug": "radix-sort",
+    "mode": "automated",
+    "results": {
+      "python": {
+        "small": 0.093,
+        "medium": 0.796
+      },
+      "rust": {
+        "small": 0.004,
+        "medium": 0.029,
+        "large": 0.291
+      },
+      "c": {
+        "small": 0.002,
+        "medium": 0.025,
+        "large": 0.254
+      }
+    },
+    "unit": "ms",
+    "status": "benchmarked",
+    "metadata": {
+      "source": "github-actions",
+      "benchmarkMode": "automated",
+      "algorithmHash": "cee22efd9cdbe861531db22ae8008da10d7c9d3cfe64e7e19f9bc0fa312c3bcf",
+      "lastRunAt": "2026-04-20T05:38:40.601Z",
+      "lastRunMode": "small"
+    },
+    "snapshot": {
+      "workloadProfiles": {
+        "random-uniform": {
+          "python": {
+            "small": 0.093,
+            "medium": 0.796
+          },
+          "rust": {
+            "small": 0.004,
+            "medium": 0.029,
+            "large": 0.291
+          },
+          "c": {
+            "small": 0.002,
+            "medium": 0.025,
+            "large": 0.254
+          }
+        },
+        "nearly-sorted": {
+          "python": {
+            "small": 0.064,
+            "medium": 0.759
+          },
+          "rust": {
+            "small": 0.003,
+            "medium": 0.03,
+            "large": 0.32
+          },
+          "c": {
+            "small": 0.002,
+            "medium": 0.024,
+            "large": 0.271
+          }
+        },
+        "reverse-sorted": {
+          "python": {
+            "small": 0.064,
+            "medium": 0.743
+          },
+          "rust": {
+            "small": 0.003,
+            "medium": 0.03,
+            "large": 0.322
+          },
+          "c": {
+            "small": 0.002,
+            "medium": 0.024,
+            "large": 0.269
+          }
+        },
+        "many-duplicates": {
+          "python": {
+            "small": 0.053,
+            "medium": 0.397
+          },
+          "rust": {
+            "small": 0.003,
+            "medium": 0.019,
+            "large": 0.184
+          },
+          "c": {
+            "small": 0.002,
+            "medium": 0.018,
+            "large": 0.156
+          }
+        },
+        "low-value-range": {
+          "python": {
+            "small": 0.052,
+            "medium": 0.402
+          },
+          "rust": {
+            "small": 0.002,
+            "medium": 0.019,
+            "large": 0.18
+          },
+          "c": {
+            "small": 0.002,
+            "medium": 0.016,
+            "large": 0.16
+          }
+        },
+        "adversarial-pivot": {
+          "python": {
+            "small": 0.063,
+            "medium": 0.736
+          },
+          "rust": {
+            "small": 0.003,
+            "medium": 0.028,
+            "large": 0.326
+          },
+          "c": {
+            "small": 0.002,
+            "medium": 0.025,
+            "large": 0.266
+          }
+        }
+      },
+      "tiers": {},
+      "environment": {
+        "benchmarkSpecVersion": "draft-v2",
+        "runnerOs": "Linux",
+        "cpu": "AMD EPYC 7763 64-Core Processor",
+        "nodeVersion": "v22.22.2",
+        "pythonVersion": "Python 3.12.13",
+        "rustVersion": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "compilerVersion": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "workflowRunId": "24650297313"
+      },
+      "harness": {
+        "datasetGenerator": "deterministic-seeded",
+        "datasetProfile": "small=100, medium=1000, large=10000",
+        "languageSizeExclusions": {
+          "python": {
+            "large": "Canceled due to Python runtime and technical constraints."
+          }
+        },
+        "warmupPolicy": "5 warm-up runs",
+        "runCountPolicy": "30 measured runs",
+        "timeoutPolicy": "CI-managed",
+        "memoryConstraints": "runner-default",
+        "correctnessValidation": "sorted-output and cross-language identity",
+        "languageRunnerContract": "python.py, rust.rs, c.c",
+        "dimensionWeights": {
+          "random-uniform": 1,
+          "nearly-sorted": 1,
+          "reverse-sorted": 1,
+          "many-duplicates": 1,
+          "low-value-range": 1,
+          "adversarial-pivot": 1
+        }
+      },
+      "score": {
+        "rawAverageMs": 0.157,
+        "normalized": 55.5,
+        "composite": 29,
+        "percentile": 90.9,
+        "badges": [],
+        "dimensionScores": {
+          "python": {
+            "random-uniform": 64.7,
+            "nearly-sorted": 43.5,
+            "reverse-sorted": 44.7,
+            "many-duplicates": 24.9,
+            "low-value-range": 27.8,
+            "adversarial-pivot": 44.9
+          },
+          "rust": {
+            "random-uniform": 29,
+            "nearly-sorted": 24.1,
+            "reverse-sorted": 23.7,
+            "many-duplicates": 30.1,
+            "low-value-range": 30.8,
+            "adversarial-pivot": 23.2
+          },
+          "c": {
+            "random-uniform": 15.7,
+            "nearly-sorted": 25.6,
+            "reverse-sorted": 23.1,
+            "many-duplicates": 10.8,
+            "low-value-range": 11.8,
+            "adversarial-pivot": 22.9
+          }
+        },
+        "sizeScores": {
+          "python": {
+            "small": 66.7,
+            "medium": 44.8
+          },
+          "rust": {
+            "small": 75,
+            "medium": 75.9,
+            "large": 22.7
+          },
+          "c": {
+            "small": 100,
+            "medium": 48,
+            "large": 11
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "Shell Sort",
+    "slug": "shell-sort",
+    "mode": "automated",
+    "results": {
+      "python": {
+        "small": 0.075,
+        "medium": 1.426
+      },
+      "rust": {
+        "small": 0.005,
+        "medium": 0.066,
+        "large": 0.821
+      },
+      "c": {
+        "small": 0.004,
+        "medium": 0.055,
+        "large": 0.751
+      }
+    },
+    "unit": "ms",
+    "status": "benchmarked",
+    "metadata": {
+      "source": "github-actions",
+      "benchmarkMode": "automated",
+      "algorithmHash": "90722b4ef811813e4a95d4c251329ba105cb57b995f5d132b3882ece67f9a273",
+      "lastRunAt": "2026-04-20T05:38:41.643Z",
+      "lastRunMode": "small"
+    },
+    "snapshot": {
+      "workloadProfiles": {
+        "random-uniform": {
+          "python": {
+            "small": 0.075,
+            "medium": 1.426
+          },
+          "rust": {
+            "small": 0.005,
+            "medium": 0.066,
+            "large": 0.821
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.055,
+            "large": 0.751
+          }
+        },
+        "nearly-sorted": {
+          "python": {
+            "small": 0.045,
+            "medium": 1.158
+          },
+          "rust": {
+            "small": 0.002,
+            "medium": 0.048,
+            "large": 0.684
+          },
+          "c": {
+            "small": 0.002,
+            "medium": 0.043,
+            "large": 0.641
+          }
+        },
+        "reverse-sorted": {
+          "python": {
+            "small": 0.05,
+            "medium": 1.055
+          },
+          "rust": {
+            "small": 0.002,
+            "medium": 0.017,
+            "large": 0.176
+          },
+          "c": {
+            "small": 0.001,
+            "medium": 0.011,
+            "large": 0.149
+          }
+        },
+        "many-duplicates": {
+          "python": {
+            "small": 0.05,
+            "medium": 0.92
+          },
+          "rust": {
+            "small": 0.003,
+            "medium": 0.038,
+            "large": 0.424
+          },
+          "c": {
+            "small": 0.003,
+            "medium": 0.033,
+            "large": 0.391
+          }
+        },
+        "low-value-range": {
+          "python": {
+            "small": 0.064,
+            "medium": 1.081
+          },
+          "rust": {
+            "small": 0.004,
+            "medium": 0.05,
+            "large": 0.61
+          },
+          "c": {
+            "small": 0.003,
+            "medium": 0.043,
+            "large": 0.549
+          }
+        },
+        "adversarial-pivot": {
+          "python": {
+            "small": 0.04,
+            "medium": 0.865
+          },
+          "rust": {
+            "small": 0.001,
+            "medium": 0.017,
+            "large": 0.174
+          },
+          "c": {
+            "small": 0.001,
+            "medium": 0.01,
+            "large": 0.133
+          }
+        }
+      },
+      "tiers": {},
+      "environment": {
+        "benchmarkSpecVersion": "draft-v2",
+        "runnerOs": "Linux",
+        "cpu": "AMD EPYC 7763 64-Core Processor",
+        "nodeVersion": "v22.22.2",
+        "pythonVersion": "Python 3.12.13",
+        "rustVersion": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "compilerVersion": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "workflowRunId": "24650297313"
+      },
+      "harness": {
+        "datasetGenerator": "deterministic-seeded",
+        "datasetProfile": "small=100, medium=1000, large=10000",
+        "languageSizeExclusions": {
+          "python": {
+            "large": "Canceled due to Python runtime and technical constraints."
+          }
+        },
+        "warmupPolicy": "5 warm-up runs",
+        "runCountPolicy": "30 measured runs",
+        "timeoutPolicy": "CI-managed",
+        "memoryConstraints": "runner-default",
+        "correctnessValidation": "sorted-output and cross-language identity",
+        "languageRunnerContract": "python.py, rust.rs, c.c",
+        "dimensionWeights": {
+          "random-uniform": 1,
+          "nearly-sorted": 1,
+          "reverse-sorted": 1,
+          "many-duplicates": 1,
+          "low-value-range": 1,
+          "adversarial-pivot": 1
+        }
+      },
+      "score": {
+        "rawAverageMs": 0.267,
+        "normalized": 35.6,
+        "composite": 22.6,
+        "percentile": 81.8,
+        "badges": [],
+        "dimensionScores": {
+          "python": {
+            "random-uniform": 38.3,
+            "nearly-sorted": 29.8,
+            "reverse-sorted": 32.7,
+            "many-duplicates": 11.5,
+            "low-value-range": 11,
+            "adversarial-pivot": 39.7
+          },
+          "rust": {
+            "random-uniform": 10.5,
+            "nearly-sorted": 11.6,
+            "reverse-sorted": 43.1,
+            "many-duplicates": 13.3,
+            "low-value-range": 9.3,
+            "adversarial-pivot": 43.2
+          },
+          "c": {
+            "random-uniform": 5.4,
+            "nearly-sorted": 11.1,
+            "reverse-sorted": 42.2,
+            "many-duplicates": 4.4,
+            "low-value-range": 3.5,
+            "adversarial-pivot": 46.5
+          }
+        },
+        "sizeScores": {
+          "python": {
+            "small": 82.7,
+            "medium": 25
+          },
+          "rust": {
+            "small": 60,
+            "medium": 33.3,
+            "large": 8
+          },
+          "c": {
+            "small": 50,
+            "medium": 21.8,
+            "large": 3.7
+          }
+        }
+      }
+    }
+  },
+  {
     "name": "Quick Sort",
     "slug": "quick-sort",
     "mode": "automated",
@@ -165,54 +809,477 @@
       },
       "score": {
         "rawAverageMs": 10.506,
-        "normalized": 100,
-        "composite": 74,
-        "percentile": 100,
-        "badges": [
-          "Fast Random",
-          "Adversarial Ready"
-        ],
+        "normalized": 49.5,
+        "composite": 13.8,
+        "percentile": 72.7,
+        "badges": [],
         "dimensionScores": {
           "python": {
-            "random-uniform": 100,
-            "nearly-sorted": 100,
-            "reverse-sorted": 94.6,
-            "many-duplicates": 4,
-            "low-value-range": 24.5,
-            "adversarial-pivot": 100
+            "random-uniform": 4.9,
+            "nearly-sorted": 3.6,
+            "reverse-sorted": 2.8,
+            "many-duplicates": 0,
+            "low-value-range": 0.2,
+            "adversarial-pivot": 3.6
           },
           "rust": {
-            "random-uniform": 100,
-            "nearly-sorted": 100,
-            "reverse-sorted": 100,
-            "many-duplicates": 6.2,
-            "low-value-range": 47.4,
-            "adversarial-pivot": 100
+            "random-uniform": 14.7,
+            "nearly-sorted": 23.6,
+            "reverse-sorted": 35,
+            "many-duplicates": 1.6,
+            "low-value-range": 5,
+            "adversarial-pivot": 43.2
           },
           "c": {
-            "random-uniform": 100,
-            "nearly-sorted": 100,
-            "reverse-sorted": 100,
-            "many-duplicates": 6.6,
-            "low-value-range": 47.8,
-            "adversarial-pivot": 100
+            "random-uniform": 8.7,
+            "nearly-sorted": 23.8,
+            "reverse-sorted": 33,
+            "many-duplicates": 0.6,
+            "low-value-range": 2.1,
+            "adversarial-pivot": 41.6
+          }
+        },
+        "sizeScores": {
+          "python": {
+            "small": 82.7,
+            "medium": 36.2,
+            "large": 100
+          },
+          "rust": {
+            "small": 75,
+            "medium": 41.5,
+            "large": 11.4
+          },
+          "c": {
+            "small": 66.7,
+            "medium": 25.5,
+            "large": 6.1
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "IntroSort",
+    "slug": "intro-sort",
+    "mode": "automated",
+    "results": {
+      "python": {
+        "small": 0.062,
+        "medium": 0.975
+      },
+      "rust": {
+        "small": 0.003,
+        "medium": 0.037,
+        "large": 0.453
+      },
+      "c": {
+        "small": 0.003,
+        "medium": 0.034,
+        "large": 0.397
+      }
+    },
+    "unit": "ms",
+    "status": "benchmarked",
+    "metadata": {
+      "source": "github-actions",
+      "benchmarkMode": "automated",
+      "algorithmHash": "80a472c11cb1c4f74e615baa766df9905408c9fce6c978e6e4542f0d9e8555ac",
+      "lastRunAt": "2026-04-20T05:38:44.323Z",
+      "lastRunMode": "small"
+    },
+    "snapshot": {
+      "workloadProfiles": {
+        "random-uniform": {
+          "python": {
+            "small": 0.062,
+            "medium": 0.975
+          },
+          "rust": {
+            "small": 0.003,
+            "medium": 0.037,
+            "large": 0.453
+          },
+          "c": {
+            "small": 0.003,
+            "medium": 0.034,
+            "large": 0.397
+          }
+        },
+        "nearly-sorted": {
+          "python": {
+            "small": 0.133,
+            "medium": 3.844
+          },
+          "rust": {
+            "small": 0.003,
+            "medium": 0.062,
+            "large": 0.733
+          },
+          "c": {
+            "small": 0.003,
+            "medium": 0.056,
+            "large": 0.645
+          }
+        },
+        "reverse-sorted": {
+          "python": {
+            "small": 0.162,
+            "medium": 3.194
+          },
+          "rust": {
+            "small": 0.005,
+            "medium": 0.061,
+            "large": 0.711
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.057,
+            "large": 0.658
+          }
+        },
+        "many-duplicates": {
+          "python": {
+            "small": 0.049,
+            "medium": 1.826
+          },
+          "rust": {
+            "small": 0.002,
+            "medium": 0.031,
+            "large": 0.363
+          },
+          "c": {
+            "small": 0.002,
+            "medium": 0.028,
+            "large": 0.283
+          }
+        },
+        "low-value-range": {
+          "python": {
+            "small": 0.054,
+            "medium": 1.102
+          },
+          "rust": {
+            "small": 0.003,
+            "medium": 0.032,
+            "large": 0.437
+          },
+          "c": {
+            "small": 0.003,
+            "medium": 0.032,
+            "large": 0.354
+          }
+        },
+        "adversarial-pivot": {
+          "python": {
+            "small": 0.156,
+            "medium": 3.472
+          },
+          "rust": {
+            "small": 0.004,
+            "medium": 0.062,
+            "large": 0.71
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.052,
+            "large": 0.637
+          }
+        }
+      },
+      "tiers": {},
+      "environment": {
+        "benchmarkSpecVersion": "draft-v2",
+        "runnerOs": "Linux",
+        "cpu": "AMD EPYC 7763 64-Core Processor",
+        "nodeVersion": "v22.22.2",
+        "pythonVersion": "Python 3.12.13",
+        "rustVersion": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "compilerVersion": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "workflowRunId": "24650297313"
+      },
+      "harness": {
+        "datasetGenerator": "deterministic-seeded",
+        "datasetProfile": "small=100, medium=1000, large=10000",
+        "languageSizeExclusions": {
+          "python": {
+            "large": "Canceled due to Python runtime and technical constraints."
+          }
+        },
+        "warmupPolicy": "5 warm-up runs",
+        "runCountPolicy": "30 measured runs",
+        "timeoutPolicy": "CI-managed",
+        "memoryConstraints": "runner-default",
+        "correctnessValidation": "sorted-output and cross-language identity",
+        "languageRunnerContract": "python.py, rust.rs, c.c",
+        "dimensionWeights": {
+          "random-uniform": 1,
+          "nearly-sorted": 1,
+          "reverse-sorted": 1,
+          "many-duplicates": 1,
+          "low-value-range": 1,
+          "adversarial-pivot": 1
+        }
+      },
+      "score": {
+        "rawAverageMs": 0.458,
+        "normalized": 52.5,
+        "composite": 13,
+        "percentile": 63.6,
+        "badges": [],
+        "dimensionScores": {
+          "python": {
+            "random-uniform": 55.4,
+            "nearly-sorted": 9,
+            "reverse-sorted": 10.8,
+            "many-duplicates": 6,
+            "low-value-range": 10.9,
+            "adversarial-pivot": 9.9
+          },
+          "rust": {
+            "random-uniform": 19.1,
+            "nearly-sorted": 10.7,
+            "reverse-sorted": 10.8,
+            "many-duplicates": 15.7,
+            "low-value-range": 13.1,
+            "adversarial-pivot": 10.7
+          },
+          "c": {
+            "random-uniform": 10.1,
+            "nearly-sorted": 10.8,
+            "reverse-sorted": 9.5,
+            "many-duplicates": 6.1,
+            "low-value-range": 5.4,
+            "adversarial-pivot": 9.7
           }
         },
         "sizeScores": {
           "python": {
             "small": 100,
-            "medium": 100,
-            "large": 100
+            "medium": 36.6
           },
           "rust": {
             "small": 100,
-            "medium": 100,
-            "large": 100
+            "medium": 59.5,
+            "large": 14.6
           },
           "c": {
-            "small": 100,
-            "medium": 100,
-            "large": 100
+            "small": 66.7,
+            "medium": 35.3,
+            "large": 7.1
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "Heap Sort",
+    "slug": "heap-sort",
+    "mode": "automated",
+    "results": {
+      "python": {
+        "small": 0.124,
+        "medium": 1.829
+      },
+      "rust": {
+        "small": 0.004,
+        "medium": 0.06,
+        "large": 0.752
+      },
+      "c": {
+        "small": 0.004,
+        "medium": 0.055,
+        "large": 0.722
+      }
+    },
+    "unit": "ms",
+    "status": "benchmarked",
+    "metadata": {
+      "source": "github-actions",
+      "benchmarkMode": "automated",
+      "algorithmHash": "012a353714704ced67edb6a95a0a74653a77a1f9f1ee73393c71c9fc56ea5ccf",
+      "lastRunAt": "2026-04-20T05:38:41.628Z",
+      "lastRunMode": "small"
+    },
+    "snapshot": {
+      "workloadProfiles": {
+        "random-uniform": {
+          "python": {
+            "small": 0.124,
+            "medium": 1.829
+          },
+          "rust": {
+            "small": 0.004,
+            "medium": 0.06,
+            "large": 0.752
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.055,
+            "large": 0.722
+          }
+        },
+        "nearly-sorted": {
+          "python": {
+            "small": 0.123,
+            "medium": 1.881
+          },
+          "rust": {
+            "small": 0.004,
+            "medium": 0.048,
+            "large": 0.545
+          },
+          "c": {
+            "small": 0.005,
+            "medium": 0.048,
+            "large": 0.533
+          }
+        },
+        "reverse-sorted": {
+          "python": {
+            "small": 0.102,
+            "medium": 1.639
+          },
+          "rust": {
+            "small": 0.004,
+            "medium": 0.049,
+            "large": 0.507
+          },
+          "c": {
+            "small": 0.003,
+            "medium": 0.044,
+            "large": 0.505
+          }
+        },
+        "many-duplicates": {
+          "python": {
+            "small": 0.116,
+            "medium": 1.637
+          },
+          "rust": {
+            "small": 0.004,
+            "medium": 0.056,
+            "large": 0.604
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.052,
+            "large": 0.595
+          }
+        },
+        "low-value-range": {
+          "python": {
+            "small": 0.113,
+            "medium": 1.742
+          },
+          "rust": {
+            "small": 0.004,
+            "medium": 0.061,
+            "large": 0.71
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.057,
+            "large": 0.708
+          }
+        },
+        "adversarial-pivot": {
+          "python": {
+            "small": 0.11,
+            "medium": 1.844
+          },
+          "rust": {
+            "small": 0.004,
+            "medium": 0.046,
+            "large": 0.477
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.047,
+            "large": 0.473
+          }
+        }
+      },
+      "tiers": {},
+      "environment": {
+        "benchmarkSpecVersion": "draft-v2",
+        "runnerOs": "Linux",
+        "cpu": "AMD EPYC 7763 64-Core Processor",
+        "nodeVersion": "v22.22.2",
+        "pythonVersion": "Python 3.12.13",
+        "rustVersion": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "compilerVersion": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "workflowRunId": "24650297313"
+      },
+      "harness": {
+        "datasetGenerator": "deterministic-seeded",
+        "datasetProfile": "small=100, medium=1000, large=10000",
+        "languageSizeExclusions": {
+          "python": {
+            "large": "Canceled due to Python runtime and technical constraints."
+          }
+        },
+        "warmupPolicy": "5 warm-up runs",
+        "runCountPolicy": "30 measured runs",
+        "timeoutPolicy": "CI-managed",
+        "memoryConstraints": "runner-default",
+        "correctnessValidation": "sorted-output and cross-language identity",
+        "languageRunnerContract": "python.py, rust.rs, c.c",
+        "dimensionWeights": {
+          "random-uniform": 1,
+          "nearly-sorted": 1,
+          "reverse-sorted": 1,
+          "many-duplicates": 1,
+          "low-value-range": 1,
+          "adversarial-pivot": 1
+        }
+      },
+      "score": {
+        "rawAverageMs": 0.397,
+        "normalized": 33.2,
+        "composite": 12.4,
+        "percentile": 54.5,
+        "badges": [],
+        "dimensionScores": {
+          "python": {
+            "random-uniform": 29.4,
+            "nearly-sorted": 17.9,
+            "reverse-sorted": 20.7,
+            "many-duplicates": 6.4,
+            "low-value-range": 6.8,
+            "adversarial-pivot": 18.4
+          },
+          "rust": {
+            "random-uniform": 11.5,
+            "nearly-sorted": 14.2,
+            "reverse-sorted": 15,
+            "many-duplicates": 9.3,
+            "low-value-range": 8,
+            "adversarial-pivot": 15.7
+          },
+          "c": {
+            "random-uniform": 5.6,
+            "nearly-sorted": 13,
+            "reverse-sorted": 12.3,
+            "many-duplicates": 2.9,
+            "low-value-range": 2.7,
+            "adversarial-pivot": 12.8
+          }
+        },
+        "sizeScores": {
+          "python": {
+            "small": 50,
+            "medium": 19.5
+          },
+          "rust": {
+            "small": 75,
+            "medium": 36.7,
+            "large": 8.8
+          },
+          "c": {
+            "small": 50,
+            "medium": 21.8,
+            "large": 3.9
           }
         }
       }
@@ -384,51 +1451,51 @@
       },
       "score": {
         "rawAverageMs": 2.72,
-        "normalized": 52,
-        "composite": 56.9,
-        "percentile": 83.3,
+        "normalized": 25.7,
+        "composite": 7.3,
+        "percentile": 45.5,
         "badges": [],
         "dimensionScores": {
           "python": {
-            "random-uniform": 64.6,
-            "nearly-sorted": 63.7,
-            "reverse-sorted": 100,
-            "many-duplicates": 61.1,
-            "low-value-range": 100,
-            "adversarial-pivot": 83.8
+            "random-uniform": 3.2,
+            "nearly-sorted": 2.3,
+            "reverse-sorted": 3,
+            "many-duplicates": 0.7,
+            "low-value-range": 0.7,
+            "adversarial-pivot": 3
           },
           "rust": {
-            "random-uniform": 56.1,
-            "nearly-sorted": 55.6,
-            "reverse-sorted": 46.5,
-            "many-duplicates": 27.4,
-            "low-value-range": 59.9,
-            "adversarial-pivot": 36.4
+            "random-uniform": 8.3,
+            "nearly-sorted": 13.1,
+            "reverse-sorted": 16.3,
+            "many-duplicates": 7.1,
+            "low-value-range": 6.3,
+            "adversarial-pivot": 15.7
           },
           "c": {
-            "random-uniform": 50.9,
-            "nearly-sorted": 56.2,
-            "reverse-sorted": 42.9,
-            "many-duplicates": 27.7,
-            "low-value-range": 57.1,
-            "adversarial-pivot": 34
+            "random-uniform": 4.4,
+            "nearly-sorted": 13.4,
+            "reverse-sorted": 14.2,
+            "many-duplicates": 2.5,
+            "low-value-range": 2.5,
+            "adversarial-pivot": 14.1
           }
         },
         "sizeScores": {
           "python": {
-            "small": 41.7,
-            "medium": 48.7,
+            "small": 34.4,
+            "medium": 17.6,
             "large": 66.1
           },
           "rust": {
-            "small": 50,
-            "medium": 55.8,
-            "large": 56.1
+            "small": 37.5,
+            "medium": 23.2,
+            "large": 6.4
           },
           "c": {
-            "small": 42.9,
-            "medium": 56.6,
-            "large": 50.4
+            "small": 28.6,
+            "medium": 14.5,
+            "large": 3.1
           }
         }
       }
@@ -600,269 +1667,51 @@
       },
       "score": {
         "rawAverageMs": 3.761,
-        "normalized": 68.3,
-        "composite": 51,
-        "percentile": 66.7,
+        "normalized": 32.9,
+        "composite": 7,
+        "percentile": 36.4,
         "badges": [],
         "dimensionScores": {
           "python": {
-            "random-uniform": 53.7,
-            "nearly-sorted": 44.2,
-            "reverse-sorted": 55.5,
-            "many-duplicates": 51.8,
-            "low-value-range": 81.2,
-            "adversarial-pivot": 44.8
+            "random-uniform": 2.6,
+            "nearly-sorted": 1.6,
+            "reverse-sorted": 1.6,
+            "many-duplicates": 0.6,
+            "low-value-range": 0.6,
+            "adversarial-pivot": 1.6
           },
           "rust": {
-            "random-uniform": 72,
-            "nearly-sorted": 53.9,
-            "reverse-sorted": 39.3,
-            "many-duplicates": 33.8,
-            "low-value-range": 68.6,
-            "adversarial-pivot": 32.7
+            "random-uniform": 10.6,
+            "nearly-sorted": 12.7,
+            "reverse-sorted": 13.8,
+            "many-duplicates": 8.7,
+            "low-value-range": 7.2,
+            "adversarial-pivot": 14.1
           },
           "c": {
-            "random-uniform": 64.2,
-            "nearly-sorted": 55.8,
-            "reverse-sorted": 37.3,
-            "many-duplicates": 32.4,
-            "low-value-range": 64.9,
-            "adversarial-pivot": 31.3
+            "random-uniform": 5.6,
+            "nearly-sorted": 13.3,
+            "reverse-sorted": 12.3,
+            "many-duplicates": 3,
+            "low-value-range": 2.8,
+            "adversarial-pivot": 13
           }
         },
         "sizeScores": {
           "python": {
-            "small": 56,
-            "medium": 46.8,
+            "small": 46.3,
+            "medium": 16.9,
             "large": 54.2
           },
           "rust": {
-            "small": 80,
-            "medium": 85.5,
-            "large": 70.9
+            "small": 60,
+            "medium": 35.5,
+            "large": 8.1
           },
           "c": {
-            "small": 75,
-            "medium": 83.9,
-            "large": 62.6
-          }
-        }
-      }
-    }
-  },
-  {
-    "name": "Bead Sort",
-    "slug": "bead-sort",
-    "mode": "automated",
-    "results": {
-      "python": {
-        "small": 7.733,
-        "medium": 86.605,
-        "large": 934.485
-      },
-      "rust": {
-        "small": 0.141,
-        "medium": 1.314,
-        "large": 12.817
-      },
-      "c": {
-        "small": 0.086,
-        "medium": 0.751,
-        "large": 7.568
-      }
-    },
-    "unit": "ms",
-    "status": "benchmarked",
-    "metadata": {
-      "source": "github-actions",
-      "benchmarkMode": "automated",
-      "algorithmHash": "b35a12a60722ff524761dd4d98d3a23284e20499831df5fb374f91db699897f7",
-      "lastRunAt": "2026-04-19T14:59:28.108Z",
-      "lastRunMode": "small"
-    },
-    "snapshot": {
-      "workloadProfiles": {
-        "random-uniform": {
-          "python": {
-            "small": 7.733,
-            "medium": 86.605,
-            "large": 934.485
-          },
-          "rust": {
-            "small": 0.141,
-            "medium": 1.314,
-            "large": 12.817
-          },
-          "c": {
-            "small": 0.086,
-            "medium": 0.751,
-            "large": 7.568
-          }
-        },
-        "nearly-sorted": {
-          "python": {
-            "small": 0.584,
-            "medium": 84.668,
-            "large": 10135.866
-          },
-          "rust": {
-            "small": 0.013,
-            "medium": 1.281,
-            "large": 124.943
-          },
-          "c": {
-            "small": 0.012,
-            "medium": 0.753,
-            "large": 71.549
-          }
-        },
-        "reverse-sorted": {
-          "python": {
-            "small": 0.589,
-            "medium": 85.391,
-            "large": 10235.347
-          },
-          "rust": {
-            "small": 0.013,
-            "medium": 1.284,
-            "large": 125.224
-          },
-          "c": {
-            "small": 0.016,
-            "medium": 1.098,
-            "large": 71.619
-          }
-        },
-        "many-duplicates": {
-          "python": {
-            "small": 0.126,
-            "medium": 1.314,
-            "large": 13.854
-          },
-          "rust": {
-            "small": 0.003,
-            "medium": 0.026,
-            "large": 0.211
-          },
-          "c": {
-            "small": 0.004,
-            "medium": 0.02,
-            "large": 0.184
-          }
-        },
-        "low-value-range": {
-          "python": {
-            "small": 0.328,
-            "medium": 3.541,
-            "large": 38.396
-          },
-          "rust": {
-            "small": 0.008,
-            "medium": 0.061,
-            "large": 0.523
-          },
-          "c": {
-            "small": 0.006,
-            "medium": 0.048,
-            "large": 0.435
-          }
-        },
-        "adversarial-pivot": {
-          "python": {
-            "small": 0.584,
-            "medium": 83.502,
-            "large": 10114.322
-          },
-          "rust": {
-            "small": 0.013,
-            "medium": 1.284,
-            "large": 124.766
-          },
-          "c": {
-            "small": 0.01,
-            "medium": 0.731,
-            "large": 71.63
-          }
-        }
-      },
-      "tiers": {},
-      "environment": {
-        "benchmarkSpecVersion": "draft-v2",
-        "runnerOs": "Linux",
-        "cpu": "AMD EPYC 7763 64-Core Processor",
-        "nodeVersion": "v22.22.2",
-        "pythonVersion": "Python 3.12.13",
-        "rustVersion": "rustc 1.95.0 (59807616e 2026-04-14)",
-        "compilerVersion": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
-        "workflowRunId": "24631972996"
-      },
-      "harness": {
-        "datasetGenerator": "deterministic-seeded",
-        "datasetProfile": "small=100, medium=1000, large=10000",
-        "warmupPolicy": "5 warm-up runs",
-        "runCountPolicy": "30 measured runs",
-        "timeoutPolicy": "CI-managed",
-        "memoryConstraints": "runner-default",
-        "correctnessValidation": "sorted-output and cross-language identity",
-        "languageRunnerContract": "python.py, rust.rs, c.c",
-        "dimensionWeights": {
-          "random-uniform": 1,
-          "nearly-sorted": 1,
-          "reverse-sorted": 1,
-          "many-duplicates": 1,
-          "low-value-range": 1,
-          "adversarial-pivot": 1
-        }
-      },
-      "score": {
-        "rawAverageMs": 600.883,
-        "normalized": 3.4,
-        "composite": 31.9,
-        "percentile": 50,
-        "badges": [
-          "Handles Duplicates Well"
-        ],
-        "dimensionScores": {
-          "python": {
-            "random-uniform": 1.7,
-            "nearly-sorted": 0.1,
-            "reverse-sorted": 0.2,
-            "many-duplicates": 100,
-            "low-value-range": 60.7,
-            "adversarial-pivot": 0.1
-          },
-          "rust": {
-            "random-uniform": 4.5,
-            "nearly-sorted": 0.3,
-            "reverse-sorted": 0.2,
-            "many-duplicates": 100,
-            "low-value-range": 100,
-            "adversarial-pivot": 0.2
-          },
-          "c": {
-            "random-uniform": 6,
-            "nearly-sorted": 0.4,
-            "reverse-sorted": 0.3,
-            "many-duplicates": 100,
-            "low-value-range": 100,
-            "adversarial-pivot": 0.2
-          }
-        },
-        "sizeScores": {
-          "python": {
-            "small": 1,
-            "medium": 1.1,
-            "large": 1.8
-          },
-          "rust": {
-            "small": 2.8,
-            "medium": 4,
-            "large": 4.5
-          },
-          "c": {
-            "small": 3.5,
-            "medium": 6.3,
-            "large": 6
+            "small": 50,
+            "medium": 21.4,
+            "large": 3.8
           }
         }
       }
@@ -1034,51 +1883,267 @@
       },
       "score": {
         "rawAverageMs": 13.779,
-        "normalized": 33.4,
-        "composite": 19,
-        "percentile": 33.3,
+        "normalized": 15.7,
+        "composite": 3,
+        "percentile": 27.3,
         "badges": [],
         "dimensionScores": {
           "python": {
-            "random-uniform": 13.9,
-            "nearly-sorted": 12.4,
-            "reverse-sorted": 15.4,
-            "many-duplicates": 12.8,
-            "low-value-range": 21.1,
-            "adversarial-pivot": 12.9
+            "random-uniform": 0.7,
+            "nearly-sorted": 0.4,
+            "reverse-sorted": 0.5,
+            "many-duplicates": 0.1,
+            "low-value-range": 0.2,
+            "adversarial-pivot": 0.5
           },
           "rust": {
-            "random-uniform": 31.7,
-            "nearly-sorted": 25.7,
-            "reverse-sorted": 18.8,
-            "many-duplicates": 14.4,
-            "low-value-range": 33,
-            "adversarial-pivot": 14.8
+            "random-uniform": 4.7,
+            "nearly-sorted": 6.1,
+            "reverse-sorted": 6.6,
+            "many-duplicates": 3.7,
+            "low-value-range": 3.5,
+            "adversarial-pivot": 6.4
           },
           "c": {
-            "random-uniform": 25.3,
-            "nearly-sorted": 22.3,
-            "reverse-sorted": 15.6,
-            "many-duplicates": 12.5,
-            "low-value-range": 27.4,
-            "adversarial-pivot": 12.6
+            "random-uniform": 2.2,
+            "nearly-sorted": 5.3,
+            "reverse-sorted": 5.1,
+            "many-duplicates": 1.1,
+            "low-value-range": 1.2,
+            "adversarial-pivot": 5.2
           }
         },
         "sizeScores": {
           "python": {
-            "small": 26.8,
-            "medium": 20.7,
+            "small": 22.1,
+            "medium": 7.5,
             "large": 13.6
           },
           "rust": {
-            "small": 44.4,
-            "medium": 52.5,
-            "large": 30.5
+            "small": 33.3,
+            "medium": 21.8,
+            "large": 3.5
           },
           "c": {
-            "small": 37.5,
-            "medium": 50.5,
-            "large": 24
+            "small": 25,
+            "medium": 12.9,
+            "large": 1.5
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "Bead Sort",
+    "slug": "bead-sort",
+    "mode": "automated",
+    "results": {
+      "python": {
+        "small": 7.733,
+        "medium": 86.605,
+        "large": 934.485
+      },
+      "rust": {
+        "small": 0.141,
+        "medium": 1.314,
+        "large": 12.817
+      },
+      "c": {
+        "small": 0.086,
+        "medium": 0.751,
+        "large": 7.568
+      }
+    },
+    "unit": "ms",
+    "status": "benchmarked",
+    "metadata": {
+      "source": "github-actions",
+      "benchmarkMode": "automated",
+      "algorithmHash": "b35a12a60722ff524761dd4d98d3a23284e20499831df5fb374f91db699897f7",
+      "lastRunAt": "2026-04-19T14:59:28.108Z",
+      "lastRunMode": "small"
+    },
+    "snapshot": {
+      "workloadProfiles": {
+        "random-uniform": {
+          "python": {
+            "small": 7.733,
+            "medium": 86.605,
+            "large": 934.485
+          },
+          "rust": {
+            "small": 0.141,
+            "medium": 1.314,
+            "large": 12.817
+          },
+          "c": {
+            "small": 0.086,
+            "medium": 0.751,
+            "large": 7.568
+          }
+        },
+        "nearly-sorted": {
+          "python": {
+            "small": 0.584,
+            "medium": 84.668,
+            "large": 10135.866
+          },
+          "rust": {
+            "small": 0.013,
+            "medium": 1.281,
+            "large": 124.943
+          },
+          "c": {
+            "small": 0.012,
+            "medium": 0.753,
+            "large": 71.549
+          }
+        },
+        "reverse-sorted": {
+          "python": {
+            "small": 0.589,
+            "medium": 85.391,
+            "large": 10235.347
+          },
+          "rust": {
+            "small": 0.013,
+            "medium": 1.284,
+            "large": 125.224
+          },
+          "c": {
+            "small": 0.016,
+            "medium": 1.098,
+            "large": 71.619
+          }
+        },
+        "many-duplicates": {
+          "python": {
+            "small": 0.126,
+            "medium": 1.314,
+            "large": 13.854
+          },
+          "rust": {
+            "small": 0.003,
+            "medium": 0.026,
+            "large": 0.211
+          },
+          "c": {
+            "small": 0.004,
+            "medium": 0.02,
+            "large": 0.184
+          }
+        },
+        "low-value-range": {
+          "python": {
+            "small": 0.328,
+            "medium": 3.541,
+            "large": 38.396
+          },
+          "rust": {
+            "small": 0.008,
+            "medium": 0.061,
+            "large": 0.523
+          },
+          "c": {
+            "small": 0.006,
+            "medium": 0.048,
+            "large": 0.435
+          }
+        },
+        "adversarial-pivot": {
+          "python": {
+            "small": 0.584,
+            "medium": 83.502,
+            "large": 10114.322
+          },
+          "rust": {
+            "small": 0.013,
+            "medium": 1.284,
+            "large": 124.766
+          },
+          "c": {
+            "small": 0.01,
+            "medium": 0.731,
+            "large": 71.63
+          }
+        }
+      },
+      "tiers": {},
+      "environment": {
+        "benchmarkSpecVersion": "draft-v2",
+        "runnerOs": "Linux",
+        "cpu": "AMD EPYC 7763 64-Core Processor",
+        "nodeVersion": "v22.22.2",
+        "pythonVersion": "Python 3.12.13",
+        "rustVersion": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "compilerVersion": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "workflowRunId": "24631972996"
+      },
+      "harness": {
+        "datasetGenerator": "deterministic-seeded",
+        "datasetProfile": "small=100, medium=1000, large=10000",
+        "warmupPolicy": "5 warm-up runs",
+        "runCountPolicy": "30 measured runs",
+        "timeoutPolicy": "CI-managed",
+        "memoryConstraints": "runner-default",
+        "correctnessValidation": "sorted-output and cross-language identity",
+        "languageRunnerContract": "python.py, rust.rs, c.c",
+        "dimensionWeights": {
+          "random-uniform": 1,
+          "nearly-sorted": 1,
+          "reverse-sorted": 1,
+          "many-duplicates": 1,
+          "low-value-range": 1,
+          "adversarial-pivot": 1
+        }
+      },
+      "score": {
+        "rawAverageMs": 600.883,
+        "normalized": 1.3,
+        "composite": 2.9,
+        "percentile": 18.2,
+        "badges": [],
+        "dimensionScores": {
+          "python": {
+            "random-uniform": 0.1,
+            "nearly-sorted": 0,
+            "reverse-sorted": 0,
+            "many-duplicates": 1.1,
+            "low-value-range": 0.4,
+            "adversarial-pivot": 0
+          },
+          "rust": {
+            "random-uniform": 0.7,
+            "nearly-sorted": 0.1,
+            "reverse-sorted": 0.1,
+            "many-duplicates": 25.8,
+            "low-value-range": 10.5,
+            "adversarial-pivot": 0.1
+          },
+          "c": {
+            "random-uniform": 0.5,
+            "nearly-sorted": 0.1,
+            "reverse-sorted": 0.1,
+            "many-duplicates": 9.1,
+            "low-value-range": 4.3,
+            "adversarial-pivot": 0.1
+          }
+        },
+        "sizeScores": {
+          "python": {
+            "small": 0.8,
+            "medium": 0.4,
+            "large": 1.8
+          },
+          "rust": {
+            "small": 2.1,
+            "medium": 1.7,
+            "large": 0.5
+          },
+          "c": {
+            "small": 2.3,
+            "medium": 1.6,
+            "large": 0.4
           }
         }
       }
@@ -1250,51 +2315,51 @@
       },
       "score": {
         "rawAverageMs": 14.858,
-        "normalized": 25.9,
-        "composite": 16.3,
-        "percentile": 16.7,
+        "normalized": 12,
+        "composite": 2.4,
+        "percentile": 9.1,
         "badges": [],
         "dimensionScores": {
           "python": {
-            "random-uniform": 13.3,
-            "nearly-sorted": 11.6,
-            "reverse-sorted": 14,
-            "many-duplicates": 12.1,
-            "low-value-range": 20,
-            "adversarial-pivot": 11.5
+            "random-uniform": 0.7,
+            "nearly-sorted": 0.4,
+            "reverse-sorted": 0.4,
+            "many-duplicates": 0.1,
+            "low-value-range": 0.1,
+            "adversarial-pivot": 0.4
           },
           "rust": {
-            "random-uniform": 27.6,
-            "nearly-sorted": 19.3,
-            "reverse-sorted": 15.2,
-            "many-duplicates": 12.5,
-            "low-value-range": 28.2,
-            "adversarial-pivot": 12.2
+            "random-uniform": 4.1,
+            "nearly-sorted": 4.6,
+            "reverse-sorted": 5.3,
+            "many-duplicates": 3.2,
+            "low-value-range": 3,
+            "adversarial-pivot": 5.3
           },
           "c": {
-            "random-uniform": 21.2,
-            "nearly-sorted": 17.2,
-            "reverse-sorted": 13,
-            "many-duplicates": 11,
-            "low-value-range": 23.6,
-            "adversarial-pivot": 9.9
+            "random-uniform": 1.8,
+            "nearly-sorted": 4.1,
+            "reverse-sorted": 4.3,
+            "many-duplicates": 1,
+            "low-value-range": 1,
+            "adversarial-pivot": 4.1
           }
         },
         "sizeScores": {
           "python": {
-            "small": 22.7,
-            "medium": 19.7,
+            "small": 18.7,
+            "medium": 7.1,
             "large": 13.1
           },
           "rust": {
-            "small": 33.3,
-            "medium": 39.6,
-            "large": 26.8
+            "small": 25,
+            "medium": 16.4,
+            "large": 3
           },
           "c": {
-            "small": 21.4,
-            "medium": 35.9,
-            "large": 20.4
+            "small": 14.3,
+            "medium": 9.2,
+            "large": 1.2
           }
         }
       }
@@ -1466,51 +2531,51 @@
       },
       "score": {
         "rawAverageMs": 1940.275,
-        "normalized": 3,
-        "composite": 0.1,
+        "normalized": 2,
+        "composite": 0,
         "percentile": 0,
         "badges": [],
         "dimensionScores": {
           "python": {
-            "random-uniform": 0.2,
-            "nearly-sorted": 0.1,
-            "reverse-sorted": 0.1,
-            "many-duplicates": 0.1,
-            "low-value-range": 0.2,
-            "adversarial-pivot": 0.1
+            "random-uniform": 0,
+            "nearly-sorted": 0,
+            "reverse-sorted": 0,
+            "many-duplicates": 0,
+            "low-value-range": 0,
+            "adversarial-pivot": 0
           },
           "rust": {
-            "random-uniform": 0.5,
-            "nearly-sorted": 0.1,
+            "random-uniform": 0.1,
+            "nearly-sorted": 0,
             "reverse-sorted": 0,
-            "many-duplicates": 0.1,
-            "low-value-range": 0.4,
-            "adversarial-pivot": 0.1
+            "many-duplicates": 0,
+            "low-value-range": 0,
+            "adversarial-pivot": 0
           },
           "c": {
-            "random-uniform": 0.2,
-            "nearly-sorted": 0.1,
+            "random-uniform": 0,
+            "nearly-sorted": 0,
             "reverse-sorted": 0,
-            "many-duplicates": 0.1,
-            "low-value-range": 0.2,
+            "many-duplicates": 0,
+            "low-value-range": 0,
             "adversarial-pivot": 0
           }
         },
         "sizeScores": {
           "python": {
-            "small": 8,
-            "medium": 1.1,
+            "small": 6.6,
+            "medium": 0.4,
             "large": 0.2
           },
           "rust": {
-            "small": 7.8,
-            "medium": 3,
-            "large": 0.4
+            "small": 5.9,
+            "medium": 1.3,
+            "large": 0
           },
           "c": {
-            "small": 4.9,
-            "medium": 1.5,
-            "large": 0.2
+            "small": 3.3,
+            "medium": 0.4,
+            "large": 0
           }
         }
       }
