@@ -48,12 +48,48 @@ function formatDateTime(value?: string, locale?: string) {
   }).format(new Date(value));
 }
 
+function getTimingScore(values: number[], value?: number) {
+  if (typeof value !== "number" || values.length === 0) {
+    return undefined;
+  }
+
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+
+  if (min === max) {
+    return 100;
+  }
+
+  return 100 - ((value - min) / (max - min)) * 100;
+}
+
+function getCompositeVerdict(score?: number) {
+  if (typeof score !== "number") {
+    return "unavailable";
+  }
+
+  if (score >= 85) {
+    return "elite";
+  }
+
+  if (score >= 65) {
+    return "strong";
+  }
+
+  if (score >= 40) {
+    return "mixed";
+  }
+
+  return "limited";
+}
+
 export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetailPageProps) {
   const { t, i18n } = useTranslation();
   const [entries, setEntries] = useState<BenchmarkRankingEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState<BenchmarkLanguage>("python");
   const [size, setSize] = useState<BenchmarkSize>("medium");
+  const [radarLanguages, setRadarLanguages] = useState<BenchmarkLanguage[]>(["python", "rust", "c"]);
 
   useEffect(() => {
     let cancelled = false;
@@ -111,6 +147,48 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
     ]),
   );
   const languageLabels = Object.fromEntries(benchmarkLanguages.map((item) => [item, t(`labs.benchmarkLanguages.${item}`)]));
+  const profileDescriptions = Object.fromEntries(
+    benchmarkProfiles.map((profile) => [profile, t(`benchmarkDetail.profileHelp.${profile}`)]),
+  );
+  const radarSeries = radarLanguages
+    .map((item) => ({
+      language: item,
+      scores: entry?.snapshot?.score?.dimensionScores?.[item] ?? {},
+    }))
+    .filter((item) => benchmarkProfiles.some((profile) => typeof item.scores?.[profile] === "number"));
+  const profileSummaries = benchmarkProfiles
+    .map((profile) => {
+      const scores = benchmarkLanguages
+        .map((languageKey) => entry?.snapshot?.score?.dimensionScores?.[languageKey]?.[profile])
+        .filter((value): value is number => typeof value === "number");
+
+      if (!scores.length) {
+        return { profile, score: undefined };
+      }
+
+      const total = scores.reduce((sum, value) => sum + value, 0);
+      return { profile, score: total / scores.length };
+    })
+    .filter((item): item is { profile: typeof benchmarkProfiles[number]; score: number } => typeof item.score === "number")
+    .sort((left, right) => right.score - left.score);
+  const strength = profileSummaries[0];
+  const weakness = profileSummaries[profileSummaries.length - 1];
+  const verdict = getCompositeVerdict(compositeScore);
+  const fastestLanguageForSize = benchmarkLanguages
+    .map((languageKey) => ({ language: languageKey, value: entry?.results?.[languageKey]?.[size] }))
+    .filter((item): item is { language: BenchmarkLanguage; value: number } => typeof item.value === "number")
+    .sort((left, right) => left.value - right.value)[0];
+  const generatedSummary = strength && weakness && fastestLanguageForSize
+    ? t("benchmarkDetail.generatedSummary", {
+        bestProfile: profileLabels[strength.profile],
+        bestScore: strength.score.toFixed(1),
+        weakestProfile: profileLabels[weakness.profile],
+        weakestScore: weakness.score.toFixed(1),
+        fastestLanguage: languageLabels[fastestLanguageForSize.language],
+        fastestTime: formatBenchmarkMetric(fastestLanguageForSize.value, entry?.unit ?? "ms"),
+        size: t(`labs.benchmarkSizes.${size}`),
+      })
+    : t("benchmarkDetail.summary");
 
   const dataFields = entry
     ? [
@@ -203,7 +281,7 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                       {t("benchmarkDetail.fields.lastRunAt", { defaultValue: "Last benchmark run" })}: {formatDateTime(entry.metadata?.lastRunAt, i18n.language)}
                     </span>
                   </div>
-                  <p className="mt-5 max-w-3xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("benchmarkDetail.summary")}</p>
+                  <p className="mt-5 max-w-3xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">{generatedSummary}</p>
                 </div>
 
                 <div
@@ -220,9 +298,47 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                 </div>
               </div>
 
+              <div className="mt-8 grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1.1fr)_minmax(0,0.8fr)]">
+                <div className="rounded-xl border border-zinc-950/8 bg-zinc-50/90 p-5 dark:border-white/10 dark:bg-zinc-950/25">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">{t("benchmarkDetail.insightStrength")}</p>
+                  <p className="mt-3 text-lg font-semibold">
+                    {strength ? profileLabels[strength.profile] : t("benchmarkDetail.none")}
+                  </p>
+                  <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">
+                    {strength
+                      ? t("benchmarkDetail.insightStrengthDescription", {
+                          language: languageLabels[language],
+                          score: strength.score.toFixed(1),
+                        })
+                      : t("benchmarkDetail.none")}
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-zinc-950/8 bg-zinc-50/90 p-5 dark:border-white/10 dark:bg-zinc-950/25">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">{t("benchmarkDetail.insightWeakness")}</p>
+                  <p className="mt-3 text-lg font-semibold">
+                    {weakness ? profileLabels[weakness.profile] : t("benchmarkDetail.none")}
+                  </p>
+                  <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">
+                    {weakness
+                      ? t("benchmarkDetail.insightWeaknessDescription", {
+                          language: languageLabels[language],
+                          score: weakness.score.toFixed(1),
+                        })
+                      : t("benchmarkDetail.none")}
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-zinc-950/8 bg-zinc-50/90 p-5 dark:border-white/10 dark:bg-zinc-950/25">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">{t("benchmarkDetail.insightVerdict")}</p>
+                  <p className="mt-3 text-lg font-semibold">{t(`benchmarkDetail.verdicts.${verdict}.title`)}</p>
+                  <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">{t(`benchmarkDetail.verdicts.${verdict}.description`)}</p>
+                </div>
+              </div>
+
             </section>
 
-            <section className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)]">
+            <section className="mt-8 grid gap-5">
               <div className="grid gap-5">
                 <section className="rounded-lg border border-zinc-950/10 bg-white/72 p-6 shadow-sm dark:border-white/10 dark:bg-white/8">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -296,7 +412,7 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                     <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">{t("benchmarkDetail.pythonLargeCanceled")}</p>
                   ) : null}
 
-                  <div className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+                  <div className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,0.8fr)_minmax(0,1fr)]">
                     <div className="rounded-lg bg-zinc-50/90 p-5 dark:bg-zinc-950/30">
                       <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
                         {t("benchmarkDetail.selectedMetric")}
@@ -311,13 +427,54 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                           ? t("benchmark.status.canceled")
                           : typeof selectedSizeScore === "number" ? selectedSizeScore.toFixed(1) : t("benchmarkDetail.none")}
                       </p>
+                      <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">{t("benchmarkDetail.compositeExplanation")}</p>
+                    </div>
+
+                    <div className="rounded-lg bg-zinc-50/90 p-5 dark:bg-zinc-950/30">
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+                        {t("benchmarkDetail.radarSelectionTitle")}
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {benchmarkLanguages.map((item) => {
+                          const active = radarLanguages.includes(item);
+
+                          return (
+                            <button
+                              key={item}
+                              type="button"
+                              onClick={() => {
+                                setLanguage(item);
+                                setRadarLanguages((current) => {
+                                  if (current.includes(item)) {
+                                    if (current.length === 1) {
+                                      return current;
+                                    }
+
+                                    return current.filter((value) => value !== item);
+                                  }
+
+                                  return [...current, item];
+                                });
+                              }}
+                              className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
+                                active
+                                  ? "bg-zinc-950 text-white dark:bg-white dark:text-zinc-950"
+                                  : "border border-zinc-950/10 bg-white text-zinc-700 hover:bg-zinc-950 hover:text-white dark:border-white/10 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white dark:hover:text-zinc-950"
+                              }`}
+                            >
+                              {languageLabels[item]}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">{t("benchmarkDetail.radarHint")}</p>
                     </div>
 
                     <BenchmarkRadarChart
-                      scores={radarScores}
-                      language={language}
+                      series={radarSeries}
                       unitLabel={t("benchmarkDetail.radarTitle")}
                       labels={{ ...profileLabels, ...languageLabels }}
+                      profileDescriptions={profileDescriptions}
                     />
                   </div>
                 </section>
@@ -328,7 +485,14 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
 
                   <div className="mt-6 grid gap-4 lg:grid-cols-3">
                     {benchmarkLanguages.map((languageKey) => (
-                      <div key={languageKey} className="rounded-lg border border-zinc-950/8 bg-zinc-50/80 p-4 dark:border-white/10 dark:bg-zinc-950/20">
+                      <div
+                        key={languageKey}
+                        className={`rounded-lg border bg-zinc-50/80 p-4 transition dark:bg-zinc-950/20 ${
+                          language === languageKey
+                            ? "border-teal-500/50 shadow-[0_0_0_1px_rgba(20,184,166,0.25)] dark:border-teal-300/45"
+                            : "border-zinc-950/8 dark:border-white/10"
+                        }`}
+                      >
                         <div className="flex items-center justify-between gap-3">
                           <p className="text-sm font-semibold">{t(`labs.benchmarkLanguages.${languageKey}`)}</p>
                           <span
@@ -346,14 +510,31 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                         </div>
                         <div className="mt-4 space-y-3">
                           {benchmarkSizes.map((sizeKey) => (
-                            <div key={sizeKey} className="flex items-center justify-between gap-4">
-                              <span className="text-sm text-zinc-500 dark:text-zinc-400">{t(`labs.benchmarkSizes.${sizeKey}`)}</span>
-                              <span className="font-mono text-sm font-semibold">
+                            <button
+                              key={sizeKey}
+                              type="button"
+                              onClick={() => {
+                                setLanguage(languageKey);
+                                setSize(sizeKey);
+                                if (!radarLanguages.includes(languageKey)) {
+                                  setRadarLanguages((current) => [...current, languageKey]);
+                                }
+                              }}
+                              className={`flex w-full items-center justify-between gap-4 rounded-lg px-3 py-2 text-left transition ${
+                                language === languageKey && size === sizeKey
+                                  ? "bg-teal-500/12 ring-1 ring-teal-500/35 dark:bg-teal-400/10 dark:ring-teal-300/30"
+                                  : "hover:bg-white dark:hover:bg-white/5"
+                              }`}
+                            >
+                              <span className={`text-sm ${language === languageKey && size === sizeKey ? "font-semibold text-zinc-900 dark:text-zinc-100" : "text-zinc-500 dark:text-zinc-400"}`}>
+                                {t(`labs.benchmarkSizes.${sizeKey}`)}
+                              </span>
+                              <span className={`font-mono text-sm ${language === languageKey && size === sizeKey ? "font-bold" : "font-semibold"}`}>
                                 {getBenchmarkSizeStatus(entry, languageKey, sizeKey) === "canceled"
                                   ? t("benchmark.status.canceled")
                                   : formatBenchmarkMetric(entry.results?.[languageKey]?.[sizeKey], entry.unit ?? "ms")}
                               </span>
-                            </div>
+                            </button>
                           ))}
                         </div>
                       </div>
@@ -404,6 +585,80 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                 </section>
 
                 <section className="rounded-lg border border-zinc-950/10 bg-white/72 p-6 shadow-sm dark:border-white/10 dark:bg-white/8">
+                  <h2 className="text-2xl font-semibold tracking-tight">{t("benchmarkDetail.allTimingsTitle")}</h2>
+                  <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("benchmarkDetail.allTimingsDescription")}</p>
+
+                  <div className="mt-6 overflow-x-auto">
+                    <table className="min-w-[760px] divide-y divide-zinc-950/8 dark:divide-white/10">
+                      <thead className="bg-zinc-950/[0.03] dark:bg-white/[0.03]">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+                            {t("benchmarkDetail.table.dimension")}
+                          </th>
+                          {benchmarkLanguages.map((languageKey) => (
+                            <th key={languageKey} colSpan={3} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+                              {languageLabels[languageKey]}
+                            </th>
+                          ))}
+                        </tr>
+                        <tr className="border-t border-zinc-950/8 dark:border-white/10">
+                          <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-[0.14em] text-zinc-400 dark:text-zinc-500">
+                            {t("benchmarkDetail.table.workload")}
+                          </th>
+                          {benchmarkLanguages.flatMap((languageKey) =>
+                            benchmarkSizes.map((sizeKey) => (
+                              <th key={`${languageKey}-${sizeKey}`} className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-[0.14em] text-zinc-400 dark:text-zinc-500">
+                                {t(`labs.benchmarkSizes.${sizeKey}`)}
+                              </th>
+                            )),
+                          )}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-zinc-950/8 dark:divide-white/10">
+                        {benchmarkProfiles.map((profile) => (
+                          <tr key={profile}>
+                            <td className="px-4 py-4">
+                              <p className="font-semibold">{profileLabels[profile]}</p>
+                              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{profileDescriptions[profile]}</p>
+                            </td>
+                            {benchmarkLanguages.flatMap((languageKey) =>
+                              benchmarkSizes.map((sizeKey) => {
+                                const value = entry.snapshot?.workloadProfiles?.[profile]?.[languageKey]?.[sizeKey];
+                                const comparable = benchmarkLanguages
+                                  .map((item) => entry.snapshot?.workloadProfiles?.[profile]?.[item]?.[sizeKey])
+                                  .filter((item): item is number => typeof item === "number");
+                                const heat = getTimingScore(comparable, value);
+                                const colors = getPerformanceColors(heat);
+                                const isActive = language === languageKey && size === sizeKey;
+
+                                return (
+                                  <td key={`${profile}-${languageKey}-${sizeKey}`} className="px-2 py-2">
+                                    <div
+                                      className={`rounded-lg border px-3 py-3 text-sm ${isActive ? "ring-1 ring-teal-500/35 dark:ring-teal-300/35" : ""}`}
+                                      style={{
+                                        backgroundColor: typeof value === "number" ? colors.background : undefined,
+                                        borderColor: typeof value === "number" ? colors.border : "rgba(113,113,122,0.18)",
+                                        color: typeof value === "number" ? colors.foreground : undefined,
+                                      }}
+                                    >
+                                      <p className="font-mono font-semibold">
+                                        {getBenchmarkSizeStatus(entry, languageKey, sizeKey) === "canceled"
+                                          ? t("benchmark.status.canceled")
+                                          : formatBenchmarkMetric(value, entry.unit ?? "ms")}
+                                      </p>
+                                    </div>
+                                  </td>
+                                );
+                              }),
+                            )}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <section className="rounded-lg border border-zinc-950/10 bg-white/72 p-6 shadow-sm dark:border-white/10 dark:bg-white/8">
                   <h2 className="text-2xl font-semibold tracking-tight">{t("benchmarkDetail.snapshotTitle")}</h2>
                   <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("benchmarkDetail.snapshotDescription")}</p>
 
@@ -439,7 +694,7 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                 </section>
               </div>
 
-              <div className="grid gap-5">
+              <div className="grid gap-5 lg:grid-cols-2">
                 <section className="rounded-lg border border-zinc-950/10 bg-white/72 p-6 shadow-sm dark:border-white/10 dark:bg-white/8">
                   <h2 className="text-xl font-semibold tracking-tight">{t("benchmarkDetail.dataTitle")}</h2>
                   <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("benchmarkDetail.dataDescription")}</p>

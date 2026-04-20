@@ -1,16 +1,47 @@
 import { benchmarkProfiles, clampScore, getPerformanceColors, radarAxisPoint, radarGridPoints, radarPoints } from "../core/benchmark";
 import type { BenchmarkLanguage, BenchmarkProfileScores } from "../core/types";
 
-type BenchmarkRadarChartProps = {
-  scores: BenchmarkProfileScores;
+type BenchmarkRadarSeries = {
   language: BenchmarkLanguage;
-  unitLabel: string;
-  labels: Record<string, string>;
+  scores: BenchmarkProfileScores;
 };
 
-export function BenchmarkRadarChart({ scores, language, unitLabel, labels }: BenchmarkRadarChartProps) {
-  const composite = benchmarkProfiles.reduce((sum, profile) => sum + clampScore(scores[profile]), 0) / benchmarkProfiles.length;
-  const colors = getPerformanceColors(composite);
+type BenchmarkRadarChartProps = {
+  scores?: BenchmarkProfileScores;
+  language?: BenchmarkLanguage;
+  series?: BenchmarkRadarSeries[];
+  unitLabel: string;
+  labels: Record<string, string>;
+  profileDescriptions?: Partial<Record<string, string>>;
+};
+
+const SERIES_COLORS: Record<BenchmarkLanguage, { stroke: string; fill: string; dot: string }> = {
+  python: {
+    stroke: "rgb(14 116 144)",
+    fill: "rgba(34, 211, 238, 0.18)",
+    dot: "rgb(8 145 178)",
+  },
+  rust: {
+    stroke: "rgb(5 150 105)",
+    fill: "rgba(16, 185, 129, 0.18)",
+    dot: "rgb(4 120 87)",
+  },
+  c: {
+    stroke: "rgb(234 88 12)",
+    fill: "rgba(251, 146, 60, 0.18)",
+    dot: "rgb(194 65 12)",
+  },
+};
+
+function compositeFor(scores: BenchmarkProfileScores) {
+  return benchmarkProfiles.reduce((sum, profile) => sum + clampScore(scores[profile]), 0) / benchmarkProfiles.length;
+}
+
+export function BenchmarkRadarChart({ scores, language, series, unitLabel, labels, profileDescriptions }: BenchmarkRadarChartProps) {
+  const activeSeries = series ?? (scores && language ? [{ language, scores }] : []);
+  const leadingSeries = activeSeries[0];
+  const leadingComposite = leadingSeries ? compositeFor(leadingSeries.scores) : 0;
+  const leadingColors = getPerformanceColors(leadingComposite);
   const center = 110;
   const radius = 72;
   const levels = [0.25, 0.5, 0.75, 1];
@@ -20,15 +51,32 @@ export function BenchmarkRadarChart({ scores, language, unitLabel, labels }: Ben
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">{unitLabel}</p>
-          <p className="mt-2 text-lg font-semibold">{labels[language]}</p>
+          <p className="mt-2 text-lg font-semibold">
+            {activeSeries.length > 1 ? activeSeries.map((item) => labels[item.language]).join(" · ") : leadingSeries ? labels[leadingSeries.language] : "-"}
+          </p>
         </div>
         <div
           className="rounded-full border px-3 py-1 text-sm font-semibold"
-          style={{ backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }}
+          style={{ backgroundColor: leadingColors.background, borderColor: leadingColors.border, color: leadingColors.foreground }}
         >
-          {composite.toFixed(1)}
+          {leadingComposite.toFixed(1)}
         </div>
       </div>
+
+      {activeSeries.length > 1 ? (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {activeSeries.map((item) => (
+            <div key={item.language} className="inline-flex items-center gap-2 rounded-full border border-zinc-950/8 bg-white/80 px-3 py-1 text-xs font-semibold dark:border-white/10 dark:bg-white/10">
+              <span
+                className="inline-flex h-2.5 w-2.5 rounded-full"
+                style={{ backgroundColor: SERIES_COLORS[item.language].stroke }}
+              />
+              <span>{labels[item.language]}</span>
+              <span className="text-zinc-500 dark:text-zinc-400">{compositeFor(item.scores).toFixed(1)}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       <div className="mt-5 flex justify-center">
         <svg viewBox="0 0 220 220" className="h-auto w-full max-w-[320px]">
@@ -55,25 +103,38 @@ export function BenchmarkRadarChart({ scores, language, unitLabel, labels }: Ben
                   dominantBaseline={point.y < center - 8 ? "alphabetic" : point.y > center + 8 ? "hanging" : "middle"}
                   className="fill-zinc-500 text-[10px] dark:fill-zinc-400"
                 >
+                  <title>{profileDescriptions?.[profile] ?? labels[profile]}</title>
                   {labels[profile]}
                 </text>
               </g>
             );
           })}
 
-          <polygon
-            points={radarPoints(scores, radius, center)}
-            fill={colors.background}
-            fillOpacity="0.45"
-            stroke={colors.border}
-            strokeWidth="2"
-          />
+          {activeSeries.map((item) => {
+            const radarColor = SERIES_COLORS[item.language];
+            const points = radarPoints(item.scores, radius, center).split(" ");
 
-          {benchmarkProfiles.map((profile, index) => {
-            const pointString = radarPoints(scores, radius, center).split(" ")[index];
-            const [x, y] = pointString.split(",").map(Number);
+            return (
+              <g key={item.language}>
+                <polygon
+                  points={points.join(" ")}
+                  fill={radarColor.fill}
+                  stroke={radarColor.stroke}
+                  strokeWidth="2"
+                >
+                  <title>{`${labels[item.language]}: ${compositeFor(item.scores).toFixed(1)}`}</title>
+                </polygon>
+                {benchmarkProfiles.map((profile, index) => {
+                  const [x, y] = points[index].split(",").map(Number);
 
-            return <circle key={`${profile}-dot`} cx={x} cy={y} r="3.5" fill={colors.border} />;
+                  return (
+                    <circle key={`${item.language}-${profile}-dot`} cx={x} cy={y} r="3.5" fill={radarColor.dot}>
+                      <title>{`${labels[item.language]} • ${labels[profile]}: ${clampScore(item.scores[profile]).toFixed(1)}. ${profileDescriptions?.[profile] ?? ""}`.trim()}</title>
+                    </circle>
+                  );
+                })}
+              </g>
+            );
           })}
         </svg>
       </div>

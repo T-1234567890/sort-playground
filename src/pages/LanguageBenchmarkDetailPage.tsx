@@ -54,6 +54,7 @@ export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: Langua
   const [entries, setEntries] = useState<ExperimentalLanguageBenchmarkEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [size, setSize] = useState<BenchmarkSize>("medium");
+  const [showOnlyAvailableLanguages, setShowOnlyAvailableLanguages] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -88,7 +89,19 @@ export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: Langua
     () => entries.find((item) => item.slug === slug && hasExperimentalBenchmarkData(item)),
     [entries, slug],
   );
-  const languageEntries = useMemo(() => (entry ? Object.entries(entry.languages) : []), [entry]);
+  const languageEntries = useMemo(() => {
+    if (!entry) {
+      return [];
+    }
+
+    const items = Object.entries(entry.languages);
+
+    if (!showOnlyAvailableLanguages) {
+      return items;
+    }
+
+    return items.filter(([, language]) => language.status === "benchmarked");
+  }, [entry, showOnlyAvailableLanguages]);
   const profileGridStyle = useMemo(
     () => ({ gridTemplateColumns: `minmax(0, 1.2fr) repeat(${Math.max(languageEntries.length, 1)}, minmax(0, 1fr))` }),
     [languageEntries.length],
@@ -175,6 +188,19 @@ export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: Langua
             <section className="mt-8 rounded-2xl border border-zinc-950/10 bg-white/72 p-6 shadow-sm dark:border-white/10 dark:bg-white/8">
               <h2 className="text-2xl font-semibold tracking-tight">{t("languageBenchmark.languageOverview")}</h2>
               <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("languageBenchmark.languageOverviewDescription")}</p>
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowOnlyAvailableLanguages((current) => !current)}
+                  className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                    showOnlyAvailableLanguages
+                      ? "bg-amber-400 text-zinc-950 hover:bg-amber-300"
+                      : "border border-zinc-950/10 bg-white/70 text-zinc-700 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15"
+                  }`}
+                >
+                  {t("languageBenchmark.showOnlyAvailableLanguages")}
+                </button>
+              </div>
 
               <div className="mt-6 grid gap-4 lg:grid-cols-2">
                 {languageEntries.map(([languageKey, language]) => (
@@ -244,6 +270,9 @@ export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: Langua
                   ))}
                 </div>
               </div>
+              {showOnlyAvailableLanguages && languageEntries.length === 0 ? (
+                <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">{t("languageBenchmark.noAvailableLanguages")}</p>
+              ) : null}
             </section>
           </>
         )}

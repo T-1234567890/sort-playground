@@ -449,6 +449,7 @@
     "mode": "模式",
     "status": "状态",
     "summary": "这个页面展示某个算法当前保存下来的基准数据，包括按语言和输入规模区分的原始计时结果，以及 CI 发布的快照元数据。",
+    "generatedSummary": "自动摘要：当前整体最强的工作负载是 {{bestProfile}}（{{bestScore}}），最弱的是 {{weakestProfile}}（{{weakestScore}}），而 {{size}} 规模下最快的结果来自 {{fastestLanguage}}，耗时 {{fastestTime}}。",
     "pythonLargeCanceled": "在当前基准策略里，Python 的 large 规模测试被有意取消。",
     "compositeTitle": "综合评分",
     "compositeDescription": "这是基于当前保存下来的基准画像计算出的标准化概览分数。",
@@ -460,9 +461,19 @@
     "resultsDescription": "这个算法详情页会展示所有受支持语言和输入规模下保存的基准结果。",
     "selectedRanking": "当前选择的基准集合",
     "selectedRankingDescription": "基准总览页目前按 {{language}} 在 {{size}} 规模下的原始耗时排序。数值越低越好。",
+    "insightStrength": "优势",
+    "insightStrengthDescription": "{{language}} 在这个工作负载上的表现最好，分数为 {{score}}。",
+    "insightWeakness": "短板",
+    "insightWeaknessDescription": "{{language}} 在这个工作负载上的下降最明显，分数为 {{score}}。",
+    "insightVerdict": "结论",
+    "compositeExplanation": "综合分数概括了整份基准快照。分数越高，表示在当前保存的工作负载组合下整体表现越强。",
     "noPoints": "目前还没有积分或综合评分。",
     "profileTitle": "画像拆解",
     "profileDescription": "这里会展示当前语言在各个工作负载维度上的得分，以及 small、medium、large 三个输入规模下保存的原始耗时。",
+    "radarSelectionTitle": "雷达语言",
+    "radarHint": "切换一个或多个语言，在雷达图上直接比较它们的工作负载形状。",
+    "allTimingsTitle": "完整耗时",
+    "allTimingsDescription": "这个热力表展示了每个工作负载画像、语言和输入规模下保存的所有耗时。同一画像和规模切片里，越偏绿色表示越快。",
     "dataTitle": "基准数据",
     "dataDescription": "这里展示的是这个算法条目当前发布出来的基准元数据。",
     "snapshotTitle": "系统快照",
@@ -477,7 +488,38 @@
     "none": "暂无",
     "table": {
       "dimension": "维度",
-      "score": "分数"
+      "score": "分数",
+      "workload": "工作负载"
+    },
+    "verdicts": {
+      "elite": {
+        "title": "整体很强",
+        "description": "这个算法在大多数已测工作负载下都保持了稳定竞争力。"
+      },
+      "strong": {
+        "title": "总体稳健",
+        "description": "这份基准画像整体表现扎实，只在少数工作负载边缘上偏弱。"
+      },
+      "mixed": {
+        "title": "取舍明显",
+        "description": "它在部分工作负载下有价值，但整份画像里也存在明显短板。"
+      },
+      "limited": {
+        "title": "基准受限",
+        "description": "当前保存的快照显示它相对现有基准集合存在较广泛的性能弱点。"
+      },
+      "unavailable": {
+        "title": "数据不足",
+        "description": "当前保存的评分数据还不足以给出可靠结论。"
+      }
+    },
+    "profileHelp": {
+      "random-uniform": "随机均匀分布的输入。这是默认参考工作负载。",
+      "nearly-sorted": "已经接近有序的输入。",
+      "reverse-sorted": "与目标顺序完全相反的输入。",
+      "many-duplicates": "包含大量重复值的输入。",
+      "low-value-range": "值域很小、重复频繁的输入。",
+      "adversarial-pivot": "专门用来放大糟糕枢轴行为的输入。"
     },
     "fields": {
       "lastRunAt": "最近一次基准运行",
@@ -541,6 +583,8 @@
     "viewMain": "查看主基准",
     "languageOverview": "语言概览",
     "languageOverviewDescription": "主基准语言会作为基线显示。社区和实验性语言会被单独列出，只用于对比参考。",
+    "showOnlyAvailableLanguages": "只显示可用语言",
+    "noAvailableLanguages": "当前筛选下没有已完成基准测试的语言。",
     "profileTitle": "按画像拆解",
     "profileDescription": "每一行展示一个工作负载画像在当前 {{size}} 规模下、各语言实现上的结果。",
     "profileColumnsNote": "每一列都是一个语言实现。横向看一行是同一画像下的语言对比，纵向看一列是同一语言在不同画像下的结果。",

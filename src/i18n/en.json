@@ -449,6 +449,7 @@
     "mode": "Mode",
     "status": "Status",
     "summary": "This page shows the currently stored benchmark dataset for one algorithm. It exposes raw timing data by language and input size, plus any benchmark snapshot metadata published by CI.",
+    "generatedSummary": "Auto summary: the strongest overall workload is {{bestProfile}} ({{bestScore}}), the weakest is {{weakestProfile}} ({{weakestScore}}), and the fastest {{size}} result currently comes from {{fastestLanguage}} at {{fastestTime}}.",
     "pythonLargeCanceled": "Python large-size benchmark runs are intentionally canceled for this benchmark.",
     "compositeTitle": "Composite Score",
     "compositeDescription": "A normalized summary of the current stored benchmark profile for this algorithm.",
@@ -460,9 +461,19 @@
     "resultsDescription": "This algorithm page shows the stored benchmark timings across all supported languages and input sizes.",
     "selectedRanking": "Selected benchmark set",
     "selectedRankingDescription": "Current ranking on the benchmark overview is based on raw time for {{language}} at {{size}} size. Lower is better.",
+    "insightStrength": "Strength",
+    "insightStrengthDescription": "{{language}} performs best on this workload with a score of {{score}}.",
+    "insightWeakness": "Weakness",
+    "insightWeaknessDescription": "{{language}} drops the most on this workload, with a score of {{score}}.",
+    "insightVerdict": "Verdict",
+    "compositeExplanation": "Composite score summarizes the full benchmark snapshot. Higher means stronger overall behavior across the stored workload mix.",
     "noPoints": "No points or composite score are available yet.",
     "profileTitle": "Profile Breakdown",
     "profileDescription": "Each dimension shows the stored workload score for the selected language, together with the raw timings for small, medium, and large inputs.",
+    "radarSelectionTitle": "Radar languages",
+    "radarHint": "Toggle one or more languages to compare their workload shapes on the radar.",
+    "allTimingsTitle": "All Timings",
+    "allTimingsDescription": "This heatmap shows every stored timing by workload profile, language, and input size. Greener cells are faster within the same workload and size slice.",
     "dataTitle": "Benchmark Data",
     "dataDescription": "This is the benchmark metadata currently published for this algorithm entry.",
     "snapshotTitle": "System Snapshot",
@@ -477,7 +488,38 @@
     "none": "Not available",
     "table": {
       "dimension": "Dimension",
-      "score": "Score"
+      "score": "Score",
+      "workload": "Workload"
+    },
+    "verdicts": {
+      "elite": {
+        "title": "Very strong",
+        "description": "This algorithm stays consistently competitive across most measured workloads."
+      },
+      "strong": {
+        "title": "Strong overall",
+        "description": "The benchmark profile is solid, with only a few weaker workload edges."
+      },
+      "mixed": {
+        "title": "Specialized tradeoffs",
+        "description": "Performance is useful in some workloads, but the profile has noticeable weak spots."
+      },
+      "limited": {
+        "title": "Benchmark-limited",
+        "description": "The stored snapshot shows broad performance weaknesses against the current benchmark set."
+      },
+      "unavailable": {
+        "title": "Not enough data",
+        "description": "There is not enough stored score data to draw a reliable verdict yet."
+      }
+    },
+    "profileHelp": {
+      "random-uniform": "Randomly distributed values. This is the default reference workload.",
+      "nearly-sorted": "Inputs that are already close to sorted order.",
+      "reverse-sorted": "Inputs arranged in the opposite of the target order.",
+      "many-duplicates": "Inputs with frequent repeated values.",
+      "low-value-range": "Inputs drawn from a small repeated value range.",
+      "adversarial-pivot": "Inputs designed to stress poor pivot behavior."
     },
     "fields": {
       "lastRunAt": "Last benchmark run",
@@ -541,6 +583,8 @@
     "viewMain": "View main benchmark",
     "languageOverview": "Language Overview",
     "languageOverviewDescription": "Main benchmark languages are shown as a baseline. Community and experimental languages are listed separately for comparison only.",
+    "showOnlyAvailableLanguages": "Show only available languages",
+    "noAvailableLanguages": "No benchmarked languages match this filter.",
     "profileTitle": "Per-profile Results",
     "profileDescription": "Each row shows the {{size}} benchmark result for one workload profile across the available language implementations.",
     "profileColumnsNote": "Each column is a language implementation. Read each workload profile across the row and compare languages by column.",
