@@ -1,7 +1,7 @@
 #include <vector>
 #include <utility>
 
-std::vector<int> selection_sort(std::vector<int> values) {
+std::vector<int> selectionSort(std::vector<int> values) {
     const int length = static_cast<int>(values.size());
 
     for (int left = 0; left < length - 1; ++left) {

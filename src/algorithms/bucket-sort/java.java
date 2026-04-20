@@ -1,18 +1,19 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public final class BucketSortExample {
-    private BucketSortExample() {}
+public final class BucketSort {
+    private BucketSort() {}
 
-    public static List<Integer> bucketSort(List<Integer> values) {
-        if (values.isEmpty()) {
-            return new ArrayList<>();
+    public static int[] bucketSort(int[] values) {
+        if (values.length == 0) {
+            return new int[0];
         }
 
-        int minimum = Collections.min(values);
-        int maximum = Collections.max(values);
-        int bucketCount = Math.max(1, (int) Math.sqrt(values.size()));
+        int minimum = Arrays.stream(values).min().orElse(0);
+        int maximum = Arrays.stream(values).max().orElse(0);
+        int bucketCount = Math.max(1, (int) Math.sqrt(values.length));
         int range = Math.max(1, maximum - minimum + 1);
         List<List<Integer>> buckets = new ArrayList<>();
 
@@ -25,10 +26,16 @@ public final class BucketSortExample {
             buckets.get(bucketIndex).add(value);
         }
 
-        List<Integer> result = new ArrayList<>(values.size());
+        int[] result = new int[values.length];
+        int writeIndex = 0;
+
         for (List<Integer> bucket : buckets) {
             Collections.sort(bucket);
-            result.addAll(bucket);
+
+            for (int value : bucket) {
+                result[writeIndex] = value;
+                writeIndex += 1;
+            }
         }
 
         return result;

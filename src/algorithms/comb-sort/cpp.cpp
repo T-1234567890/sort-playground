@@ -1,7 +1,7 @@
 #include <vector>
 #include <utility>
 
-std::vector<int> comb_sort(std::vector<int> values) {
+std::vector<int> combSort(std::vector<int> values) {
     int gap = static_cast<int>(values.size());
     bool swapped = true;
 
