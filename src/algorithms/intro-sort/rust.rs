@@ -7,106 +7,100 @@ fn floor_log2(mut value: usize) -> usize {
     result
 }
 
-pub fn intro_sort(values: &[i32]) -> Vec<i32> {
-    let mut arr = values.to_vec();
+fn insertion_sort(values: &mut [i32]) {
+    for index in 1..values.len() {
+        let value = values[index];
+        let mut position = index;
 
-    fn insertion_sort(arr: &mut [i32], start: usize, end: usize) {
-        for index in start + 1..=end {
-            let value = arr[index];
-            let mut position = index;
-
-            while position > start && arr[position - 1] > value {
-                arr[position] = arr[position - 1];
-                position -= 1;
-            }
-
-            arr[position] = value;
+        while position > 0 && values[position - 1] > value {
+            values[position] = values[position - 1];
+            position -= 1;
         }
+
+        values[position] = value;
     }
+}
 
-    fn sift_down(arr: &mut [i32], start: usize, end: usize, offset: usize) {
-        let mut root = start;
+fn sift_down(values: &mut [i32], start: usize, end: usize) {
+    let mut root = start;
 
-        while root * 2 + 1 <= end {
-            let child = root * 2 + 1;
-            let mut swap_index = root;
+    while root * 2 + 1 <= end {
+        let child = root * 2 + 1;
+        let mut swap_index = root;
 
-            if arr[offset + swap_index] < arr[offset + child] {
-                swap_index = child;
-            }
-
-            if child + 1 <= end && arr[offset + swap_index] < arr[offset + child + 1] {
-                swap_index = child + 1;
-            }
-
-            if swap_index == root {
-                return;
-            }
-
-            arr.swap(offset + root, offset + swap_index);
-            root = swap_index;
-        }
-    }
-
-    fn heap_sort(arr: &mut [i32], start: usize, end: usize) {
-        let length = end - start + 1;
-
-        for root in (0..=(length / 2)).rev() {
-            sift_down(arr, root, length - 1, start);
-            if root == 0 {
-                break;
-            }
+        if values[swap_index] < values[child] {
+            swap_index = child;
         }
 
-        for tail in (1..length).rev() {
-            arr.swap(start, start + tail);
-            sift_down(arr, 0, tail - 1, start);
-        }
-    }
-
-    fn partition(arr: &mut [i32], low: usize, high: usize) -> usize {
-        let pivot = arr[high];
-        let mut store = low;
-
-        for index in low..high {
-            if arr[index] <= pivot {
-                arr.swap(store, index);
-                store += 1;
-            }
+        if child + 1 <= end && values[swap_index] < values[child + 1] {
+            swap_index = child + 1;
         }
 
-        arr.swap(store, high);
-        store
-    }
-
-    fn sort(arr: &mut [i32], low: usize, high: usize, depth_limit: usize) {
-        if high <= low {
-          return;
-        }
-
-        let length = high - low + 1;
-        if length <= 16 {
-            insertion_sort(arr, low, high);
+        if swap_index == root {
             return;
         }
 
-        if depth_limit == 0 {
-            heap_sort(arr, low, high);
-            return;
-        }
+        values.swap(root, swap_index);
+        root = swap_index;
+    }
+}
 
-        let pivot_index = partition(arr, low, high);
-        if pivot_index > 0 {
-            sort(arr, low, pivot_index - 1, depth_limit - 1);
-        }
-        sort(arr, pivot_index + 1, high, depth_limit - 1);
+fn heap_sort(values: &mut [i32]) {
+    if values.len() <= 1 {
+        return;
     }
 
-    if arr.len() > 1 {
-        let depth_limit = floor_log2(arr.len().max(2)) * 2;
-        let end = arr.len() - 1;
-        sort(&mut arr, 0, end, depth_limit);
+    for start in (0..(values.len() / 2)).rev() {
+        sift_down(values, start, values.len() - 1);
     }
 
-    arr
+    for end in (1..values.len()).rev() {
+        values.swap(0, end);
+        sift_down(values, 0, end - 1);
+    }
+}
+
+fn partition(values: &mut [i32]) -> usize {
+    let high = values.len() - 1;
+    let pivot = values[high];
+    let mut store = 0usize;
+
+    for index in 0..high {
+        if values[index] <= pivot {
+            values.swap(store, index);
+            store += 1;
+        }
+    }
+
+    values.swap(store, high);
+    store
+}
+
+fn intro_sort_recursive(values: &mut [i32], depth_limit: usize) {
+    if values.len() <= 1 {
+        return;
+    }
+
+    if values.len() <= 16 {
+        insertion_sort(values);
+        return;
+    }
+
+    if depth_limit == 0 {
+        heap_sort(values);
+        return;
+    }
+
+    let pivot_index = partition(values);
+    let (left, right_with_pivot) = values.split_at_mut(pivot_index);
+    intro_sort_recursive(left, depth_limit - 1);
+
+    if right_with_pivot.len() > 1 {
+        intro_sort_recursive(&mut right_with_pivot[1..], depth_limit - 1);
+    }
+}
+
+pub fn intro_sort(values: &mut [i32]) {
+    let depth_limit = floor_log2(values.len().max(2)) * 2;
+    intro_sort_recursive(values, depth_limit);
 }

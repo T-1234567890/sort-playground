@@ -1,22 +1,21 @@
-pub fn counting_sort(values: &[i32]) -> Vec<i32> {
+pub fn counting_sort(values: &mut [i32]) {
     if values.is_empty() {
-        return Vec::new();
+        return;
     }
 
     let min = *values.iter().min().unwrap();
     let max = *values.iter().max().unwrap();
     let mut counts = vec![0usize; (max - min + 1) as usize];
 
-    for &value in values {
+    for &value in values.iter() {
         counts[(value - min) as usize] += 1;
     }
 
-    let mut result = Vec::with_capacity(values.len());
+    let mut write = 0usize;
     for (offset, count) in counts.iter().enumerate() {
         for _ in 0..*count {
-            result.push(min + offset as i32);
+            values[write] = min + offset as i32;
+            write += 1;
         }
     }
-
-    result
 }

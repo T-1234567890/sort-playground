@@ -1,22 +1,19 @@
-pub fn shell_sort(values: &[i32]) -> Vec<i32> {
-    let mut arr = values.to_vec();
-    let mut gap = arr.len() / 2;
+pub fn shell_sort(values: &mut [i32]) {
+    let mut gap = values.len() / 2;
 
     while gap > 0 {
-        for index in gap..arr.len() {
-            let value = arr[index];
+        for index in gap..values.len() {
+            let value = values[index];
             let mut position = index;
 
-            while position >= gap && arr[position - gap] > value {
-                arr[position] = arr[position - gap];
+            while position >= gap && values[position - gap] > value {
+                values[position] = values[position - gap];
                 position -= gap;
             }
 
-            arr[position] = value;
+            values[position] = value;
         }
 
         gap /= 2;
     }
-
-    arr
 }

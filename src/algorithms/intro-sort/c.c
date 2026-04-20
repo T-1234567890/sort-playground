@@ -1,5 +1,4 @@
 #include <stddef.h>
-#include <stdlib.h>
 
 static void swap_int(int *left, int *right) {
     int temp = *left;
@@ -7,8 +6,8 @@ static void swap_int(int *left, int *right) {
     *right = temp;
 }
 
-static size_t floor_log2(size_t value) {
-    size_t result = 0;
+static int floor_log2_int(int value) {
+    int result = 0;
     while (value > 1) {
         value /= 2;
         result += 1;
@@ -16,32 +15,32 @@ static size_t floor_log2(size_t value) {
     return result;
 }
 
-static void insertion_sort(int *arr, size_t start, size_t end) {
-    for (size_t index = start + 1; index <= end; index += 1) {
-        int value = arr[index];
-        size_t position = index;
+static void insertion_sort(int values[], int length) {
+    for (int index = 1; index < length; index += 1) {
+        int value = values[index];
+        int position = index;
 
-        while (position > start && arr[position - 1] > value) {
-            arr[position] = arr[position - 1];
+        while (position > 0 && values[position - 1] > value) {
+            values[position] = values[position - 1];
             position -= 1;
         }
 
-        arr[position] = value;
+        values[position] = value;
     }
 }
 
-static void sift_down(int *arr, size_t start, size_t end, size_t offset) {
-    size_t root = start;
+static void sift_down(int values[], int start, int end) {
+    int root = start;
 
     while (root * 2 + 1 <= end) {
-        size_t child = root * 2 + 1;
-        size_t swap_index = root;
+        int child = root * 2 + 1;
+        int swap_index = root;
 
-        if (arr[offset + swap_index] < arr[offset + child]) {
+        if (values[swap_index] < values[child]) {
             swap_index = child;
         }
 
-        if (child + 1 <= end && arr[offset + swap_index] < arr[offset + child + 1]) {
+        if (child + 1 <= end && values[swap_index] < values[child + 1]) {
             swap_index = child + 1;
         }
 
@@ -49,76 +48,62 @@ static void sift_down(int *arr, size_t start, size_t end, size_t offset) {
             return;
         }
 
-        swap_int(&arr[offset + root], &arr[offset + swap_index]);
+        swap_int(&values[root], &values[swap_index]);
         root = swap_index;
     }
 }
 
-static void heap_sort(int *arr, size_t start, size_t end) {
-    size_t length = end - start + 1;
-
-    for (size_t root = length / 2; root > 0; root -= 1) {
-        sift_down(arr, root - 1, length - 1, start);
+static void heap_sort(int values[], int length) {
+    if (length <= 1) {
+        return;
     }
 
-    for (size_t tail = length - 1; tail > 0; tail -= 1) {
-        swap_int(&arr[start], &arr[start + tail]);
-        sift_down(arr, 0, tail - 1, start);
+    for (int start = length / 2 - 1; start >= 0; start -= 1) {
+        sift_down(values, start, length - 1);
+    }
+
+    for (int end = length - 1; end > 0; end -= 1) {
+        swap_int(&values[0], &values[end]);
+        sift_down(values, 0, end - 1);
     }
 }
 
-static size_t partition(int *arr, size_t low, size_t high) {
-    int pivot = arr[high];
-    size_t store = low;
+static int partition(int values[], int length) {
+    int pivot = values[length - 1];
+    int store = 0;
 
-    for (size_t index = low; index < high; index += 1) {
-        if (arr[index] <= pivot) {
-            swap_int(&arr[store], &arr[index]);
+    for (int index = 0; index < length - 1; index += 1) {
+        if (values[index] <= pivot) {
+            swap_int(&values[store], &values[index]);
             store += 1;
         }
     }
 
-    swap_int(&arr[store], &arr[high]);
+    swap_int(&values[store], &values[length - 1]);
     return store;
 }
 
-static void intro_sort_recursive(int *arr, size_t low, size_t high, size_t depth_limit) {
-    if (high <= low) {
+static void intro_sort_recursive(int values[], int length, int depth_limit) {
+    if (length <= 1) {
         return;
     }
 
-    size_t length = high - low + 1;
     if (length <= 16) {
-        insertion_sort(arr, low, high);
+        insertion_sort(values, length);
         return;
     }
 
     if (depth_limit == 0) {
-        heap_sort(arr, low, high);
+        heap_sort(values, length);
         return;
     }
 
-    size_t pivot_index = partition(arr, low, high);
-    if (pivot_index > 0) {
-        intro_sort_recursive(arr, low, pivot_index - 1, depth_limit - 1);
-    }
-    intro_sort_recursive(arr, pivot_index + 1, high, depth_limit - 1);
+    int pivot_index = partition(values, length);
+    intro_sort_recursive(values, pivot_index, depth_limit - 1);
+    intro_sort_recursive(values + pivot_index + 1, length - pivot_index - 1, depth_limit - 1);
 }
 
-int *intro_sort(const int *values, size_t length) {
-    int *arr = malloc(length * sizeof(int));
-    if (!arr) {
-        return NULL;
-    }
-
-    for (size_t i = 0; i < length; i += 1) {
-        arr[i] = values[i];
-    }
-
-    if (length > 1) {
-        size_t depth_limit = floor_log2(length > 1 ? length : 2) * 2;
-        intro_sort_recursive(arr, 0, length - 1, depth_limit);
-    }
-
-    return arr;
+void intro_sort(int values[], int length) {
+    int depth_limit = floor_log2_int(length > 1 ? length : 2) * 2;
+    intro_sort_recursive(values, length, depth_limit);
 }
