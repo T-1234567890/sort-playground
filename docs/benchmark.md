@@ -21,6 +21,10 @@ Published benchmark data is stored in:
 
 - `/public/data/benchmark-ranking.json`
 
+JSON conventions for generated benchmark data are documented in:
+
+- [JSON Files](./json-files.md)
+
 The benchmark pipeline is driven by:
 
 - [/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/list-algorithms.js](/Users/2111832868qq.com/PycharmProjects/sort-playground/scripts/benchmark/list-algorithms.js)

@@ -65,7 +65,7 @@ const wizardSteps = [
   },
   {
     title: "Write metadata",
-    body: "meta.json controls the explorer card, detail page, category, complexity, stability, and visualization mode.",
+    body: "meta.json controls the explorer card, detail page, category, complexity, stability, and visualization mode. Use GitHub usernames in author and contributors so profile links and icons resolve correctly.",
   },
   {
     title: "Generate steps",
@@ -104,6 +104,7 @@ const checklist = [
   "The folder name is lowercase and URL-friendly.",
   "The algorithm appears in the explorer.",
   "The visualization reaches the intended final state.",
+  "author and contributors use GitHub usernames, not display names.",
   "Custom visualization ideas are explained in the PR.",
   "Python, Rust, and C examples are simple enough to learn from.",
   "No core architecture changes are included unless the PR explains why.",
@@ -269,6 +270,9 @@ export function ContributePage({ dark, onToggleDark }: ContributePageProps) {
             <TemplateBlock title="rust.rs" language="Rust" code={rustTemplate} />
             <TemplateBlock title="c.c" language="C" code={cTemplate} />
           </div>
+          <p className="mt-5 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+            Use GitHub usernames in <span className="font-mono">author</span> and <span className="font-mono">contributors</span>. The UI uses those values to build profile links and avatar icons.
+          </p>
         </section>
 
         <section className="mx-auto grid max-w-6xl gap-10 px-5 py-12 lg:grid-cols-[minmax(0,1fr)_360px]">

@@ -2,6 +2,24 @@
 
 Sort Playground displays contributor information from each algorithm's `meta.json`.
 
+Important rule:
+
+- `author`
+- every entry in `contributors`
+
+should be the contributor's GitHub username, not a display name.
+
+Example:
+
+```json
+{
+  "author": "octocat",
+  "contributors": ["octocat", "another-user"]
+}
+```
+
+This is required because the UI builds GitHub profile links and avatar/icon URLs from those values.
+
 ## Official Contributor
 
 Official sorts use:

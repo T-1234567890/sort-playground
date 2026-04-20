@@ -9,7 +9,12 @@ import {
   loadReferenceRanking,
   root,
 } from "./catalog.js";
-import { createCommunityLanguageHash, listCommunityLanguageTargets, listSupportedCommunityLanguages } from "./community-languages.js";
+import {
+  createCommunityLanguageHash,
+  experimentalBenchmarkSizesForLanguageCode,
+  listCommunityLanguageTargets,
+  listSupportedCommunityLanguages,
+} from "./community-languages.js";
 
 const PARTIAL_RESULTS_DIR = process.env.PARTIAL_RESULTS_DIR || path.join(root, "benchmark-language-results");
 const MAIN_BENCHMARK_PATH = process.env.MAIN_BENCHMARK_PATH ? path.resolve(root, process.env.MAIN_BENCHMARK_PATH) : path.join(root, "public/data/benchmark-ranking.json");
@@ -41,13 +46,9 @@ async function loadPartialResults() {
   }
 }
 
-function getExperimentalBenchmarkSizes(languageKey) {
-  return ["go", "java", "cpp", "swift", "zig"].includes(languageKey) ? ["small", "medium", "large"] : ["small", "medium"];
-}
-
 function experimentalEntryHasCurrentData(entry, languageKey, languageHash) {
   const languageEntry = entry?.languages?.[languageKey];
-  const expectedSizes = getExperimentalBenchmarkSizes(languageKey);
+  const expectedSizes = experimentalBenchmarkSizesForLanguageCode(languageKey);
 
   if (!languageEntry?.metadata?.lastRunAt || languageEntry?.metadata?.languageHash !== languageHash) {
     return false;
@@ -92,7 +93,9 @@ function buildExperimentalLanguageEntry(partial) {
     runtime: partial.runtime,
     note:
       partial.harness?.languageSizeExclusions?.[partial.languageCode]?.large ??
-      (getExperimentalBenchmarkSizes(partial.languageCode).includes("large") ? undefined : "Large dataset canceled for this language due to runtime constraints."),
+      (experimentalBenchmarkSizesForLanguageCode(partial.languageCode).includes("large")
+        ? undefined
+        : "Large dataset canceled for this language due to runtime constraints."),
     results: partial.profileResults?.["random-uniform"] ?? {},
     workloadProfiles: partial.profileResults ?? {},
     metadata: {
@@ -234,6 +237,7 @@ async function main() {
       languages,
       metadata: {
         lastUpdatedAt: new Date().toISOString(),
+        mainBenchmarkCompositeScore: mainEntry.snapshot?.score?.composite,
       },
     });
   }

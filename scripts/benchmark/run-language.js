@@ -16,7 +16,7 @@ import { createKotlinRunner } from "./runner-kotlin.js";
 import { createZigRunner } from "./runner-zig.js";
 import { assertSorted } from "./validator.js";
 import { algorithmsDir, hasTool, loadAlgorithms, root, tryRunCommand } from "./catalog.js";
-import { createCommunityLanguageHash, experimentalLanguageConfig } from "./community-languages.js";
+import { createCommunityLanguageHash, experimentalBenchmarkSizesForLanguageCode, experimentalLanguageConfig } from "./community-languages.js";
 
 const slug = process.env.ALGORITHM;
 const languageCode = process.env.LANGUAGE_CODE;
@@ -163,7 +163,7 @@ async function main() {
   const lastRunAt = new Date().toISOString();
   const datasets = createDatasets();
   const tempDir = await mkdtemp(path.join(os.tmpdir(), `sort-playground-language-${slug}-${languageCode}-`));
-  const selectedSizes = config.supportsLargeDatasetBenchmark ? benchmarkSizes : benchmarkSizes.filter((size) => size !== "large");
+  const selectedSizes = experimentalBenchmarkSizesForLanguageCode(languageCode);
 
   logBenchmark(`matrix target: ${slug}/${languageCode}`);
 

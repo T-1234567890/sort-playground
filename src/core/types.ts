@@ -190,5 +190,6 @@ export type ExperimentalLanguageBenchmarkEntry = {
   languages: Record<string, ExperimentalBenchmarkLanguageEntry>;
   metadata?: {
     lastUpdatedAt?: string;
+    mainBenchmarkCompositeScore?: number;
   };
 };

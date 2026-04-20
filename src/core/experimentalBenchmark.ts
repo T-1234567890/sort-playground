@@ -65,7 +65,7 @@ export function getExperimentalCompositeScore(
   const timing = getExperimentalCompositeTiming(entry, size);
 
   if (typeof timing !== "number") {
-    return undefined;
+    return entry.metadata?.mainBenchmarkCompositeScore;
   }
 
   const timings = entries
@@ -73,16 +73,21 @@ export function getExperimentalCompositeScore(
     .filter((value): value is number => typeof value === "number")
     .sort((left, right) => left - right);
 
-  if (!timings.length) {
-    return undefined;
+  if (timings.length < 2) {
+    return entry.metadata?.mainBenchmarkCompositeScore;
   }
 
   const best = timings[0];
   const worst = timings[timings.length - 1];
 
   if (best === worst) {
-    return 100;
+    return entry.metadata?.mainBenchmarkCompositeScore ?? 100;
   }
 
   return ((worst - timing) / (worst - best)) * 100;
+}
+
+export function getExperimentalOverviewScore(entry: ExperimentalLanguageBenchmarkEntry, entries: ExperimentalLanguageBenchmarkEntry[]) {
+  void entries;
+  return entry.metadata?.mainBenchmarkCompositeScore;
 }

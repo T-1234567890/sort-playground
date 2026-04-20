@@ -6,24 +6,25 @@ import {
   loadReferenceRanking,
   root,
 } from "./catalog.js";
-import { benchmarkProfiles, benchmarkSizes } from "./dataset.js";
-import { createCommunityLanguageHash, listCommunityLanguageTargets } from "./community-languages.js";
+import { benchmarkProfiles } from "./dataset.js";
+import { createCommunityLanguageHash, experimentalBenchmarkSizesForLanguageCode, listCommunityLanguageTargets } from "./community-languages.js";
 
 const BENCHMARK_RUN_MODE = process.env.BENCHMARK_RUN_MODE === "full" ? "full" : "small";
 
 function experimentalEntryHasCurrentData(entry, languageKey, languageHash) {
   const languageEntry = entry?.languages?.[languageKey];
+  const requiredSizes = experimentalBenchmarkSizesForLanguageCode(languageKey);
 
   if (!languageEntry?.metadata?.lastRunAt || languageEntry?.metadata?.languageHash !== languageHash) {
     return false;
   }
 
-  if (!benchmarkSizes.every((size) => typeof languageEntry?.results?.[size] === "number")) {
+  if (!requiredSizes.every((size) => typeof languageEntry?.results?.[size] === "number")) {
     return false;
   }
 
   return benchmarkProfiles.every((profile) =>
-    benchmarkSizes.every((size) => typeof languageEntry?.workloadProfiles?.[profile]?.[size] === "number"),
+    requiredSizes.every((size) => typeof languageEntry?.workloadProfiles?.[profile]?.[size] === "number"),
   );
 }
 

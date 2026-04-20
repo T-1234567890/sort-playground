@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
-import { benchmarkProfiles, benchmarkSizes } from "../core/benchmark";
+import { benchmarkProfiles, benchmarkSizes, isBenchmarkSizeCanceled } from "../core/benchmark";
 import { formatExperimentalMetric, hasExperimentalBenchmarkData, isExperimentalSizeCanceled, languageBadgeTone } from "../core/experimentalBenchmark";
 import type { BenchmarkSize, ExperimentalLanguageBenchmarkEntry } from "../core/types";
 
@@ -35,6 +35,18 @@ function formatDateTime(value?: string, locale?: string) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(new Date(value));
+}
+
+function formatTableLanguageLabel(languageKey: string, label: string) {
+  if (languageKey === "javascript") {
+    return "JS";
+  }
+
+  if (languageKey === "typescript") {
+    return "TS";
+  }
+
+  return label;
 }
 
 export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: LanguageBenchmarkDetailPageProps) {
@@ -81,6 +93,22 @@ export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: Langua
     () => ({ gridTemplateColumns: `minmax(0, 1.2fr) repeat(${Math.max(languageEntries.length, 1)}, minmax(0, 1fr))` }),
     [languageEntries.length],
   );
+
+  function getSizeValueLabel(languageKey: string, language: ExperimentalLanguageBenchmarkEntry["languages"][string], sizeKey: BenchmarkSize) {
+    if (language.status === "unsupported" || language.status === "missing") {
+      return "-";
+    }
+
+    if (!language.experimental && (languageKey === "python" || languageKey === "rust" || languageKey === "c") && isBenchmarkSizeCanceled(languageKey, sizeKey)) {
+      return t("languageBenchmark.canceled");
+    }
+
+    if (language.experimental && isExperimentalSizeCanceled(languageKey, sizeKey)) {
+      return t("languageBenchmark.canceled");
+    }
+
+    return formatExperimentalMetric(language.results?.[sizeKey], entry?.unit);
+  }
 
   return (
     <Shell dark={dark} onToggleDark={onToggleDark}>
@@ -159,7 +187,7 @@ export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: Langua
                           <p className="mt-2 text-xs leading-5 text-zinc-500 dark:text-zinc-400">{language.note}</p>
                         ) : null}
                       </div>
-                      <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${languageBadgeTone(language.experimental)}`}>
+                      <span className={`whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-semibold ${languageBadgeTone(language.experimental)}`}>
                         {language.status === "unsupported"
                           ? t("languageBenchmark.pendingSupport")
                           : language.status === "missing"
@@ -172,13 +200,7 @@ export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: Langua
                       {benchmarkSizes.map((sizeKey) => (
                         <div key={sizeKey} className="flex items-center justify-between gap-4">
                           <span className="text-zinc-500 dark:text-zinc-400">{t(`labs.benchmarkSizes.${sizeKey}`)}</span>
-                          <span className="font-mono font-semibold">
-                            {language.status === "unsupported" || language.status === "missing"
-                              ? t("languageBenchmark.notBenchmarked")
-                              : isExperimentalSizeCanceled(languageKey, sizeKey)
-                                ? t("languageBenchmark.canceled")
-                                : formatExperimentalMetric(language.results?.[sizeKey], entry.unit)}
-                          </span>
+                          <span className="font-mono font-semibold">{getSizeValueLabel(languageKey, language, sizeKey)}</span>
                         </div>
                       ))}
                     </div>
@@ -195,7 +217,7 @@ export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: Langua
                 <div className="grid gap-3 bg-zinc-950/[0.03] px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:bg-white/[0.03] dark:text-zinc-400" style={profileGridStyle}>
                   <span>{t("languageBenchmark.profileHeader")}</span>
                   {languageEntries.map(([languageKey, language]) => (
-                    <span key={languageKey}>{language.label}</span>
+                    <span key={languageKey}>{formatTableLanguageLabel(languageKey, language.label)}</span>
                   ))}
                 </div>
                 <div className="divide-y divide-zinc-950/8 dark:divide-white/10">
@@ -205,8 +227,10 @@ export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: Langua
                       {languageEntries.map(([languageKey, language]) => (
                         <div key={languageKey} className="font-mono text-xs sm:text-sm">
                           {language.status === "unsupported" || language.status === "missing"
-                            ? t("languageBenchmark.notBenchmarked")
-                            : isExperimentalSizeCanceled(languageKey, size)
+                            ? "-"
+                            : (!language.experimental && (languageKey === "python" || languageKey === "rust" || languageKey === "c") && isBenchmarkSizeCanceled(languageKey, size))
+                              ? t("languageBenchmark.canceled")
+                              : (language.experimental && isExperimentalSizeCanceled(languageKey, size))
                               ? t("languageBenchmark.canceled")
                               : formatExperimentalMetric(language.workloadProfiles?.[profile]?.[size], entry.unit)}
                         </div>

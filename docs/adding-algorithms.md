@@ -16,7 +16,18 @@ rust.rs
 c.c
 ```
 
+JSON formatting and schema conventions:
+
+- [JSON Files](./json-files.md)
+
 ## `meta.json`
+
+Repo-wide JSON rules still apply here:
+
+- use 2-space indentation
+- keep valid JSON only, with no comments or trailing commas
+- keep dates in `YYYY-MM-DD`
+- use GitHub usernames in `author` and `contributors` so profile links and icons resolve correctly
 
 Example:
 

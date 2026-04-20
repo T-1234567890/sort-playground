@@ -3,9 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
-import { benchmarkSizes } from "../core/benchmark";
-import { formatExperimentalScore, getExperimentalCompositeScore, hasExperimentalBenchmarkData } from "../core/experimentalBenchmark";
-import type { BenchmarkSize, ExperimentalLanguageBenchmarkEntry } from "../core/types";
+import { getCompositeScore } from "../core/benchmark";
+import { formatExperimentalScore, getExperimentalOverviewScore, hasExperimentalBenchmarkData } from "../core/experimentalBenchmark";
+import type { BenchmarkRankingEntry, ExperimentalLanguageBenchmarkEntry } from "../core/types";
 
 type LanguageBenchmarkPageProps = {
   dark: boolean;
@@ -29,8 +29,8 @@ async function readJson<T>(path: string): Promise<T> {
 export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkPageProps) {
   const { t } = useTranslation();
   const [entries, setEntries] = useState<ExperimentalLanguageBenchmarkEntry[]>([]);
+  const [mainEntries, setMainEntries] = useState<BenchmarkRankingEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [size, setSize] = useState<BenchmarkSize>("medium");
   const [query, setQuery] = useState("");
 
   useEffect(() => {
@@ -40,14 +40,19 @@ export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkP
       setLoading(true);
 
       try {
-        const data = await readJson<ExperimentalLanguageBenchmarkEntry[]>("/data/benchmark-languages.json");
+        const [languageData, mainBenchmarkData] = await Promise.all([
+          readJson<ExperimentalLanguageBenchmarkEntry[]>("/data/benchmark-languages.json"),
+          readJson<BenchmarkRankingEntry[]>("/data/benchmark-ranking.json").catch(() => []),
+        ]);
 
         if (!cancelled) {
-          setEntries(data);
+          setEntries(languageData);
+          setMainEntries(mainBenchmarkData);
         }
       } catch {
         if (!cancelled) {
           setEntries([]);
+          setMainEntries([]);
         }
       } finally {
         if (!cancelled) {
@@ -63,13 +68,29 @@ export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkP
     };
   }, []);
 
+  const mainCompositeBySlug = useMemo(
+    () => new Map(mainEntries.map((entry) => [entry.slug, getCompositeScore(entry)])),
+    [mainEntries],
+  );
+
+  function getOverviewScore(entry: ExperimentalLanguageBenchmarkEntry) {
+    const experimentalScore = getExperimentalOverviewScore(entry, entries);
+
+    if (typeof experimentalScore === "number") {
+      return experimentalScore;
+    }
+
+    const mainScore = mainCompositeBySlug.get(entry.slug);
+    return typeof mainScore === "number" ? mainScore : undefined;
+  }
+
   const rankedEntries = useMemo(
     () =>
       [...entries]
         .filter((entry) => hasExperimentalBenchmarkData(entry))
         .sort((left, right) => {
-          const leftScore = getExperimentalCompositeScore(left, entries, size);
-          const rightScore = getExperimentalCompositeScore(right, entries, size);
+          const leftScore = getOverviewScore(left);
+          const rightScore = getOverviewScore(right);
 
           if (typeof leftScore === "number" && typeof rightScore === "number") {
             return rightScore - leftScore || left.name.localeCompare(right.name);
@@ -85,7 +106,7 @@ export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkP
 
           return left.name.localeCompare(right.name);
         }),
-    [entries, size],
+    [entries, mainCompositeBySlug],
   );
   const rankMap = useMemo(
     () => new Map(rankedEntries.map((entry, index) => [entry.slug, index + 1])),
@@ -140,23 +161,6 @@ export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkP
             </div>
           </div>
 
-          <div className="mt-6 flex flex-wrap gap-2">
-            {benchmarkSizes.map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => setSize(item)}
-                className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
-                  size === item
-                    ? "bg-zinc-950 text-white dark:bg-white dark:text-zinc-950"
-                    : "border border-zinc-950/10 bg-white/70 text-zinc-700 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15"
-                }`}
-              >
-                {t(`labs.benchmarkSizes.${item}`)}
-              </button>
-            ))}
-          </div>
-
           <div className="mt-6 max-w-xl">
             <label htmlFor="language-benchmark-search" className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">
               {t("labs.search.label")}
@@ -180,7 +184,7 @@ export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkP
         ) : (
           <section className="mt-8 overflow-hidden rounded-lg border border-zinc-950/10 bg-white/72 shadow-sm dark:border-white/10 dark:bg-white/8">
             {visibleEntries.length ? visibleEntries.map((entry) => {
-              const compositeScore = getExperimentalCompositeScore(entry, entries, size);
+              const overallScore = getOverviewScore(entry);
 
               return (
                 <a
@@ -197,13 +201,13 @@ export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkP
                       <h2 className="text-lg font-semibold tracking-tight">{entry.name}</h2>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
-                      {t("languageBenchmark.compositeScore")}
-                    </p>
+                    <div className="text-right">
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+                      {t("languageBenchmark.overallScore", { defaultValue: "Overall score" })}
+                      </p>
                     <p className="mt-1 font-mono text-lg font-semibold">
-                      {typeof compositeScore === "number"
-                        ? formatExperimentalScore(compositeScore)
+                      {typeof overallScore === "number"
+                        ? formatExperimentalScore(overallScore)
                         : t("languageBenchmark.notBenchmarked")}
                     </p>
                   </div>

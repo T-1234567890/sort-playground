@@ -78,6 +78,10 @@ export const experimentalLanguageConfig = {
   },
 };
 
+export function experimentalBenchmarkSizesForLanguageCode(languageCode) {
+  return experimentalLanguageConfig[languageCode]?.supportsLargeDatasetBenchmark ? ["small", "medium", "large"] : ["small", "medium"];
+}
+
 export function listSupportedCommunityLanguages() {
   return Object.entries(experimentalLanguageConfig)
     .map(([languageCode, config]) => ({
