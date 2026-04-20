@@ -148,6 +148,8 @@ Project docs live in [`docs/`](./docs/):
 - [Architecture](./docs/architecture.md)
 - [Adding Algorithms](./docs/adding-algorithms.md)
 - [Community Language Examples](./docs/community-language-examples.md)
+- [Explain with AI](./docs/explain-with-ai.md)
+- [Explain with AI Prompts](./docs/explain-with-ai-prompts.md)
 - [Export Features](./docs/exports.md)
 - [Contributor Guide](./docs/contributors.md)
 - [Sort Labs: How to Join](./docs/labs-how-to-join.md)

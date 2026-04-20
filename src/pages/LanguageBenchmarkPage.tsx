@@ -1,8 +1,10 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { AiBridgePanel } from "../components/AiBridgePanel";
 import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
+import { buildBenchmarkExplainPrompt, getPublicPageUrl } from "../core/aiBridge";
 import { getCompositeScore } from "../core/benchmark";
 import { formatExperimentalScore, getExperimentalOverviewScore, hasExperimentalBenchmarkData } from "../core/experimentalBenchmark";
 import type { BenchmarkRankingEntry, ExperimentalLanguageBenchmarkEntry } from "../core/types";
@@ -152,6 +154,19 @@ export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkP
     },
     [query, rankedEntries],
   );
+  const explainPrompt = useMemo(() => {
+    const sample = visibleEntries.slice(0, 5);
+    const results = sample.length
+      ? sample.map((entry) => `- ${entry.name}: ${Object.entries(entry.languages).map(([languageKey, language]) => `${languageKey} ${typeof language.results?.medium === "number" ? `${language.results.medium} ${entry.unit}` : "n/a"}`).join(", ")}`).join("\n")
+      : "No published experimental language benchmark entries yet.";
+
+    return buildBenchmarkExplainPrompt({
+      algorithmName: "Experimental language benchmark",
+      algorithmLink: getPublicPageUrl(),
+      languages: ["main and community implementations"],
+      results,
+    });
+  }, [visibleEntries]);
 
   return (
     <Shell dark={dark} onToggleDark={onToggleDark}>
@@ -252,6 +267,13 @@ export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkP
               </div>
             ) : null}
           </div>
+        </section>
+
+        <section className="mt-8">
+          <AiBridgePanel
+            title={t("aiBridge.title")}
+            prompt={explainPrompt}
+          />
         </section>
 
         {loading ? (

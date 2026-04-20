@@ -8,14 +8,6 @@ import { createAudioContext, playStepSound, resumeAudioContext, type SortAudioCo
 import { DEFAULT_ARRAY, parseArrayInput, randomArray, sortAscending } from "../core/visualizer";
 import type { Algorithm, Step } from "../core/types";
 
-const actionLabels = {
-  compare: "Compare",
-  swap: "Swap",
-  overwrite: "Overwrite",
-  delete: "Delete",
-  sorted: "Sorted",
-};
-
 const actionColors = {
   compare: "bg-amber-400",
   swap: "bg-rose-500",
@@ -27,39 +19,6 @@ const actionColors = {
 type VisualizerProps = {
   algorithm: Algorithm;
 };
-
-function explainStep(step: Step, stepIndex: number) {
-  const indices = step.indices ?? [];
-  const values = indices.map((index) => step.array[index]).filter((value): value is number => typeof value === "number");
-
-  if (step.action === "sorted") {
-    return "The algorithm has reached ascending order. The final array is ready to copy, compare, or replay.";
-  }
-
-  if (step.action === "delete") {
-    return indices.length
-      ? `Deleting value at index ${indices[0]} because it violates the algorithm's rule.`
-      : "Deleting an element from the working array.";
-  }
-
-  if (step.action === "swap") {
-    return values.length > 1
-      ? `Moving values ${values.join(" and ")} into their next positions.`
-      : `Writing value ${values[0] ?? ""} into the next sorted position.`;
-  }
-
-  if (step.action === "overwrite") {
-    return values.length
-      ? `Writing value ${values[0]} into index ${indices[0] ?? 0}.`
-      : "Writing the next value into the working array.";
-  }
-
-  if (values.length > 1) {
-    return `Comparing ${values[0]} and ${values[1]} to decide what happens next.`;
-  }
-
-  return `Preparing comparison step ${stepIndex + 1}.`;
-}
 
 function isSorted(array: number[]) {
   return array.every((value, index) => index === 0 || array[index - 1] <= value);
@@ -80,7 +39,6 @@ export function Visualizer({ algorithm }: VisualizerProps) {
   const [stepIndex, setStepIndex] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [mode, setMode] = useState<"visual" | "explain">("visual");
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [volume, setVolume] = useState(0.55);
   const [exportStatus, setExportStatus] = useState<"idle" | "png" | "share" | "gif">("idle");
@@ -121,8 +79,6 @@ export function Visualizer({ algorithm }: VisualizerProps) {
   }, [manualArray]);
   const isFinished = isManualSort ? isSorted(manualArray) : stepIndex >= steps.length - 1;
   const progress = isManualSort ? manualProgress : steps.length > 1 ? (stepIndex / (steps.length - 1)) * 100 : 100;
-  const stepExplanation = explainStep(activeStep, stepIndex);
-
   const stopAnimation = useCallback(() => {
     if (frameRef.current !== null) {
       cancelAnimationFrame(frameRef.current);
@@ -363,26 +319,6 @@ export function Visualizer({ algorithm }: VisualizerProps) {
           </span>
         </div>
 
-        <div className="mt-5 inline-flex rounded-lg border border-zinc-950/10 bg-white/72 p-1 dark:border-white/10 dark:bg-white/8">
-          {[
-            ["visual", t("visualizer.visualMode")],
-            ["explain", t("visualizer.explainMode")],
-          ].map(([id, label]) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => setMode(id as "visual" | "explain")}
-              className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
-                mode === id
-                  ? "bg-zinc-950 text-white dark:bg-white dark:text-zinc-950"
-                  : "text-zinc-600 hover:bg-zinc-950/5 dark:text-zinc-300 dark:hover:bg-white/10"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
         {isRandomizedRun ? (
           <div className="mt-5 rounded-lg border border-dashed border-zinc-950/10 bg-zinc-950/[0.03] px-3 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-400">
             {t("visualizer.randomizedHint")}
@@ -494,12 +430,6 @@ export function Visualizer({ algorithm }: VisualizerProps) {
           <div className="mt-4 rounded-lg border border-teal-500/20 bg-teal-50 p-4 text-sm leading-6 text-teal-950 dark:border-teal-300/20 dark:bg-teal-300/10 dark:text-teal-100">
             <p className="font-semibold">{t("visualizer.manualTitle")}</p>
             <p className="mt-1">{t("visualizer.manualDescription")}</p>
-          </div>
-        ) : null}
-        {mode === "explain" ? (
-          <div className="mt-4 rounded-lg border border-teal-500/20 bg-teal-50 p-4 text-sm leading-6 text-teal-950 dark:border-teal-300/20 dark:bg-teal-300/10 dark:text-teal-100">
-            <p className="font-semibold">{t("visualizer.stepExplanation")}</p>
-            <p className="mt-1">{stepExplanation}</p>
           </div>
         ) : null}
         <div className="group mt-4 rounded-lg border border-zinc-950/10 bg-white/72 p-3 transition hover:bg-white focus-within:bg-white dark:border-white/10 dark:bg-white/8 dark:hover:bg-white/10 dark:focus-within:bg-white/10">

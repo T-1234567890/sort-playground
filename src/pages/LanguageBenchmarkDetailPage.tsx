@@ -1,8 +1,10 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { AiBridgePanel } from "../components/AiBridgePanel";
 import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
+import { buildExperimentalBenchmarkPrompt, getPublicPageUrl } from "../core/aiBridge";
 import { benchmarkProfiles, benchmarkSizes, isBenchmarkSizeCanceled } from "../core/benchmark";
 import { formatExperimentalMetric, hasExperimentalBenchmarkData, isExperimentalSizeCanceled, languageBadgeTone } from "../core/experimentalBenchmark";
 import type { BenchmarkSize, ExperimentalLanguageBenchmarkEntry } from "../core/types";
@@ -106,6 +108,14 @@ export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: Langua
     () => ({ gridTemplateColumns: `minmax(0, 1.2fr) repeat(${Math.max(languageEntries.length, 1)}, minmax(0, 1fr))` }),
     [languageEntries.length],
   );
+  const explainPrompt = entry
+    ? buildExperimentalBenchmarkPrompt({
+        algorithmName: entry.name,
+        algorithmLink: getPublicPageUrl(),
+        entry,
+        size,
+      })
+    : "";
 
   function getSizeValueLabel(languageKey: string, language: ExperimentalLanguageBenchmarkEntry["languages"][string], sizeKey: BenchmarkSize) {
     if (language.status === "unsupported" || language.status === "missing") {
@@ -183,6 +193,13 @@ export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: Langua
                   </button>
                 ))}
               </div>
+            </section>
+
+            <section className="mt-8 rounded-2xl border border-zinc-950/10 bg-white/72 p-6 shadow-sm dark:border-white/10 dark:bg-white/8">
+              <AiBridgePanel
+                title={t("aiBridge.title")}
+                prompt={explainPrompt}
+              />
             </section>
 
             <section className="mt-8 rounded-2xl border border-zinc-950/10 bg-white/72 p-6 shadow-sm dark:border-white/10 dark:bg-white/8">

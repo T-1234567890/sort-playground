@@ -1,9 +1,11 @@
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { AiBridgePanel } from "../components/AiBridgePanel";
 import { BenchmarkRadarChart } from "../components/BenchmarkRadarChart";
 import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
+import { buildBenchmarkPromptFromEntry, getPublicPageUrl } from "../core/aiBridge";
 import {
   benchmarkLanguages,
   benchmarkProfiles,
@@ -237,6 +239,13 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
         { label: t("benchmarkDetail.fields.percentile"), value: typeof entry.snapshot?.score?.percentile === "number" ? entry.snapshot.score.percentile.toFixed(1) : t("benchmarkDetail.none") },
       ]
     : [];
+  const benchmarkExplainPrompt = entry
+    ? buildBenchmarkPromptFromEntry({
+        entry,
+        algorithmLink: getPublicPageUrl(),
+        languageLabels: languageLabels as Record<BenchmarkLanguage, string>,
+      })
+    : "";
 
   return (
     <Shell dark={dark} onToggleDark={onToggleDark}>
@@ -336,6 +345,13 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                 </div>
               </div>
 
+            </section>
+
+            <section className="mt-8">
+              <AiBridgePanel
+                title={t("aiBridge.title")}
+                prompt={benchmarkExplainPrompt}
+              />
             </section>
 
             <section className="mt-8 grid gap-5">

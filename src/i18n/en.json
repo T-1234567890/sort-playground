@@ -185,6 +185,11 @@
       "sorted": "Sorted"
     }
   },
+  "aiBridge": {
+    "title": "Explain with AI",
+    "copyPrompt": "Copy Prompt",
+    "copied": "Copied ✓"
+  },
   "export": {
     "title": "Export",
     "hint": "Disabled while animation is running.",

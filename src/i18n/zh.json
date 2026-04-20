@@ -185,6 +185,11 @@
       "sorted": "已排序"
     }
   },
+  "aiBridge": {
+    "title": "用 AI 解释",
+    "copyPrompt": "复制提示词",
+    "copied": "已复制 ✓"
+  },
   "export": {
     "title": "导出",
     "hint": "动画运行时不可导出。",

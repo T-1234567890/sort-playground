@@ -1,11 +1,13 @@
 import { ArrowLeft, CalendarDays, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import { AiBridgePanel } from "../components/AiBridgePanel";
 import { FaviconMark } from "../components/BrandIcons";
 import { CodeTabs } from "../components/CodeTabs";
 import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
 import { Visualizer } from "../components/Visualizer";
+import { buildAlgorithmExplainPrompt, getPublicPageUrl } from "../core/aiBridge";
 import type { Algorithm } from "../core/types";
 
 type AlgorithmPageProps = {
@@ -40,6 +42,12 @@ export function AlgorithmPage({ algorithm, dark, onToggleDark }: AlgorithmPagePr
   const addedLabel = algorithm.added
     ? new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(`${algorithm.added}T00:00:00`))
     : null;
+  const explainPrompt = buildAlgorithmExplainPrompt({
+    algorithmName: algorithm.name,
+    algorithmLink: getPublicPageUrl(),
+    arrayExample: [5, 3, 8, 1, 4],
+    stepDescription: "Use the current page and example input to explain the main behavior and the first few important moves.",
+  });
 
   return (
     <Shell dark={dark} onToggleDark={onToggleDark}>
@@ -145,6 +153,13 @@ export function AlgorithmPage({ algorithm, dark, onToggleDark }: AlgorithmPagePr
         <div className="mt-10">
           <Visualizer algorithm={algorithm} />
         </div>
+
+        <section className="mt-8">
+          <AiBridgePanel
+            title={t("aiBridge.title")}
+            prompt={explainPrompt}
+          />
+        </section>
 
         <section className="mt-12">
           <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
