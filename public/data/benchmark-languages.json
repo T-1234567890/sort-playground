@@ -1,1 +1,640 @@
-[]
+[
+  {
+    "name": "Merge Sort",
+    "slug": "merge-sort",
+    "unit": "ms",
+    "status": "benchmarked",
+    "labels": {
+      "experimental": "Experimental",
+      "communityProvided": "Community provided"
+    },
+    "languages": {
+      "python": {
+        "label": "Python",
+        "source": "main",
+        "experimental": false,
+        "communityProvided": false,
+        "status": "benchmarked",
+        "results": {
+          "small": 0.18,
+          "medium": 2.025,
+          "large": 25.109
+        },
+        "workloadProfiles": {
+          "random-uniform": {
+            "small": 0.18,
+            "medium": 2.025,
+            "large": 25.109
+          },
+          "nearly-sorted": {
+            "small": 0.144,
+            "medium": 1.783,
+            "large": 21.826
+          },
+          "reverse-sorted": {
+            "small": 0.136,
+            "medium": 1.461,
+            "large": 16.665
+          },
+          "many-duplicates": {
+            "small": 0.164,
+            "medium": 1.895,
+            "large": 22.971
+          },
+          "low-value-range": {
+            "small": 0.165,
+            "medium": 1.93,
+            "large": 23.545
+          },
+          "adversarial-pivot": {
+            "small": 0.136,
+            "medium": 1.448,
+            "large": 16.497
+          }
+        },
+        "metadata": {
+          "lastRunAt": "2026-04-19T14:59:28.145Z",
+          "benchmarkMode": "main",
+          "algorithmHash": "7fd675bce6b227d81303bd18bf1cc18fd87e53ef1111917147ed2475ddda32e7"
+        }
+      },
+      "rust": {
+        "label": "Rust",
+        "source": "main",
+        "experimental": false,
+        "communityProvided": false,
+        "status": "benchmarked",
+        "results": {
+          "small": 0.008,
+          "medium": 0.095,
+          "large": 1.035
+        },
+        "workloadProfiles": {
+          "random-uniform": {
+            "small": 0.008,
+            "medium": 0.095,
+            "large": 1.035
+          },
+          "nearly-sorted": {
+            "small": 0.006,
+            "medium": 0.058,
+            "large": 0.584
+          },
+          "reverse-sorted": {
+            "small": 0.005,
+            "medium": 0.048,
+            "large": 0.463
+          },
+          "many-duplicates": {
+            "small": 0.008,
+            "medium": 0.079,
+            "large": 0.79
+          },
+          "low-value-range": {
+            "small": 0.009,
+            "medium": 0.095,
+            "large": 0.884
+          },
+          "adversarial-pivot": {
+            "small": 0.005,
+            "medium": 0.048,
+            "large": 0.474
+          }
+        },
+        "metadata": {
+          "lastRunAt": "2026-04-19T14:59:28.145Z",
+          "benchmarkMode": "main",
+          "algorithmHash": "7fd675bce6b227d81303bd18bf1cc18fd87e53ef1111917147ed2475ddda32e7"
+        }
+      },
+      "c": {
+        "label": "C",
+        "source": "main",
+        "experimental": false,
+        "communityProvided": false,
+        "status": "benchmarked",
+        "results": {
+          "small": 0.007,
+          "medium": 0.083,
+          "large": 0.906
+        },
+        "workloadProfiles": {
+          "random-uniform": {
+            "small": 0.007,
+            "medium": 0.083,
+            "large": 0.906
+          },
+          "nearly-sorted": {
+            "small": 0.006,
+            "medium": 0.05,
+            "large": 0.512
+          },
+          "reverse-sorted": {
+            "small": 0.005,
+            "medium": 0.045,
+            "large": 0.43
+          },
+          "many-duplicates": {
+            "small": 0.007,
+            "medium": 0.069,
+            "large": 0.676
+          },
+          "low-value-range": {
+            "small": 0.007,
+            "medium": 0.076,
+            "large": 0.773
+          },
+          "adversarial-pivot": {
+            "small": 0.005,
+            "medium": 0.048,
+            "large": 0.421
+          }
+        },
+        "metadata": {
+          "lastRunAt": "2026-04-19T14:59:28.145Z",
+          "benchmarkMode": "main",
+          "algorithmHash": "7fd675bce6b227d81303bd18bf1cc18fd87e53ef1111917147ed2475ddda32e7"
+        }
+      },
+      "cpp": {
+        "label": "C++",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "cpp",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      },
+      "go": {
+        "label": "Go",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "go",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      },
+      "java": {
+        "label": "Java",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "java",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      },
+      "javascript": {
+        "label": "JavaScript",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "node",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      },
+      "kotlin": {
+        "label": "Kotlin",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "kotlin",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      },
+      "ruby": {
+        "label": "Ruby",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "ruby",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      },
+      "swift": {
+        "label": "Swift",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "swift",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      },
+      "typescript": {
+        "label": "TypeScript",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "benchmarked",
+        "file": "ts.ts",
+        "runtime": "typescript",
+        "note": "Canceled due to runtime constraints.",
+        "results": {
+          "small": 0.198,
+          "medium": 2.297
+        },
+        "workloadProfiles": {
+          "random-uniform": {
+            "small": 0.198,
+            "medium": 2.297
+          },
+          "nearly-sorted": {
+            "small": 0.177,
+            "medium": 2.207
+          },
+          "reverse-sorted": {
+            "small": 0.171,
+            "medium": 1.759
+          },
+          "many-duplicates": {
+            "small": 0.19,
+            "medium": 2.285
+          },
+          "low-value-range": {
+            "small": 0.188,
+            "medium": 2.328
+          },
+          "adversarial-pivot": {
+            "small": 0.17,
+            "medium": 1.68
+          }
+        },
+        "metadata": {
+          "lastRunAt": "2026-04-20T01:57:03.973Z",
+          "languageHash": "b706c4cdb5576e04c14dd6ec5d5a92fb2fa7bbb0ef84bbb0a2e9b5386d6a1184",
+          "benchmarkMode": "community-language"
+        }
+      },
+      "zig": {
+        "label": "Zig",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "zig",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      }
+    },
+    "metadata": {
+      "lastUpdatedAt": "2026-04-20T01:58:08.521Z"
+    }
+  },
+  {
+    "name": "Quick Sort",
+    "slug": "quick-sort",
+    "unit": "ms",
+    "status": "benchmarked",
+    "labels": {
+      "experimental": "Experimental",
+      "communityProvided": "Community provided"
+    },
+    "languages": {
+      "python": {
+        "label": "Python",
+        "source": "main",
+        "experimental": false,
+        "communityProvided": false,
+        "status": "benchmarked",
+        "results": {
+          "small": 0.075,
+          "medium": 0.986,
+          "large": 16.59
+        },
+        "workloadProfiles": {
+          "random-uniform": {
+            "small": 0.075,
+            "medium": 0.986,
+            "large": 16.59
+          },
+          "nearly-sorted": {
+            "small": 0.063,
+            "medium": 0.957,
+            "large": 14.103
+          },
+          "reverse-sorted": {
+            "small": 0.074,
+            "medium": 1.256,
+            "large": 17.969
+          },
+          "many-duplicates": {
+            "small": 0.09,
+            "medium": 4.29,
+            "large": 379.015
+          },
+          "low-value-range": {
+            "small": 0.071,
+            "medium": 1.8,
+            "large": 102.899
+          },
+          "adversarial-pivot": {
+            "small": 0.067,
+            "medium": 0.985,
+            "large": 14.092
+          }
+        },
+        "metadata": {
+          "lastRunAt": "2026-04-19T14:59:27.344Z",
+          "benchmarkMode": "main",
+          "algorithmHash": "91162654cb5f2d6e0d63811403a2aa55b5d35277a7ded9b0dfec69a84e120e92"
+        }
+      },
+      "rust": {
+        "label": "Rust",
+        "source": "main",
+        "experimental": false,
+        "communityProvided": false,
+        "status": "benchmarked",
+        "results": {
+          "small": 0.004,
+          "medium": 0.053,
+          "large": 0.581
+        },
+        "workloadProfiles": {
+          "random-uniform": {
+            "small": 0.004,
+            "medium": 0.053,
+            "large": 0.581
+          },
+          "nearly-sorted": {
+            "small": 0.003,
+            "medium": 0.029,
+            "large": 0.328
+          },
+          "reverse-sorted": {
+            "small": 0.003,
+            "medium": 0.022,
+            "large": 0.215
+          },
+          "many-duplicates": {
+            "small": 0.004,
+            "medium": 0.062,
+            "large": 3.816
+          },
+          "low-value-range": {
+            "small": 0.004,
+            "medium": 0.042,
+            "large": 1.204
+          },
+          "adversarial-pivot": {
+            "small": 0.003,
+            "medium": 0.019,
+            "large": 0.17
+          }
+        },
+        "metadata": {
+          "lastRunAt": "2026-04-19T14:59:27.344Z",
+          "benchmarkMode": "main",
+          "algorithmHash": "91162654cb5f2d6e0d63811403a2aa55b5d35277a7ded9b0dfec69a84e120e92"
+        }
+      },
+      "c": {
+        "label": "C",
+        "source": "main",
+        "experimental": false,
+        "communityProvided": false,
+        "status": "benchmarked",
+        "results": {
+          "small": 0.003,
+          "medium": 0.047,
+          "large": 0.457
+        },
+        "workloadProfiles": {
+          "random-uniform": {
+            "small": 0.003,
+            "medium": 0.047,
+            "large": 0.457
+          },
+          "nearly-sorted": {
+            "small": 0.002,
+            "medium": 0.024,
+            "large": 0.293
+          },
+          "reverse-sorted": {
+            "small": 0.002,
+            "medium": 0.016,
+            "large": 0.188
+          },
+          "many-duplicates": {
+            "small": 0.003,
+            "medium": 0.047,
+            "large": 3.108
+          },
+          "low-value-range": {
+            "small": 0.004,
+            "medium": 0.032,
+            "large": 0.986
+          },
+          "adversarial-pivot": {
+            "small": 0.002,
+            "medium": 0.014,
+            "large": 0.145
+          }
+        },
+        "metadata": {
+          "lastRunAt": "2026-04-19T14:59:27.344Z",
+          "benchmarkMode": "main",
+          "algorithmHash": "91162654cb5f2d6e0d63811403a2aa55b5d35277a7ded9b0dfec69a84e120e92"
+        }
+      },
+      "cpp": {
+        "label": "C++",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "cpp",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      },
+      "go": {
+        "label": "Go",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "go",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      },
+      "java": {
+        "label": "Java",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "java",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      },
+      "javascript": {
+        "label": "JavaScript",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "benchmarked",
+        "file": "js.js",
+        "runtime": "node",
+        "note": "Canceled due to runtime constraints.",
+        "results": {
+          "small": 0.457,
+          "medium": 3.52
+        },
+        "workloadProfiles": {
+          "random-uniform": {
+            "small": 0.457,
+            "medium": 3.52
+          },
+          "nearly-sorted": {
+            "small": 0.435,
+            "medium": 3.366
+          },
+          "reverse-sorted": {
+            "small": 0.492,
+            "medium": 4.46
+          },
+          "many-duplicates": {
+            "small": 0.547,
+            "medium": 6.836
+          },
+          "low-value-range": {
+            "small": 0.473,
+            "medium": 5.899
+          },
+          "adversarial-pivot": {
+            "small": 0.453,
+            "medium": 3.63
+          }
+        },
+        "metadata": {
+          "lastRunAt": "2026-04-20T01:57:31.509Z",
+          "languageHash": "2261af9a91f9018f5c90ca9c6133f1184172dcb30a7c5c8c39a8b9b26fa21d8c",
+          "benchmarkMode": "community-language"
+        }
+      },
+      "kotlin": {
+        "label": "Kotlin",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "kotlin",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      },
+      "ruby": {
+        "label": "Ruby",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "ruby",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      },
+      "swift": {
+        "label": "Swift",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "swift",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      },
+      "typescript": {
+        "label": "TypeScript",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "typescript",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      },
+      "zig": {
+        "label": "Zig",
+        "source": "community",
+        "experimental": true,
+        "communityProvided": true,
+        "status": "missing",
+        "note": "No community implementation has been added for this language yet.",
+        "runtime": "zig",
+        "results": {},
+        "workloadProfiles": {},
+        "metadata": {
+          "benchmarkMode": "community-language"
+        }
+      }
+    },
+    "metadata": {
+      "lastUpdatedAt": "2026-04-20T01:58:08.520Z"
+    }
+  }
+]
