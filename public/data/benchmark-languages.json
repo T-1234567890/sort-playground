@@ -315,7 +315,8 @@
       }
     },
     "metadata": {
-      "lastUpdatedAt": "2026-04-20T01:58:08.521Z"
+      "lastUpdatedAt": "2026-04-20T04:20:49.038Z",
+      "mainBenchmarkCompositeScore": 56.9
     }
   },
   {
@@ -634,7 +635,8 @@
       }
     },
     "metadata": {
-      "lastUpdatedAt": "2026-04-20T01:58:08.520Z"
+      "lastUpdatedAt": "2026-04-20T04:20:49.037Z",
+      "mainBenchmarkCompositeScore": 74
     }
   }
 ]
