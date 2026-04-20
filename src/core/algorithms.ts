@@ -25,6 +25,11 @@ import { shellSortSteps } from "../algorithms/shell-sort/steps";
 import { countingSortSteps } from "../algorithms/counting-sort/steps";
 import { radixSortSteps } from "../algorithms/radix-sort/steps";
 import { introSortSteps } from "../algorithms/intro-sort/steps";
+import { selectionSortSteps } from "../algorithms/selection-sort/steps";
+import { timSortSteps } from "../algorithms/tim-sort/steps";
+import { combSortSteps } from "../algorithms/comb-sort/steps";
+import { cocktailShakerSortSteps } from "../algorithms/cocktail-shaker-sort/steps";
+import { bucketSortSteps } from "../algorithms/bucket-sort/steps";
 
 const metaModules = import.meta.glob<AlgorithmMeta>("../algorithms/*/meta.json", {
   eager: true,
@@ -105,6 +110,11 @@ const stepModules = {
   "counting-sort": countingSortSteps,
   "radix-sort": radixSortSteps,
   "intro-sort": introSortSteps,
+  "selection-sort": selectionSortSteps,
+  "tim-sort": timSortSteps,
+  "comb-sort": combSortSteps,
+  "cocktail-shaker-sort": cocktailShakerSortSteps,
+  "bucket-sort": bucketSortSteps,
 };
 
 function slugFromPath(path: string) {

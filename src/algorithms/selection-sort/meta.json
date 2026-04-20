@@ -1,0 +1,13 @@
+{
+  "name": "Selection Sort",
+  "category": "classic",
+  "complexity": "O(n^2)",
+  "space": "O(1)",
+  "stability": "Unstable",
+  "description": "Finds the smallest remaining value and places it into the next sorted position.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-20",
+  "visualization": "default",
+  "keywords": ["classic", "selection", "in-place", "teaching"]
+}

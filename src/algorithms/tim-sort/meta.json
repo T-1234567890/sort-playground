@@ -1,0 +1,13 @@
+{
+  "name": "TimSort",
+  "category": "classic",
+  "complexity": "O(n log n)",
+  "spaceComplexity": "O(n)",
+  "stability": "Stable",
+  "description": "Builds sorted runs with insertion sort and then merges them, making it strong on partially ordered data.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-20",
+  "visualization": "default",
+  "keywords": ["classic", "stable", "runs", "merge", "adaptive"]
+}

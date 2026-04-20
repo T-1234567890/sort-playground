@@ -1,0 +1,13 @@
+{
+  "name": "Cocktail Shaker Sort",
+  "category": "classic",
+  "complexity": "O(n^2)",
+  "space": "O(1)",
+  "stability": "Stable",
+  "description": "Sweeps left to right and then right to left, bubbling values in both directions.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-20",
+  "visualization": "default",
+  "keywords": ["classic", "bidirectional", "bubble family", "stable"]
+}

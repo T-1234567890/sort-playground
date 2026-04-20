@@ -1,0 +1,13 @@
+{
+  "name": "Comb Sort",
+  "category": "classic",
+  "complexity": "O(n^2) worst, O(n log n) average-ish",
+  "space": "O(1)",
+  "stability": "Unstable",
+  "description": "Improves on Bubble Sort by comparing elements across a shrinking gap before finishing with adjacent passes.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-20",
+  "visualization": "default",
+  "keywords": ["classic", "gap", "bubble family", "shrinking gap"]
+}

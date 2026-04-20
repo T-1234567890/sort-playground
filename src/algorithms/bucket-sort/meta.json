@@ -1,0 +1,13 @@
+{
+  "name": "Bucket Sort",
+  "category": "classic",
+  "complexity": "O(n + k) average",
+  "spaceComplexity": "O(n + k)",
+  "stability": "Stable",
+  "description": "Distributes values into buckets, sorts each bucket, and concatenates the results.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-04-20",
+  "visualization": "default",
+  "keywords": ["classic", "distribution", "bucket", "stable"]
+}
