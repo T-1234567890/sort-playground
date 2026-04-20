@@ -102,6 +102,7 @@
     "title": "Sort Labs",
     "subtitle": "围绕排序算法的社区排名、基准测试和活动。",
     "explore": "打开 Labs",
+    "create": "打开贡献中心",
     "community": {
       "title": "社区排名",
       "description": "看看社区觉得哪些算法最有意思，从有创意的点子到完全没有必要的作品。"
@@ -265,6 +266,10 @@
     "eyebrow": "社区",
     "title": "贡献与讨论",
     "description": "使用贡献向导，阅读文档，或在 GitHub Discussions 讨论新算法和想法。",
+    "hub": {
+      "title": "贡献中心",
+      "description": "打开用于工具、文件夹校验和预览的实际工作台，然后再提交。"
+    },
     "contribute": {
       "title": "贡献向导",
       "description": "了解算法结构，并开始你的 pull request。"
@@ -765,6 +770,247 @@
     "privacy": "隐私政策",
     "terms": "服务条款",
     "back": "返回首页"
+  },
+  "create": {
+    "hub": {
+      "back": "返回 Sort Playground",
+      "hero": {
+        "eyebrow": "贡献中心",
+        "title": "Contribute Algorithms",
+        "subtitle": "Add your own sorting algorithm to Sort Playground.",
+        "description": "把这个页面当成实际工作台：打开辅助工具、校验算法文件夹；当你需要完整的逐步说明时，再去贡献向导页面。",
+        "clone": "克隆仓库",
+        "openTools": "打开工具",
+        "openWizard": "打开贡献向导"
+      },
+      "wizard": {
+        "eyebrow": "贡献向导",
+        "title": "需要完整的贡献说明吗？",
+        "description": "向导页面会讲清楚仓库结构、必需文件、模板以及推荐的 Pull Request 流程。让 `/create` 保持聚焦于工具和预览，而把更完整的说明放在 `/contribute`。",
+        "open": "打开 /contribute",
+        "note": "完整说明请看贡献向导。"
+      },
+      "quickStart": {
+        "eyebrow": "快速开始",
+        "title": "先用工具。",
+        "description": "先打开工具页准备文件，再回到这里校验整个文件夹。"
+      },
+      "tools": {
+        "eyebrow": "工具",
+        "title": "在贡献流程里直接使用辅助工具。",
+        "description": "工具页用于生成 `meta.json`、做一次快速浏览器本地测试，以及准备检查实现时要用的数据集。",
+        "open": "打开 /create/tools",
+        "items": {
+          "json": {
+            "title": "JSON 生成器",
+            "description": "用简单字段生成干净的 `meta.json` 内容，并直接复制。"
+          },
+          "test": {
+            "title": "本地测试",
+            "description": "加载算法文件夹，在浏览器里用小型或中型数据集运行，并得到近似耗时。"
+          },
+          "datasets": {
+            "title": "数据集生成器",
+            "description": "快速生成随机、接近有序、逆序或高重复数组。"
+          }
+        }
+      },
+      "preview": {
+        "eyebrow": "预览",
+        "title": "校验并可视化一个现有贡献。",
+        "panelEyebrow": "文件夹预览",
+        "panelTitle": "加载算法文件夹",
+        "open": "打开预览页面",
+        "pageNote": "文件夹校验和可视化预览现在都放在独立页面里。",
+        "liveTitle": "实时预览",
+        "liveNote": "运行可视化页面。",
+        "loadTitle": "加载算法",
+        "loadNote": "打开本地算法文件夹。",
+        "loadedTitle": "算法已加载",
+        "loadedDescription": "所选的 `steps.ts` 会在沙箱运行器中执行，方便你在发起 Pull Request 之前确认可视化结果。",
+        "emptyTitle": "还没有加载算法文件夹。",
+        "emptyBody": "选择本地算法文件夹以验证 `meta.json`、`steps.ts`、`python.py`、`rust.rs` 和 `c.c`，然后在这里预览可视化输出。",
+        "toolsLink": "如果还需要先准备文件，可以打开工具页"
+      }
+    },
+    "tabs": {
+      "build": {
+        "label": "构建",
+        "description": "编写并导出新的算法文件夹。"
+      },
+      "preview": {
+        "label": "预览",
+        "description": "加载已有算法文件夹并进行校验。"
+      }
+    },
+    "categories": {
+      "classic": "经典",
+      "weird": "奇怪",
+      "meme": "梗图"
+    },
+    "fields": {
+      "name": "名称",
+      "slug": "Slug",
+      "category": "分类",
+      "description": "描述",
+      "namePlaceholder": "Example Sort",
+      "slugPlaceholder": "example-sort",
+      "descriptionPlaceholder": "解释这个算法为什么有用、特别，或者足够好笑。"
+    },
+    "validation": {
+      "nameRequired": "名称是必填项。",
+      "slugRequired": "Slug 是必填项。",
+      "slugInvalid": "Slug 只能包含小写字母和连字符。",
+      "descriptionRequired": "描述是必填项。",
+      "codeRequired": "算法代码是必填项。"
+    },
+    "messages": {
+      "completeDraftTitle": "请先补全草稿",
+      "completeDraftBody": {
+        "save": "保存前请先填写必填字段。",
+        "export": "导出前请先填写必填字段。"
+      },
+      "fileSavingUnavailableTitle": "无法直接保存文件",
+      "fileSavingUnavailableBody": "浏览器需要在安全上下文中支持 File System Access API，才能直接保存到本地仓库。",
+      "filesCreatedTitle": "文件创建成功",
+      "savedToProjectBody": "已将 src/algorithms/{{slug}}/ 保存到所选项目文件夹中。",
+      "projectSaveFailedTitle": "项目保存失败",
+      "projectSaveCancelled": "项目保存已取消。",
+      "bundleDownloadedTitle": "压缩包已下载",
+      "bundleDownloadedBody": "已创建包含算法文件夹的 algorithm-{{slug}}.zip。",
+      "folderAccessUnavailableTitle": "无法访问文件夹",
+      "folderAccessUnavailableBody": "浏览器需要在安全上下文中支持 File System Access API，才能加载本地算法文件夹。",
+      "loadedStructureBody": "已加载 {{slug}}，并验证了所需的算法结构。",
+      "couldNotLoadAlgorithmTitle": "无法加载算法",
+      "invalidStructure": "结构无效"
+    },
+    "page": {
+      "eyebrow": "为 Playground 创建",
+      "title": "创建新算法，或加载已有算法进行校验。",
+      "description": "构建模式专注于编辑。预览模式会在单独面板中运行当前草稿或已加载文件夹。Tools 作为独立辅助页面打开。",
+      "helperTitle": "单一路由，聚焦辅助功能",
+      "helperBody": {
+        "before": "使用下面的标签在编写和预览之间切换。Tools 会单独打开在",
+        "after": "。"
+      },
+      "toolsLink": "工具"
+    },
+    "build": {
+      "editorEyebrow": "编辑器",
+      "editorTitle": "steps.ts 草稿",
+      "contributionGuide": "贡献指南",
+      "metadataEyebrow": "元数据",
+      "metadataTitle": "准备算法文件夹",
+      "generatedFilesTitle": "生成的文件",
+      "generatedFilesBody": {
+        "before": "导出会写入",
+        "after": "并包含 5 个必需的贡献文件。"
+      },
+      "yourSlug": "your-slug",
+      "requiredBeforeExport": "导出前必填",
+      "actionsEyebrow": "操作",
+      "actionsTitle": "导出或保存到本地",
+      "downloadBundle": "下载压缩包",
+      "saveToProject": "保存到此项目",
+      "autoSaveTitle": "自动保存",
+      "autoSaveBody": "编辑器会每秒将草稿代码保存到本地存储键",
+      "nextSteps": "后续步骤：",
+      "openPullRequest": "打开 Pull Request"
+    },
+    "preview": {
+      "page": {
+        "back": "返回 /create",
+        "eyebrow": "创建预览",
+        "title": "校验算法文件夹",
+        "description": "加载一个已有算法贡献，验证必需文件结构，并单独预览可视化输出。"
+      },
+      "defaultTitle": "沙箱草稿运行器",
+      "defaultDescription": "导出一个类似 `algorithmSteps(input)` 的函数，并返回由 compare、swap、overwrite、delete 或 sorted 组成的步骤数组。",
+      "loadedTitle": "{{name}} 预览",
+      "draftTitle": "草稿预览",
+      "loadedDescription": "已加载的 `steps.ts` 会通过与构建模式相同的沙箱运行器执行。",
+      "draftDescription": "这个面板会预览来自构建模式的当前 `steps.ts` 草稿。继续编辑请切回构建模式。",
+      "loadedEyebrow": "已加载预览",
+      "liveEyebrow": "实时预览",
+      "panelEyebrow": "预览面板",
+      "validateTitle": "校验外部贡献",
+      "currentDraftTitle": "预览当前草稿",
+      "loadedSource": "已加载源码",
+      "currentSource": "当前源码",
+      "loadedSourceBody": "正在预览所选文件夹中的 {{slug}}/steps.ts。",
+      "currentSourceBody": "正在预览来自构建模式的当前编辑草稿。",
+      "loadingFolder": "正在加载文件夹...",
+      "loadExisting": "加载已有算法",
+      "requiredFiles": "必需文件",
+      "loadedMetadata": "已加载元数据",
+      "showLess": "收起",
+      "showFullCode": "显示完整代码",
+      "languageFiles": "语言文件",
+      "validatedBundle": "已校验源码包",
+      "loadedSuccessfully": "加载成功。",
+      "missingContent": "内容缺失。",
+      "failed": "预览失败",
+      "errorBadge": "预览错误",
+      "runningBadge": "运行中",
+      "playback": "播放",
+      "play": "播放",
+      "pause": "暂停",
+      "reset": "重置",
+      "randomize": "随机样例",
+      "speed": "速度",
+      "sampleArray": "样例数组",
+      "applySample": "应用样例",
+      "guardrailsTitle": "运行约束",
+      "guardrailsBody": "预览会在带有短超时的 Web Worker 中运行。请保持草稿自包含，并使用不带 import 或重型循环的普通 JavaScript / TS 兼容语法。",
+      "errors": {
+        "timeout": "预览超时。请保持运行器足够轻量，并避免长循环。"
+      }
+    },
+    "tools": {
+      "eyebrow": "工具",
+      "title": "用于起草和检查算法的小工具。",
+      "currentDraft": "已保存的本地草稿",
+      "page": {
+        "back": "返回 /create",
+        "eyebrow": "创建工具",
+        "title": "用于算法创建的轻量辅助工具。",
+        "description": "这个页面把辅助工具与贡献中心分开。它可以在有本地草稿时使用该草稿，也可以加载真实算法文件夹进行检查。",
+        "helperTitle": "辅助页面",
+        "helperBody": "JSON 生成、快速浏览器端测试和数据集预设都在这里，这样主贡献页面可以保持聚焦。",
+        "algorithmFolderLoadedTitle": "算法文件夹已加载",
+        "algorithmFolderLoadedBody": "已加载 {{slug}} 及其所需的算法文件。"
+      },
+      "jsonGenerator": {
+        "title": "JSON 生成器",
+        "description": "用于轻量 meta 载荷的自动预览。",
+        "copy": "复制 JSON",
+        "copied": "已复制"
+      },
+      "localTest": {
+        "title": "本地测试",
+        "note": "近似本地测试（不是官方基准）",
+        "testSource": "测试来源",
+        "openFolder": "打开算法文件夹",
+        "running": "运行中...",
+        "run": "运行测试",
+        "timeout": "本地测试超时。",
+        "failed": "本地测试失败。",
+        "smallDataset": "小型数据集",
+        "mediumDataset": "中型数据集",
+        "currentDatasetSize": "当前数据集大小：{{count}} 项",
+        "resultMs": "JS 预览运行器（近似）：{{duration}} ms",
+        "generatedSteps": "生成步骤数：{{count}}"
+      },
+      "datasetGenerator": {
+        "title": "数据集生成器",
+        "random": "随机",
+        "nearlySorted": "接近有序",
+        "reverseSorted": "逆序",
+        "manyDuplicates": "大量重复",
+        "currentPreviewDataset": "当前预览数据集",
+        "description": "这些数据集预设会喂给预览标签中的样例数组和本地测试运行器。"
+      }
+    }
   },
   "footer": {
     "copyright": "© 2026 Tony Hu",

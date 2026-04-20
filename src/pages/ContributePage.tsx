@@ -172,6 +172,16 @@ export function ContributePage({ dark, onToggleDark }: ContributePageProps) {
                 <p className="mt-6 max-w-2xl text-xl leading-8 text-zinc-600 dark:text-zinc-300">
                   The roadmap calls for a guided `/contribute` page. This is the path from idea to pull request.
                 </p>
+                <div className="mt-6">
+                  <a
+                    data-route
+                    href="/create"
+                    className="inline-flex items-center gap-2 rounded-lg bg-zinc-950 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-zinc-950"
+                  >
+                    Open the browser creator
+                    <ExternalLink size={16} />
+                  </a>
+                </div>
               </div>
 
               <div className="rounded-lg border border-zinc-950/10 bg-zinc-950 p-5 text-white shadow-soft dark:border-white/10">

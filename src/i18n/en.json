@@ -102,6 +102,7 @@
     "title": "Sort Labs",
     "subtitle": "Community Ranking, Benchmark, and Events for sorting algorithms.",
     "explore": "Open Labs",
+    "create": "Open Contributing Hub",
     "community": {
       "title": "Community Ranking",
       "description": "See which algorithms the community finds most interesting — from creative ideas to completely unnecessary ones."
@@ -265,6 +266,10 @@
     "eyebrow": "Community",
     "title": "Contribute and discuss",
     "description": "Use the contribution guide, read the docs, or join the GitHub discussion around new algorithms and ideas.",
+    "hub": {
+      "title": "Contributing Hub",
+      "description": "Open the practical workspace for tools, folder validation, and preview before you submit."
+    },
     "contribute": {
       "title": "Contribution Wizard",
       "description": "Learn how algorithms are structured and start your own pull request."
@@ -765,6 +770,247 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "back": "Back to home"
+  },
+  "create": {
+    "hub": {
+      "back": "Back to Sort Playground",
+      "hero": {
+        "eyebrow": "Contributing Hub",
+        "title": "Contribute Algorithms",
+        "subtitle": "Add your own sorting algorithm to Sort Playground.",
+        "description": "Use this page as the practical workspace: open the helper tools, validate an algorithm folder, and move over to the contribution wizard when you need the full step-by-step guide.",
+        "clone": "Clone repository",
+        "openTools": "Open tools",
+        "openWizard": "Open contribution wizard"
+      },
+      "wizard": {
+        "eyebrow": "Contribution Wizard",
+        "title": "Need the full contribution walkthrough?",
+        "description": "The wizard page covers repository structure, required files, templates, and the recommended pull request flow. Keep `/create` focused on tools and preview, and use `/contribute` when you want the deeper guidance.",
+        "open": "Open /contribute",
+        "note": "Use the wizard for the full instructions."
+      },
+      "quickStart": {
+        "eyebrow": "Quick Start",
+        "title": "Tools first.",
+        "description": "Open the tools page, prepare your files, then come back here to validate the folder."
+      },
+      "tools": {
+        "eyebrow": "Tools",
+        "title": "Use the helper tools without leaving the contribution flow.",
+        "description": "The tools page is where you generate `meta.json`, run a quick local browser-side test, and prepare datasets for checking your implementation.",
+        "open": "Open /create/tools",
+        "items": {
+          "json": {
+            "title": "JSON Generator",
+            "description": "Build a clean `meta.json` payload from lightweight fields and copy it directly."
+          },
+          "test": {
+            "title": "Local Test",
+            "description": "Load an algorithm folder, run a small or medium dataset in the browser, and get an approximate timing."
+          },
+          "datasets": {
+            "title": "Dataset Generator",
+            "description": "Create random, nearly sorted, reverse sorted, or duplicate-heavy arrays for quick checks."
+          }
+        }
+      },
+      "preview": {
+        "eyebrow": "Preview",
+        "title": "Validate and visualize an existing contribution.",
+        "panelEyebrow": "Folder Preview",
+        "panelTitle": "Load an algorithm folder",
+        "open": "Open preview page",
+        "pageNote": "The folder validator and visualization preview now live on their own dedicated page.",
+        "liveTitle": "Live preview",
+        "liveNote": "Run the visualization page.",
+        "loadTitle": "Load an algorithm",
+        "loadNote": "Open a local algorithm folder.",
+        "loadedTitle": "Algorithm loaded",
+        "loadedDescription": "The selected `steps.ts` file is executed in a sandboxed runner so you can confirm the visualization before opening a pull request.",
+        "emptyTitle": "No algorithm folder loaded yet.",
+        "emptyBody": "Select a local algorithm folder to validate `meta.json`, `steps.ts`, `python.py`, `rust.rs`, and `c.c`, then preview the visualization output here.",
+        "toolsLink": "Need help preparing files first? Open the tools page"
+      }
+    },
+    "tabs": {
+      "build": {
+        "label": "Build",
+        "description": "Write and export a new algorithm folder."
+      },
+      "preview": {
+        "label": "Preview",
+        "description": "Load an existing algorithm folder and validate it."
+      }
+    },
+    "categories": {
+      "classic": "Classic",
+      "weird": "Weird",
+      "meme": "Meme"
+    },
+    "fields": {
+      "name": "Name",
+      "slug": "Slug",
+      "category": "Category",
+      "description": "Description",
+      "namePlaceholder": "Example Sort",
+      "slugPlaceholder": "example-sort",
+      "descriptionPlaceholder": "Explain what makes the algorithm useful, unusual, or funny."
+    },
+    "validation": {
+      "nameRequired": "Name is required.",
+      "slugRequired": "Slug is required.",
+      "slugInvalid": "Slug must use lowercase letters and dashes only.",
+      "descriptionRequired": "Description is required.",
+      "codeRequired": "Algorithm code is required."
+    },
+    "messages": {
+      "completeDraftTitle": "Complete the draft first",
+      "completeDraftBody": {
+        "save": "Fill in the required fields before saving.",
+        "export": "Fill in the required fields before exporting."
+      },
+      "fileSavingUnavailableTitle": "File saving is unavailable",
+      "fileSavingUnavailableBody": "This browser needs the File System Access API in a secure context to save directly into a local repository.",
+      "filesCreatedTitle": "Files created successfully",
+      "savedToProjectBody": "Saved src/algorithms/{{slug}}/ into the selected project folder.",
+      "projectSaveFailedTitle": "Project save failed",
+      "projectSaveCancelled": "The project save was cancelled.",
+      "bundleDownloadedTitle": "Bundle downloaded",
+      "bundleDownloadedBody": "Created algorithm-{{slug}}.zip with the generated algorithm folder.",
+      "folderAccessUnavailableTitle": "Folder access is unavailable",
+      "folderAccessUnavailableBody": "This browser needs the File System Access API in a secure context to load a local algorithm folder.",
+      "loadedStructureBody": "Loaded {{slug}} and validated the required algorithm structure.",
+      "couldNotLoadAlgorithmTitle": "Could not load algorithm",
+      "invalidStructure": "Invalid structure"
+    },
+    "page": {
+      "eyebrow": "Create for Playground",
+      "title": "Build a new algorithm or load an existing one for validation.",
+      "description": "Build mode focuses on editing. Preview runs the current draft or a loaded folder in a separate panel. Tools opens as a separate helper page.",
+      "helperTitle": "Single route, focused helpers",
+      "helperBody": {
+        "before": "Use the tabs below to switch between authoring and previewing. Tools opens separately in",
+        "after": "."
+      },
+      "toolsLink": "Tools"
+    },
+    "build": {
+      "editorEyebrow": "Editor",
+      "editorTitle": "steps.ts draft",
+      "contributionGuide": "Contribution guide",
+      "metadataEyebrow": "Metadata",
+      "metadataTitle": "Prepare the algorithm folder",
+      "generatedFilesTitle": "Generated files",
+      "generatedFilesBody": {
+        "before": "The export writes to",
+        "after": "and includes the five required contribution files."
+      },
+      "yourSlug": "your-slug",
+      "requiredBeforeExport": "Required before export",
+      "actionsEyebrow": "Actions",
+      "actionsTitle": "Export or save locally",
+      "downloadBundle": "Download bundle",
+      "saveToProject": "Save to this project",
+      "autoSaveTitle": "Auto-save",
+      "autoSaveBody": "The editor persists the draft code to local storage every second under",
+      "nextSteps": "Next steps:",
+      "openPullRequest": "Open a Pull Request"
+    },
+    "preview": {
+      "page": {
+        "back": "Back to /create",
+        "eyebrow": "Create Preview",
+        "title": "Validate an algorithm folder",
+        "description": "Load an existing algorithm contribution, validate the required file structure, and preview the visualization output in isolation."
+      },
+      "defaultTitle": "Sandboxed draft runner",
+      "defaultDescription": "Export a function like `algorithmSteps(input)` and return an array of compare, swap, overwrite, delete, or sorted steps.",
+      "loadedTitle": "{{name}} preview",
+      "draftTitle": "Draft preview",
+      "loadedDescription": "The loaded `steps.ts` file is executed in the same sandboxed runner used for build mode.",
+      "draftDescription": "This panel previews the current `steps.ts` draft from Build mode. Switch back to Build to keep editing.",
+      "loadedEyebrow": "Loaded Preview",
+      "liveEyebrow": "Live Preview",
+      "panelEyebrow": "Preview panel",
+      "validateTitle": "Validate an external contribution",
+      "currentDraftTitle": "Preview the current draft",
+      "loadedSource": "Loaded source",
+      "currentSource": "Current source",
+      "loadedSourceBody": "Previewing {{slug}}/steps.ts from the selected folder.",
+      "currentSourceBody": "Previewing the current editor draft from Build mode.",
+      "loadingFolder": "Loading folder...",
+      "loadExisting": "Load existing algorithm",
+      "requiredFiles": "Required files",
+      "loadedMetadata": "Loaded metadata",
+      "showLess": "Show less",
+      "showFullCode": "Show full code",
+      "languageFiles": "Language files",
+      "validatedBundle": "Validated source bundle",
+      "loadedSuccessfully": "Loaded successfully.",
+      "missingContent": "Missing content.",
+      "failed": "Preview failed",
+      "errorBadge": "Preview error",
+      "runningBadge": "Running",
+      "playback": "Playback",
+      "play": "Play",
+      "pause": "Pause",
+      "reset": "Reset",
+      "randomize": "Randomize sample",
+      "speed": "Speed",
+      "sampleArray": "Sample array",
+      "applySample": "Apply sample",
+      "guardrailsTitle": "Runner guardrails",
+      "guardrailsBody": "The preview runs inside a web worker with a short timeout. Keep the draft self-contained and use plain JavaScript or TS-compatible syntax without imports or heavy loops.",
+      "errors": {
+        "timeout": "Preview timed out. Keep the runner small and avoid long loops."
+      }
+    },
+    "tools": {
+      "eyebrow": "Tools",
+      "title": "Small helpers for drafting and checking algorithms.",
+      "currentDraft": "Saved local draft",
+      "page": {
+        "back": "Back to /create",
+        "eyebrow": "Create Tools",
+        "title": "Lightweight helpers for algorithm creation.",
+        "description": "This page keeps the helper modules separate from the contributing hub. It can use a saved local draft when available, or load a real algorithm folder for checks.",
+        "helperTitle": "Helper page",
+        "helperBody": "JSON generation, a quick browser-side test, and dataset presets live here so the main contribution page stays focused.",
+        "algorithmFolderLoadedTitle": "Algorithm folder loaded",
+        "algorithmFolderLoadedBody": "Loaded {{slug}} with the required algorithm files."
+      },
+      "jsonGenerator": {
+        "title": "JSON Generator",
+        "description": "Auto-generated preview for a lightweight meta payload.",
+        "copy": "Copy JSON",
+        "copied": "Copied"
+      },
+      "localTest": {
+        "title": "Local Test",
+        "note": "Approximate local test (not official benchmark)",
+        "testSource": "Test source",
+        "openFolder": "Open algorithm folder",
+        "running": "Running...",
+        "run": "Run Test",
+        "timeout": "Local test timed out.",
+        "failed": "Local test failed.",
+        "smallDataset": "Small dataset",
+        "mediumDataset": "Medium dataset",
+        "currentDatasetSize": "Current dataset size: {{count}} items",
+        "resultMs": "JS preview runner (approx): {{duration}} ms",
+        "generatedSteps": "Generated steps: {{count}}"
+      },
+      "datasetGenerator": {
+        "title": "Dataset Generator",
+        "random": "Random",
+        "nearlySorted": "Nearly Sorted",
+        "reverseSorted": "Reverse Sorted",
+        "manyDuplicates": "Many Duplicates",
+        "currentPreviewDataset": "Current preview dataset",
+        "description": "Dataset presets feed the Preview tab’s sample array and the local test runner."
+      }
+    }
   },
   "footer": {
     "copyright": "© 2026 Tony Hu",

@@ -16,6 +16,9 @@ import { LanguageBenchmarkPage } from "./pages/LanguageBenchmarkPage";
 import { LegalPage } from "./pages/LegalPage";
 import { LabsPage } from "./pages/LabsPage";
 import { RacePage } from "./pages/RacePage";
+import { CreatePage } from "./pages/CreatePage";
+import { CreatePreviewPage } from "./pages/CreatePreviewPage";
+import { CreateToolsPage } from "./pages/CreateToolsPage";
 
 function getRoute() {
   const path = window.location.pathname;
@@ -30,6 +33,18 @@ function getRoute() {
 
   if (path === "/contribute") {
     return { name: null, page: "contribute" };
+  }
+
+  if (path === "/create") {
+    return { name: null, page: "create" };
+  }
+
+  if (path === "/create/tools") {
+    return { name: null, page: "create-tools" };
+  }
+
+  if (path === "/create/preview") {
+    return { name: null, page: "create-preview" };
   }
 
   if (path === "/compare") {
@@ -160,6 +175,12 @@ export default function App() {
         <AboutPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "contribute" ? (
         <ContributePage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+      ) : route.page === "create" ? (
+        <CreatePage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+      ) : route.page === "create-tools" ? (
+        <CreateToolsPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+      ) : route.page === "create-preview" ? (
+        <CreatePreviewPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "compare" ? (
         <ComparePage algorithms={algorithms} dark={dark} onToggleDark={() => setDark((value) => !value)} />
       ) : route.page === "benchmark" ? (
