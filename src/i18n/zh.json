@@ -517,10 +517,15 @@
     "title": "更多语言基准",
     "description": "这个页面用于比较社区提供或实验性的额外语言实现。",
     "note": "这些结果不会影响主基准排名。Python、Rust 和 C 仍然是权威基准集合。",
+    "largeDatasetNote": "由于运行时限制，有些语言会排除 large 规模数据集。",
+    "openDetailHint": "点击一个算法即可打开它的详细语言基准结果页面。",
+    "searchPlaceholder": "搜索实验性语言基准...",
     "mainCta": "查看主基准",
     "experimental": "实验性",
     "communityProvided": "社区提供",
     "mainProvided": "主基准基线",
+    "compositeScore": "综合分数",
+    "canceled": "已取消",
     "pendingSupport": "等待运行器支持",
     "missingImplementation": "尚无实现",
     "notBenchmarked": "未基准测试",
@@ -633,6 +638,29 @@
         "noBenchmark": "被显式标记为 no benchmark 的算法"
       }
     },
+    "mainBenchmark": {
+      "label": "主基准",
+      "title": "权威基准集合",
+      "description": "主基准是项目里的权威排名。它会在统一的受控方法下，对必需的 Python、Rust 和 C 实现进行比较。",
+      "pythonLargeNote": "由于运行时间和技术限制，Python 目前不参与 large 规模的基准测试。如果后续基准运行方式足够改进，未来仍可能重新纳入。"
+    },
+    "moreLanguages": {
+      "label": "更多语言",
+      "title": "社区语言基准",
+      "description": "更多语言基准是一个单独的实验性排名，用来比较与现有算法 slug 对应的社区语言实现。",
+      "hint": "如果你想看更广的语言覆盖，就使用这个视图。它不会替代或覆盖主基准。",
+      "supported": {
+        "javascript": "JavaScript",
+        "typescript": "TypeScript",
+        "go": "Go",
+        "java": "Java",
+        "cpp": "C++",
+        "swift": "Swift",
+        "kotlin": "Kotlin",
+        "zig": "Zig",
+        "ruby": "Ruby"
+      }
+    },
     "exclusions": {
       "label": "排除项",
       "title": "不包含什么",
@@ -647,16 +675,20 @@
         "description": "打开 Labs 基准页面，查看当前发布的基准数据。"
       },
       "secondary": {
+        "languages": {
+          "title": "查看更多语言基准 →",
+          "description": "打开面向受支持社区语言实现的实验性基准页面。"
+        },
         "source": {
           "title": "查看源码 → GitHub 仓库",
           "description": "查看项目仓库和基准流水线。"
         },
         "docs": {
-          "title": "查看文档 → /docs",
+          "title": "查看文档 →",
           "description": "浏览项目文档和基准说明。"
         },
         "algorithms": {
-          "title": "查看算法 → /",
+          "title": "查看算法 →",
           "description": "返回主算法浏览页。"
         }
       },

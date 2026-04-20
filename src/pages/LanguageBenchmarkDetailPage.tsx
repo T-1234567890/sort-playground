@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
 import { benchmarkProfiles, benchmarkSizes } from "../core/benchmark";
-import { formatExperimentalMetric, languageBadgeTone } from "../core/experimentalBenchmark";
+import { formatExperimentalMetric, hasExperimentalBenchmarkData, isExperimentalSizeCanceled, languageBadgeTone } from "../core/experimentalBenchmark";
 import type { BenchmarkSize, ExperimentalLanguageBenchmarkEntry } from "../core/types";
 
 type LanguageBenchmarkDetailPageProps = {
@@ -72,7 +72,10 @@ export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: Langua
     };
   }, []);
 
-  const entry = useMemo(() => entries.find((item) => item.slug === slug), [entries, slug]);
+  const entry = useMemo(
+    () => entries.find((item) => item.slug === slug && hasExperimentalBenchmarkData(item)),
+    [entries, slug],
+  );
   const languageEntries = useMemo(() => (entry ? Object.entries(entry.languages) : []), [entry]);
   const profileGridStyle = useMemo(
     () => ({ gridTemplateColumns: `minmax(0, 1.2fr) repeat(${Math.max(languageEntries.length, 1)}, minmax(0, 1fr))` }),
@@ -172,7 +175,9 @@ export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: Langua
                           <span className="font-mono font-semibold">
                             {language.status === "unsupported" || language.status === "missing"
                               ? t("languageBenchmark.notBenchmarked")
-                              : formatExperimentalMetric(language.results?.[sizeKey], entry.unit)}
+                              : isExperimentalSizeCanceled(languageKey, sizeKey)
+                                ? t("languageBenchmark.canceled")
+                                : formatExperimentalMetric(language.results?.[sizeKey], entry.unit)}
                           </span>
                         </div>
                       ))}
@@ -201,7 +206,9 @@ export function LanguageBenchmarkDetailPage({ slug, dark, onToggleDark }: Langua
                         <div key={languageKey} className="font-mono text-xs sm:text-sm">
                           {language.status === "unsupported" || language.status === "missing"
                             ? t("languageBenchmark.notBenchmarked")
-                            : formatExperimentalMetric(language.workloadProfiles?.[profile]?.[size], entry.unit)}
+                            : isExperimentalSizeCanceled(languageKey, size)
+                              ? t("languageBenchmark.canceled")
+                              : formatExperimentalMetric(language.workloadProfiles?.[profile]?.[size], entry.unit)}
                         </div>
                       ))}
                     </div>

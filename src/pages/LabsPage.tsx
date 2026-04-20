@@ -1,9 +1,9 @@
 import { ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, FileText, FlaskConical, Gauge, GitPullRequest, MessageSquare, Trophy } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
-import { formatBenchmarkMetric, getBenchmarkSizeStatus, isBenchmarkSizeCanceled } from "../core/benchmark";
+import { formatBenchmarkMetric, getBenchmarkSizeStatus, getCompositeScore, getSizeScore, isBenchmarkSizeCanceled } from "../core/benchmark";
 import type { BenchmarkLanguage, BenchmarkRankingEntry, BenchmarkSize, CommunityRankingEntry, SortLabsEvent } from "../core/types";
 import events from "../data/events.json";
 
@@ -23,6 +23,10 @@ type ResourceLink = {
 };
 
 const REPO_BASE = "https://github.com/T-1234567890/sort-playground";
+
+function normalizeSearchText(value: string) {
+  return value.toLowerCase().replace(/[\s_-]+/g, "");
+}
 
 function currentSection(): LabsSection {
   const slug = window.location.pathname.replace(/^\/labs\/?/, "").split("/")[0];
@@ -335,16 +339,24 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
     },
   ];
 
-  const normalizedAlgorithmQuery = algorithmQuery.trim().toLowerCase();
+  const normalizedAlgorithmQuery = normalizeSearchText(algorithmQuery.trim());
   const hasAlgorithmQuery = normalizedAlgorithmQuery.length > 0;
   const filteredCommunityEntries = communityEntries.filter((entry) =>
-    `${entry.name} ${entry.slug} ${entry.category} ${entry.author}`.toLowerCase().includes(normalizedAlgorithmQuery),
+    normalizeSearchText(`${entry.name} ${entry.slug} ${entry.category} ${entry.author}`).includes(normalizedAlgorithmQuery),
   );
   const filteredEventEntries = eventEntries.filter((entry) =>
-    `${entry.name} ${entry.slug} ${entry.category} ${entry.author} ${entry.event ?? ""}`.toLowerCase().includes(normalizedAlgorithmQuery),
+    normalizeSearchText(`${entry.name} ${entry.slug} ${entry.category} ${entry.author} ${entry.event ?? ""}`).includes(normalizedAlgorithmQuery),
   );
   const filteredBenchmarkEntries = benchmarkEntries.filter((entry) =>
-    `${entry.name} ${entry.slug} ${entry.reason ?? ""} ${entry.complexity ?? ""}`.toLowerCase().includes(normalizedAlgorithmQuery),
+    normalizeSearchText(`${entry.name} ${entry.slug} ${entry.reason ?? ""} ${entry.complexity ?? ""}`).includes(normalizedAlgorithmQuery),
+  );
+  const communityRankMap = useMemo(
+    () => new Map(communityEntries.map((entry, index) => [`${entry.slug}-${entry.category}`, index + 1])),
+    [communityEntries],
+  );
+  const eventRankMap = useMemo(
+    () => new Map(eventEntries.map((entry, index) => [`${entry.slug}-${entry.category}`, index + 1])),
+    [eventEntries],
   );
 
   function renderOverview() {
@@ -432,11 +444,11 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
             <div className="mt-8 overflow-hidden rounded-lg border border-zinc-950/10 bg-white/72 shadow-sm dark:border-white/10 dark:bg-white/8">
               {visibleEntries.length ? (
                 <ol className="divide-y divide-zinc-950/8 dark:divide-white/10">
-                  {visibleEntries.map((entry, index) => (
+                  {visibleEntries.map((entry) => (
                     <li key={`${entry.slug}-${entry.category}`} className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
                       <div className="flex items-start gap-4">
                         <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-950 text-sm font-semibold text-white dark:bg-white dark:text-zinc-950">
-                          #{index + 1}
+                          #{communityRankMap.get(`${entry.slug}-${entry.category}`) ?? "-"}
                         </span>
                         <div>
                           <a data-route href={`/algo/${entry.slug}`} className="text-lg font-semibold hover:text-teal-600 dark:hover:text-teal-300">
@@ -476,6 +488,19 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
     const sourceEntries = hasAlgorithmQuery ? filteredBenchmarkEntries : benchmarkEntries;
     const languageLabels: BenchmarkLanguage[] = ["python", "rust", "c"];
     const sizeLabels: BenchmarkSize[] = ["small", "medium", "large"];
+    const fullSortedEntries = [...benchmarkEntries]
+      .filter((entry) =>
+        entry.mode === "automated" &&
+        entry.status === "benchmarked" &&
+        typeof entry.results?.[benchmarkLanguage]?.[benchmarkSize] === "number",
+      )
+      .sort(
+        (left, right) =>
+          (left.results?.[benchmarkLanguage]?.[benchmarkSize] ?? Number.POSITIVE_INFINITY) -
+            (right.results?.[benchmarkLanguage]?.[benchmarkSize] ?? Number.POSITIVE_INFINITY) ||
+          left.name.localeCompare(right.name),
+      );
+    const benchmarkRankMap = new Map(fullSortedEntries.map((entry, index) => [entry.slug, index + 1]));
     const sortedEntries = [...sourceEntries]
       .filter((entry) =>
         entry.mode === "automated" &&
@@ -567,11 +592,11 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
             <div className="mt-8 overflow-hidden rounded-lg border border-zinc-950/10 bg-white/72 shadow-sm dark:border-white/10 dark:bg-white/8">
               {sortedEntries.length ? (
                 <ol className="divide-y divide-zinc-950/8 dark:divide-white/10">
-                  {sortedEntries.map((entry, index) => (
+                  {sortedEntries.map((entry) => (
                     <li key={entry.slug} className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
                       <div className="flex items-start gap-4">
                         <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-950 text-sm font-semibold text-white dark:bg-white dark:text-zinc-950">
-                          #{index + 1}
+                          #{benchmarkRankMap.get(entry.slug) ?? "-"}
                         </span>
                         <div>
                           <a data-route href={`/labs/benchmark/${entry.slug}`} className="text-lg font-semibold hover:text-teal-600 dark:hover:text-teal-300">
@@ -587,7 +612,18 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
                             ? `${entry.results?.[benchmarkLanguage]?.[benchmarkSize]?.toFixed(3)} ${entry.unit}`
                             : t("benchmark.status.canceled")}
                         </p>
-                        <p className="text-zinc-500 dark:text-zinc-400">{t("labs.section.benchmarkNoPoints")}</p>
+                        {typeof getCompositeScore(entry) === "number" ? (
+                          <p className="text-zinc-500 dark:text-zinc-400">
+                            {t("benchmarkDetail.fields.composite")}: {getCompositeScore(entry)?.toFixed(1)}
+                          </p>
+                        ) : (
+                          <p className="text-zinc-500 dark:text-zinc-400">{t("labs.section.benchmarkNoPoints")}</p>
+                        )}
+                        {typeof getSizeScore(entry, benchmarkLanguage, benchmarkSize) === "number" ? (
+                          <p className="text-zinc-500 dark:text-zinc-400">
+                            {t("benchmarkDetail.sizeScore")} {getSizeScore(entry, benchmarkLanguage, benchmarkSize)?.toFixed(1)}
+                          </p>
+                        ) : null}
                         <p className="text-zinc-500 dark:text-zinc-400">
                           {t("labs.benchmarkSizes.small")}: {formatBenchmarkMetric(entry.results?.[benchmarkLanguage]?.small, entry.unit ?? "ms")}
                         </p>
@@ -688,11 +724,11 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
             <div className="mt-8 overflow-hidden rounded-lg border border-zinc-950/10 bg-white/72 shadow-sm dark:border-white/10 dark:bg-white/8">
               {visibleEntries.length ? (
                 <ol className="divide-y divide-zinc-950/8 dark:divide-white/10">
-                  {visibleEntries.map((entry, index) => (
+                  {visibleEntries.map((entry) => (
                     <li key={`${entry.slug}-${entry.category}`} className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
                       <div className="flex items-start gap-4">
                         <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-950 text-sm font-semibold text-white dark:bg-white dark:text-zinc-950">
-                          #{index + 1}
+                          #{eventRankMap.get(`${entry.slug}-${entry.category}`) ?? "-"}
                         </span>
                         <div>
                           <a data-route href={`/algo/${entry.slug}`} className="text-lg font-semibold hover:text-teal-600 dark:hover:text-teal-300">

@@ -27,6 +27,17 @@ export function BenchmarkLandingPage({ dark, onToggleDark }: BenchmarkLandingPag
     t("benchmark.scope.included.deterministic"),
     t("benchmark.scope.included.comparable"),
   ];
+  const moreLanguageSupported = [
+    t("benchmark.moreLanguages.supported.javascript"),
+    t("benchmark.moreLanguages.supported.typescript"),
+    t("benchmark.moreLanguages.supported.go"),
+    t("benchmark.moreLanguages.supported.java"),
+    t("benchmark.moreLanguages.supported.cpp"),
+    t("benchmark.moreLanguages.supported.swift"),
+    t("benchmark.moreLanguages.supported.kotlin"),
+    t("benchmark.moreLanguages.supported.zig"),
+    t("benchmark.moreLanguages.supported.ruby"),
+  ];
 
   const scopeExcluded = [
     t("benchmark.scope.excluded.nondeterministic"),
@@ -47,6 +58,12 @@ export function BenchmarkLandingPage({ dark, onToggleDark }: BenchmarkLandingPag
       href: "/labs/benchmark",
       route: true,
       primary: true,
+    },
+    {
+      title: t("benchmark.navigation.secondary.languages.title"),
+      description: t("benchmark.navigation.secondary.languages.description"),
+      href: "/labs/benchmark/languages",
+      route: true,
     },
     {
       title: t("benchmark.navigation.secondary.source.title"),
@@ -177,6 +194,40 @@ export function BenchmarkLandingPage({ dark, onToggleDark }: BenchmarkLandingPag
               <p className="mt-5 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("benchmark.exclusions.description")}</p>
               <ul className="mt-6 space-y-3 text-base leading-7 text-zinc-600 dark:text-zinc-300">
                 {scopeExcluded.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </section>
+
+          <section className="grid gap-12 md:grid-cols-2">
+            <div className="mx-auto max-w-xl text-center md:text-left">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">
+                {t("benchmark.mainBenchmark.label")}
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white">
+                {t("benchmark.mainBenchmark.title")}
+              </h2>
+              <p className="mt-5 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("benchmark.mainBenchmark.description")}</p>
+              <p className="mt-5 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("benchmark.mainBenchmark.pythonLargeNote")}</p>
+              <ul className="mt-6 space-y-3 text-base leading-7 text-zinc-600 dark:text-zinc-300">
+                {scopeIncluded.slice(0, 3).map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="mx-auto max-w-xl text-center md:text-left">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">
+                {t("benchmark.moreLanguages.label")}
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white">
+                {t("benchmark.moreLanguages.title")}
+              </h2>
+              <p className="mt-5 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("benchmark.moreLanguages.description")}</p>
+              <p className="mt-5 text-sm font-medium text-zinc-700 dark:text-zinc-200">{t("benchmark.moreLanguages.hint")}</p>
+              <ul className="mt-6 grid gap-3 text-base leading-7 text-zinc-600 dark:text-zinc-300 sm:grid-cols-2">
+                {moreLanguageSupported.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>

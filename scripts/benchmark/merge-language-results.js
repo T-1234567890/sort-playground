@@ -41,19 +41,24 @@ async function loadPartialResults() {
   }
 }
 
+function getExperimentalBenchmarkSizes(languageKey) {
+  return ["go", "java", "cpp", "swift", "zig"].includes(languageKey) ? ["small", "medium", "large"] : ["small", "medium"];
+}
+
 function experimentalEntryHasCurrentData(entry, languageKey, languageHash) {
   const languageEntry = entry?.languages?.[languageKey];
+  const expectedSizes = getExperimentalBenchmarkSizes(languageKey);
 
   if (!languageEntry?.metadata?.lastRunAt || languageEntry?.metadata?.languageHash !== languageHash) {
     return false;
   }
 
-  if (!["small", "medium", "large"].every((size) => typeof languageEntry?.results?.[size] === "number")) {
+  if (!expectedSizes.every((size) => typeof languageEntry?.results?.[size] === "number")) {
     return false;
   }
 
   return benchmarkProfiles.every((profile) =>
-    ["small", "medium", "large"].every((size) => typeof languageEntry?.workloadProfiles?.[profile]?.[size] === "number"),
+    expectedSizes.every((size) => typeof languageEntry?.workloadProfiles?.[profile]?.[size] === "number"),
   );
 }
 
@@ -85,6 +90,9 @@ function buildExperimentalLanguageEntry(partial) {
     status: "benchmarked",
     file: partial.file,
     runtime: partial.runtime,
+    note:
+      partial.harness?.languageSizeExclusions?.[partial.languageCode]?.large ??
+      (getExperimentalBenchmarkSizes(partial.languageCode).includes("large") ? undefined : "Large dataset canceled for this language due to runtime constraints."),
     results: partial.profileResults?.["random-uniform"] ?? {},
     workloadProfiles: partial.profileResults ?? {},
     metadata: {
@@ -131,6 +139,10 @@ function buildMissingExperimentalLanguageEntry(target, existingLanguage) {
       benchmarkMode: "community-language",
     },
   };
+}
+
+function hasSuccessfulExperimentalLanguage(languages) {
+  return Object.values(languages).some((language) => language.experimental && language.status === "benchmarked");
 }
 
 async function main() {
@@ -204,6 +216,10 @@ async function main() {
         },
         existingLanguage,
       );
+    }
+
+    if (!hasSuccessfulExperimentalLanguage(languages)) {
+      continue;
     }
 
     ranking.push({

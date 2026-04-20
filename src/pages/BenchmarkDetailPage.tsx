@@ -219,6 +219,7 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                   <p className="mt-2 text-sm opacity-80">{t("benchmarkDetail.compositeDescription")}</p>
                 </div>
               </div>
+
             </section>
 
             <section className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)]">

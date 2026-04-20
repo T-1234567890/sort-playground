@@ -1,11 +1,21 @@
 import type { BenchmarkSize, ExperimentalLanguageBenchmarkEntry } from "./types";
 
+const experimentalLargeEnabledLanguages = new Set(["go", "java", "cpp", "swift", "zig"]);
+
 export function formatExperimentalMetric(value?: number, unit = "ms") {
   if (typeof value !== "number") {
     return "-";
   }
 
   return `${value.toFixed(3)} ${unit}`;
+}
+
+export function formatExperimentalScore(value?: number) {
+  if (typeof value !== "number") {
+    return "-";
+  }
+
+  return value.toFixed(1);
 }
 
 export function languageBadgeTone(experimental: boolean) {
@@ -20,6 +30,59 @@ export function entryHasCommunityLanguages(entry: ExperimentalLanguageBenchmarkE
   return Object.values(entry.languages).some((language) => language.experimental);
 }
 
+export function hasExperimentalBenchmarkData(entry: ExperimentalLanguageBenchmarkEntry) {
+  return Object.values(entry.languages).some(
+    (language) => language.experimental && language.status === "benchmarked",
+  );
+}
+
+export function isExperimentalSizeCanceled(languageKey: string, size: BenchmarkSize) {
+  return size === "large" && !experimentalLargeEnabledLanguages.has(languageKey);
+}
+
 export function getExperimentalSizeValue(entry: ExperimentalLanguageBenchmarkEntry, languageKey: string, size: BenchmarkSize) {
   return entry.languages[languageKey]?.results?.[size];
+}
+
+export function getExperimentalCompositeTiming(entry: ExperimentalLanguageBenchmarkEntry, size: BenchmarkSize) {
+  const values = Object.values(entry.languages)
+    .filter((language) => language.status === "benchmarked")
+    .map((language) => language.results?.[size])
+    .filter((value): value is number => typeof value === "number");
+
+  if (!values.length) {
+    return undefined;
+  }
+
+  return values.reduce((total, value) => total + value, 0) / values.length;
+}
+
+export function getExperimentalCompositeScore(
+  entry: ExperimentalLanguageBenchmarkEntry,
+  entries: ExperimentalLanguageBenchmarkEntry[],
+  size: BenchmarkSize,
+) {
+  const timing = getExperimentalCompositeTiming(entry, size);
+
+  if (typeof timing !== "number") {
+    return undefined;
+  }
+
+  const timings = entries
+    .map((item) => getExperimentalCompositeTiming(item, size))
+    .filter((value): value is number => typeof value === "number")
+    .sort((left, right) => left - right);
+
+  if (!timings.length) {
+    return undefined;
+  }
+
+  const best = timings[0];
+  const worst = timings[timings.length - 1];
+
+  if (best === worst) {
+    return 100;
+  }
+
+  return ((worst - timing) / (worst - best)) * 100;
 }

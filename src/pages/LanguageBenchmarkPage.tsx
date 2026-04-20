@@ -4,13 +4,17 @@ import { useTranslation } from "react-i18next";
 import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
 import { benchmarkSizes } from "../core/benchmark";
-import { formatExperimentalMetric, languageBadgeTone } from "../core/experimentalBenchmark";
+import { formatExperimentalScore, getExperimentalCompositeScore, hasExperimentalBenchmarkData } from "../core/experimentalBenchmark";
 import type { BenchmarkSize, ExperimentalLanguageBenchmarkEntry } from "../core/types";
 
 type LanguageBenchmarkPageProps = {
   dark: boolean;
   onToggleDark: () => void;
 };
+
+function normalizeSearchText(value: string) {
+  return value.toLowerCase().replace(/[\s_-]+/g, "");
+}
 
 async function readJson<T>(path: string): Promise<T> {
   const response = await fetch(path);
@@ -27,6 +31,7 @@ export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkP
   const [entries, setEntries] = useState<ExperimentalLanguageBenchmarkEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [size, setSize] = useState<BenchmarkSize>("medium");
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -58,7 +63,48 @@ export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkP
     };
   }, []);
 
-  const visibleEntries = useMemo(() => [...entries].sort((left, right) => left.name.localeCompare(right.name)), [entries]);
+  const rankedEntries = useMemo(
+    () =>
+      [...entries]
+        .filter((entry) => hasExperimentalBenchmarkData(entry))
+        .sort((left, right) => {
+          const leftScore = getExperimentalCompositeScore(left, entries, size);
+          const rightScore = getExperimentalCompositeScore(right, entries, size);
+
+          if (typeof leftScore === "number" && typeof rightScore === "number") {
+            return rightScore - leftScore || left.name.localeCompare(right.name);
+          }
+
+          if (typeof leftScore === "number") {
+            return -1;
+          }
+
+          if (typeof rightScore === "number") {
+            return 1;
+          }
+
+          return left.name.localeCompare(right.name);
+        }),
+    [entries, size],
+  );
+  const rankMap = useMemo(
+    () => new Map(rankedEntries.map((entry, index) => [entry.slug, index + 1])),
+    [rankedEntries],
+  );
+  const visibleEntries = useMemo(
+    () => {
+      const normalizedQuery = normalizeSearchText(query.trim());
+
+      if (!normalizedQuery) {
+        return rankedEntries;
+      }
+
+      return rankedEntries.filter((entry) =>
+        normalizeSearchText(entry.name).includes(normalizedQuery) || normalizeSearchText(entry.slug).includes(normalizedQuery),
+      );
+    },
+    [query, rankedEntries],
+  );
 
   return (
     <Shell dark={dark} onToggleDark={onToggleDark}>
@@ -79,6 +125,8 @@ export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkP
               <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{t("languageBenchmark.title")}</h1>
               <p className="mt-4 text-base leading-7 text-zinc-700 dark:text-zinc-200">{t("languageBenchmark.description")}</p>
               <p className="mt-4 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("languageBenchmark.note")}</p>
+              <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("languageBenchmark.largeDatasetNote")}</p>
+              <p className="mt-3 text-sm font-medium text-zinc-700 dark:text-zinc-200">{t("languageBenchmark.openDetailHint")}</p>
             </div>
             <div className="flex flex-col gap-3">
               <a
@@ -108,6 +156,20 @@ export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkP
               </button>
             ))}
           </div>
+
+          <div className="mt-6 max-w-xl">
+            <label htmlFor="language-benchmark-search" className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">
+              {t("labs.search.label")}
+            </label>
+            <input
+              id="language-benchmark-search"
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={t("languageBenchmark.searchPlaceholder")}
+              className="mt-2 w-full rounded-xl border border-zinc-950/10 bg-white/80 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 dark:border-white/10 dark:bg-white/10 dark:text-white dark:placeholder:text-zinc-500"
+            />
+          </div>
         </section>
 
         {loading ? (
@@ -116,68 +178,40 @@ export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkP
             <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{t("languageBenchmark.placeholder")}</p>
           </section>
         ) : (
-          <section className="mt-8 grid gap-5 lg:grid-cols-2">
+          <section className="mt-8 overflow-hidden rounded-lg border border-zinc-950/10 bg-white/72 shadow-sm dark:border-white/10 dark:bg-white/8">
             {visibleEntries.length ? visibleEntries.map((entry) => {
-              const languageEntries = Object.entries(entry.languages);
+              const compositeScore = getExperimentalCompositeScore(entry, entries, size);
 
               return (
                 <a
                   key={entry.slug}
                   data-route
                   href={`/labs/benchmark/languages/${entry.slug}`}
-                  className="rounded-2xl border border-zinc-950/10 bg-white/72 p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-amber-500/30 dark:border-white/10 dark:bg-white/8"
+                  className="flex items-center justify-between gap-4 border-b border-zinc-950/8 px-5 py-4 transition hover:bg-amber-50/40 dark:border-white/10 dark:hover:bg-white/5 last:border-b-0"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h2 className="text-2xl font-semibold tracking-tight">{entry.name}</h2>
-                      <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{entry.slug}</p>
-                    </div>
-                    <span className="rounded-full border border-amber-500/25 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-700 dark:border-amber-300/20 dark:bg-amber-400/10 dark:text-amber-200">
-                      {languageEntries.some(([, language]) => language.experimental)
-                        ? t("languageBenchmark.experimental")
-                        : t("languageBenchmark.mainProvided")}
+                  <div className="flex min-w-0 items-center gap-4">
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-950 text-sm font-semibold text-white dark:bg-white dark:text-zinc-950">
+                      #{rankMap.get(entry.slug) ?? "-"}
                     </span>
+                    <div className="min-w-0">
+                      <h2 className="text-lg font-semibold tracking-tight">{entry.name}</h2>
+                    </div>
                   </div>
-
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {languageEntries.map(([languageKey, language]) => (
-                      <span key={languageKey} className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${languageBadgeTone(language.experimental)}`}>
-                        {language.label}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="mt-6 grid gap-3">
-                    {languageEntries.map(([languageKey, language]) => (
-                      <div key={languageKey} className="flex items-center justify-between gap-4 rounded-lg bg-zinc-50/80 px-4 py-3 text-sm dark:bg-zinc-950/25">
-                        <div>
-                          <p className="font-semibold">{language.label}</p>
-                          <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                            {language.status === "unsupported"
-                              ? t("languageBenchmark.pendingSupport")
-                              : language.status === "missing"
-                                ? t("languageBenchmark.missingImplementation")
-                              : language.experimental ? t("languageBenchmark.communityProvided") : t("languageBenchmark.mainProvided")}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <span className="font-mono font-semibold">
-                            {language.status === "unsupported" || language.status === "missing"
-                              ? t("languageBenchmark.notBenchmarked")
-                              : formatExperimentalMetric(language.results?.[size], entry.unit)}
-                          </span>
-                          {language.note ? (
-                            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{language.note}</p>
-                          ) : null}
-                        </div>
-                      </div>
-                    ))}
+                  <div className="text-right">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+                      {t("languageBenchmark.compositeScore")}
+                    </p>
+                    <p className="mt-1 font-mono text-lg font-semibold">
+                      {typeof compositeScore === "number"
+                        ? formatExperimentalScore(compositeScore)
+                        : t("languageBenchmark.notBenchmarked")}
+                    </p>
                   </div>
                 </a>
               );
             }) : (
-              <div className="rounded-lg border border-zinc-950/10 bg-white/72 p-6 text-sm text-zinc-500 shadow-sm dark:border-white/10 dark:bg-white/8 dark:text-zinc-400">
-                {t("languageBenchmark.empty")}
+              <div className="p-6 text-sm text-zinc-500 dark:text-zinc-400">
+                {query.trim() ? t("labs.search.noAlgorithms") : t("languageBenchmark.empty")}
               </div>
             )}
           </section>

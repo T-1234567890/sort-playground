@@ -517,10 +517,15 @@
     "title": "More Language Benchmark",
     "description": "This page compares additional language implementations that are community-provided or experimental.",
     "note": "These results do not affect the main benchmark ranking. Python, Rust, and C remain the authoritative benchmark set.",
+    "largeDatasetNote": "Some languages exclude large datasets due to runtime constraints.",
+    "openDetailHint": "Press an algorithm to open its detailed language benchmark results.",
+    "searchPlaceholder": "Search experimental language benchmarks...",
     "mainCta": "View main benchmark",
     "experimental": "Experimental",
     "communityProvided": "Community provided",
     "mainProvided": "Main benchmark baseline",
+    "compositeScore": "Composite score",
+    "canceled": "Canceled",
     "pendingSupport": "Pending runner support",
     "missingImplementation": "No implementation yet",
     "notBenchmarked": "Not benchmarked",
@@ -633,6 +638,29 @@
         "noBenchmark": "Algorithms explicitly marked as no benchmark"
       }
     },
+    "mainBenchmark": {
+      "label": "Main Benchmark",
+      "title": "Authoritative Benchmark Set",
+      "description": "The main benchmark is the project’s authoritative ranking. It compares the required Python, Rust, and C implementations under one controlled methodology.",
+      "pythonLargeNote": "Python is currently excluded from the large-size benchmark because of runtime and technical constraints. That policy may be revisited later if the benchmark harness improves enough to support it credibly."
+    },
+    "moreLanguages": {
+      "label": "More Languages",
+      "title": "Community Language Benchmark",
+      "description": "The more-language benchmark is a separate experimental ranking for community-provided implementations that match an existing algorithm slug.",
+      "hint": "Use this view for broader language coverage. It does not replace or override the main benchmark.",
+      "supported": {
+        "javascript": "JavaScript",
+        "typescript": "TypeScript",
+        "go": "Go",
+        "java": "Java",
+        "cpp": "C++",
+        "swift": "Swift",
+        "kotlin": "Kotlin",
+        "zig": "Zig",
+        "ruby": "Ruby"
+      }
+    },
     "exclusions": {
       "label": "Exclusions",
       "title": "What is excluded",
@@ -647,16 +675,20 @@
         "description": "Open the Labs benchmark view to inspect the current published benchmark data."
       },
       "secondary": {
+        "languages": {
+          "title": "View More Language Benchmark →",
+          "description": "Open the experimental benchmark for supported community language implementations."
+        },
         "source": {
           "title": "View Source → GitHub repository",
           "description": "Inspect the project repository and benchmark pipeline."
         },
         "docs": {
-          "title": "View Documentation → /docs",
+          "title": "View Documentation →",
           "description": "Browse project documentation and benchmark notes."
         },
         "algorithms": {
-          "title": "View Algorithms → /",
+          "title": "View Algorithms →",
           "description": "Return to the main algorithm explorer."
         }
       },
