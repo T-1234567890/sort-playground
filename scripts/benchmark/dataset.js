@@ -3,6 +3,11 @@ import path from "node:path";
 
 export const benchmarkLanguages = ["python", "rust", "c"];
 export const benchmarkSizes = ["small", "medium", "large"];
+export const benchmarkReferenceTimesMs = {
+  small: 0.1,
+  medium: 1,
+  large: 5,
+};
 export const benchmarkProfiles = [
   "random-uniform",
   "nearly-sorted",

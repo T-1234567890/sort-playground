@@ -1,238 +1,276 @@
 # Benchmark Scoring
 
-This file documents how Sort Playground currently calculates benchmark score fields.
+This file documents how Sort Playground calculates and displays benchmark scores.
 
 Source of truth:
 
 - `scripts/benchmark/scoring.js`
+- `scripts/benchmark/recalculate-scores.js`
+- `src/core/benchmark.ts`
+- `src/hooks/useSettings.tsx`
 
-## 1. Important Distinction
+## 1. Two Layers
 
-There are two different benchmark value families:
+The benchmark system now has two score layers:
+
+- stored score values in `public/data/benchmark-ranking.json`
+- displayed score values in the UI
+
+### Stored score values
+
+The benchmark workflow stores linear score fields inside `snapshot.score`.
+
+These are the values produced by:
+
+- `scripts/benchmark/scoring.js`
+
+### Displayed score values
+
+The app can display stored scores in two modes through app settings:
+
+- `processed`
+- `raw`
+
+These are handled in:
+
+- `src/core/benchmark.ts`
+- `src/hooks/useSettings.tsx`
+
+## 2. Raw Timing vs Score
+
+The benchmark still exposes two value families:
 
 - `results`
 - `snapshot.score`
 
-They are not calculated the same way.
-
 ### `results`
 
-The top-level `results` field is the benchmark timing used for the main per-language, per-size display.
+`results` stores raw benchmark timing in milliseconds.
 
-It comes from the `random-uniform` workload profile only.
-
-That mapping is created in:
-
-- `scripts/benchmark/merge-results.js`
-
-Example shape:
-
-```json
-{
-  "results": {
-    "python": { "small": 0.075, "medium": 0.986, "large": 16.59 },
-    "rust": { "small": 0.004, "medium": 0.053, "large": 0.581 },
-    "c": { "small": 0.003, "medium": 0.047, "large": 0.457 }
-  }
-}
-```
-
-So:
-
-- visible benchmark result numbers are based on `random-uniform`
-- size-based score fields are also derived from those `results`
+These are measured execution times.
 
 ### `snapshot.score`
 
-The score snapshot is broader.
+`snapshot.score` stores derived score fields:
 
-It uses all benchmark workload profiles, not just `random-uniform`.
+- `sizeScores`
+- `dimensionScores`
+- `normalized`
+- `composite`
+- `percentile`
+- `badges`
 
-Current workload profiles:
+The JSON schema does not change.
 
-- `random-uniform`
-- `nearly-sorted`
-- `reverse-sorted`
-- `many-duplicates`
-- `low-value-range`
-- `adversarial-pivot`
+## 3. Fixed Reference Model
 
-## 2. Baselines
+The benchmark uses fixed reference timings instead of comparing against the current fastest algorithm.
 
-Scores are relative.
-
-For each workload profile and each language, the benchmark system finds the fastest automated entry in the current ranking.
-
-That fastest average becomes the baseline for that dimension.
-
-For each language and each size, the system also finds the fastest `results` value and uses that as the size baseline.
-
-In plain terms:
-
-- best current time in that dimension = baseline
-- every other algorithm is scored relative to that baseline
-
-## 3. Dimension Scores
-
-For each:
-
-- language
-- workload profile
-
-the benchmark computes an average timing across:
-
-- `small`
-- `medium`
-- `large`
-
-Then it scores that algorithm against the baseline:
+Current references:
 
 ```text
-dimensionScore = (baseline / profileAverage) * 100
+small  = 0.1 ms
+medium = 1.0 ms
+large  = 5.0 ms
 ```
 
-The value is:
+These values are defined in:
 
-- rounded to 1 decimal place
-- clamped to the range `0..100`
+- `scripts/benchmark/dataset.js`
 
-So:
+## 4. Stored Scoring Formula
 
-- fastest entry in a dimension gets `100`
-- slower entries get proportionally smaller values
+Stored score fields use a linear formula:
 
-## 4. Size Scores
+```text
+stored_score = (reference / measured_time) * 100
+```
 
-For each:
+This means:
 
-- language
-- size
+- `100` matches the reference
+- higher than `100` is faster than the reference
+- lower than `100` is slower than the reference
 
-the benchmark uses the top-level `results` field.
+Key properties:
 
-Because `results` comes from `random-uniform`, size scores are effectively random-uniform-only.
+- stored scores are not capped
+- stored scores do not depend on other algorithms
+- very fast implementations can produce large values
+- missing measurements do not produce fake `0` scores
+
+## 5. Display Modes
+
+The app supports two display modes through `/settings`.
+
+### Processed score
+
+`processed` is the default UI mode.
 
 Formula:
 
 ```text
-sizeScore = (baseline / value) * 100
+processed_display = stored_score
 ```
 
-Again:
+This is the familiar `×100` display scale.
 
-- rounded to 1 decimal place
-- clamped to `0..100`
+Example:
 
-## 5. Composite Score
+```text
+stored_score = 145.0
+processed_display = 145.0
+```
 
-The `composite` score is based on workload profiles, not on `results`.
+### Raw score
+
+`raw` shows the underlying ratio before the `×100` display scaling.
+
+Formula:
+
+```text
+raw_display = stored_score / 100
+```
+
+Example:
+
+```text
+stored_score = 145.0
+raw_display = 1.45
+```
+
+Interpretation:
+
+- `1.0` matches the reference
+- greater than `1.0` is faster than the reference
+- less than `1.0` is slower than the reference
+
+## 6. Size Scores
+
+`sizeScores[language][size]` are calculated from top-level `results`.
+
+Stored formula:
+
+```text
+sizeScore = (reference[size] / results[language][size]) * 100
+```
+
+## 7. Dimension Scores
+
+`dimensionScores[language][profile]` are calculated from workload-profile timings.
+
+For each language/profile pair:
+
+1. average the available timings across included sizes
+2. average the matching fixed references for those included sizes
+3. apply the same stored linear formula
+
+Stored formula:
+
+```text
+profileAverage = average(profile timings across included sizes)
+referenceAverage = average(fixed references across included sizes)
+dimensionScore = (referenceAverage / profileAverage) * 100
+```
+
+## 8. Normalized Score
+
+`normalized` remains an average of all numeric `sizeScores`.
+
+Formula:
+
+```text
+normalized = average(all numeric sizeScores)
+```
+
+## 9. Composite Score
+
+`composite` remains an average of all numeric `dimensionScores`.
+
+Formula:
+
+```text
+composite = average(all numeric dimensionScores)
+```
+
+This is the main stored score used for ranking.
+
+## 10. Percentile
+
+`percentile` is still relative ranking.
 
 Process:
 
-1. For each workload profile, average that profile's dimension score across languages.
-2. Multiply by the workload weight.
-3. Divide by the total weight.
+1. compute `composite`
+2. sort automated entries by descending `composite`
+3. assign percentile from that ordering
 
-Formula:
+Important distinction:
 
-```text
-composite =
-  weighted average of profile-average dimension scores
-```
+- `composite` is stable unless that entry’s timings change
+- `percentile` can still move when other entries are added or change
 
-Current weights:
+## 11. Missing Data and Safety
 
-- every profile weight is `1`
+The scoring system skips invalid values instead of generating artificial outputs.
 
-So today the composite is simply an equal-weight average across all workload profiles.
+Rules:
 
-That means:
+- if `value <= 0`, skip score generation
+- if `value` is not finite, skip score generation
+- no `NaN`
+- no `Infinity`
+- no artificial `0`
 
-- `composite` is not random-uniform-only
-- `composite` reflects all current workload profiles equally
+Automated entries may use:
 
-## 6. Normalized Score
+- `benchmarked`
+- `partial`
+- `skipped`
 
-`normalized` is different from `composite`.
+## 12. Raw Average
 
-It is the average of all `sizeScores` across:
+`rawAverageMs` remains descriptive timing metadata.
 
-- Python
-- Rust
-- C
-- small
-- medium
-- large
+It is the average of all numeric workload timings across:
 
-Formula:
+- workload profiles
+- languages
+- sizes
 
-```text
-normalized = average(all sizeScores)
-```
+## 13. Badges
 
-Since `sizeScores` come from `results`, and `results` comes from `random-uniform`, the normalized score is effectively based on random-uniform only.
+Badges are heuristic labels layered on top of stored score fields.
 
-If size scores are missing, the code falls back to `composite`.
+Examples:
 
-## 7. Raw Average
+- `Fast Random`
+- `Handles Duplicates Well`
+- `Adversarial Ready`
+- `Cross-Language Balanced`
+- `Top Overall`
 
-`rawAverageMs` is the average of every numeric workload timing in:
+## 14. Practical Reading Guide
 
-- every workload profile
-- every language
-- every size
+Short version:
 
-So it is a broad timing average over the full workload snapshot.
+- timings are raw milliseconds
+- stored scores are linear fixed-reference scores
+- processed display shows the stored `×100` scale
+- raw display shows the underlying ratio
+- higher score still means faster relative performance
+- scores are not capped
 
-It is descriptive, not the main ranking key.
+## 15. Post-Processing Workflow
 
-## 8. Percentile
+There is a dedicated score recalculation step in the benchmark workflow.
 
-After `composite` is computed for all automated entries:
+Purpose:
 
-1. entries are sorted by descending `composite`
-2. percentile is assigned from that ranking
+- recompute score-family fields from existing timing data
+- update old entries without rerunning raw benchmarks
+- keep stored score fields aligned with the current formula
 
-Highest composite gets the highest percentile.
+The recalculation step uses:
 
-So percentile is based on `composite`, not on `normalized`.
-
-## 9. Badges
-
-Badges are heuristic labels added after score calculation.
-
-Current rules:
-
-- `Fast Random` if average `random-uniform` score is at least `92`
-- `Handles Duplicates Well` if average `many-duplicates` score is at least `92`
-- `Adversarial Ready` if average `adversarial-pivot` score is at least `92`
-- `Cross-Language Balanced` if cross-language spread ratio is at most `1.35`
-- `Top Overall` if `composite >= 95`
-
-## 10. Practical Summary
-
-If you want the shortest accurate summary:
-
-- displayed `results` use `random-uniform`
-- `sizeScores` use `random-uniform`
-- `normalized` is built from those size scores, so it is effectively random-uniform-based
-- `composite` uses all workload profiles equally
-- ranking order for automated entries uses `composite`
-
-## 11. Why This Matters
-
-This means two different questions have two different answers:
-
-### "What timing is shown on the main results view?"
-
-Answer:
-
-- `random-uniform`
-
-### "What score decides the automated ranking?"
-
-Answer:
-
-- `composite`
-- built from all workload profiles
-- equally weighted under the current configuration
+- `scripts/benchmark/recalculate-scores.js`

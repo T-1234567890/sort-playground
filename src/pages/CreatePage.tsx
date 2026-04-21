@@ -8,7 +8,8 @@ import {
   type LoadedAlgorithmDraft,
 } from "../core/createAlgorithm";
 import type { AlgorithmCategory } from "../core/types";
-import { randomArray } from "../core/visualizer";
+import { datasetArray, randomArray } from "../core/visualizer";
+import { useSettings } from "../hooks/useSettings";
 
 type CreatePageProps = {
   dark: boolean;
@@ -126,6 +127,7 @@ export function ToolsModeSection({
   onLoadExistingAlgorithm,
 }: ToolsModeSectionProps) {
   const { t } = useTranslation();
+  const { settings } = useSettings();
   const [jsonCopied, setJsonCopied] = useState(false);
   const [localTestResult, setLocalTestResult] = useState<LocalTestResult | null>(null);
   const [localTestError, setLocalTestError] = useState<string | null>(null);
@@ -211,7 +213,7 @@ export function ToolsModeSection({
   function setDatasetSizeAndRefresh(nextSize: "small" | "medium") {
     setDatasetSize(nextSize);
     const length = nextSize === "small" ? 12 : 32;
-    applyDataset(randomArray(length));
+    applyDataset(datasetArray(settings.defaultDataset, length));
   }
 
   return (

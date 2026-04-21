@@ -5,7 +5,8 @@ import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
 import { SortRunCard } from "../components/SortRunCard";
 import { createAudioContext, playStepSound, resumeAudioContext, type SortAudioContext } from "../core/sound";
-import { DEFAULT_ARRAY, parseArrayInput, randomArray } from "../core/visualizer";
+import { datasetArray, parseArrayInput } from "../core/visualizer";
+import { useSettings } from "../hooks/useSettings";
 import type { Algorithm } from "../core/types";
 
 type RacePageProps = {
@@ -43,9 +44,11 @@ function selectedFromUrl(algorithms: Algorithm[]) {
 
 export function RacePage({ algorithms, dark, onToggleDark }: RacePageProps) {
   const { t } = useTranslation();
+  const { settings } = useSettings();
   const [selectedSlugs] = useState(() => selectedFromUrl(algorithms));
-  const [baseArray, setBaseArray] = useState(DEFAULT_ARRAY);
-  const [input, setInput] = useState(DEFAULT_ARRAY.join(", "));
+  const initialArray = useMemo(() => datasetArray(settings.defaultDataset, 10), [settings.defaultDataset]);
+  const [baseArray, setBaseArray] = useState(initialArray);
+  const [input, setInput] = useState(initialArray.join(", "));
   const [speed, setSpeed] = useState(4);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [volume, setVolume] = useState(0.5);
@@ -183,7 +186,7 @@ export function RacePage({ algorithms, dark, onToggleDark }: RacePageProps) {
   }
 
   function generate() {
-    const next = randomArray(10);
+    const next = datasetArray(settings.defaultDataset, 10);
     setBaseArray(next);
     setInput(next.join(", "));
   }

@@ -5,7 +5,8 @@ import { EmbedShare } from "./EmbedShare";
 import { ExportCard } from "./ExportCard";
 import { exportGif, exportPng, exportShareCard } from "../core/exporters";
 import { createAudioContext, playStepSound, resumeAudioContext, type SortAudioContext } from "../core/sound";
-import { DEFAULT_ARRAY, parseArrayInput, randomArray, sortAscending } from "../core/visualizer";
+import { datasetArray, parseArrayInput, sortAscending } from "../core/visualizer";
+import { useSettings } from "../hooks/useSettings";
 import type { Algorithm, Step } from "../core/types";
 
 const actionColors = {
@@ -33,8 +34,10 @@ function moveItem(array: number[], fromIndex: number, toIndex: number) {
 
 export function Visualizer({ algorithm }: VisualizerProps) {
   const { t } = useTranslation();
-  const [baseArray, setBaseArray] = useState(DEFAULT_ARRAY);
-  const [input, setInput] = useState(DEFAULT_ARRAY.join(", "));
+  const { settings } = useSettings();
+  const initialArray = useMemo(() => datasetArray(settings.defaultDataset, 10), [settings.defaultDataset]);
+  const [baseArray, setBaseArray] = useState(initialArray);
+  const [input, setInput] = useState(initialArray.join(", "));
   const [speed, setSpeed] = useState(1.5);
   const [stepIndex, setStepIndex] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -44,8 +47,8 @@ export function Visualizer({ algorithm }: VisualizerProps) {
   const [exportStatus, setExportStatus] = useState<"idle" | "png" | "share" | "gif">("idle");
   const [isGifExporting, setIsGifExporting] = useState(false);
   const [exportSection, setExportSection] = useState<"images" | "animation" | "embed">("images");
-  const [manualArray, setManualArray] = useState(DEFAULT_ARRAY);
-  const [manualStep, setManualStep] = useState<Step>({ array: DEFAULT_ARRAY, action: "compare", indices: [] });
+  const [manualArray, setManualArray] = useState(initialArray);
+  const [manualStep, setManualStep] = useState<Step>({ array: initialArray, action: "compare", indices: [] });
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [scrubHover, setScrubHover] = useState<{ index: number; x: number } | null>(null);
@@ -208,7 +211,7 @@ export function Visualizer({ algorithm }: VisualizerProps) {
   }
 
   function generate() {
-    const next = randomArray(algorithm.slug === "bogo-sort" ? 6 : isManualSort ? 10 : 12);
+    const next = datasetArray(settings.defaultDataset, algorithm.slug === "bogo-sort" ? 6 : isManualSort ? 10 : 12);
     setBaseArray(next);
     setInput(next.join(", "));
   }

@@ -1,4 +1,4 @@
-import { Moon, Sun } from "lucide-react";
+import { Moon, Settings, Sun } from "lucide-react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -20,6 +20,15 @@ export function Shell({ children, dark, onToggleDark }: ShellProps) {
             {t("nav.home")}
           </a>
           <div className="flex items-center gap-2">
+            <a
+              data-route
+              href="/settings"
+              className="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-950/10 bg-white/70 px-3 text-sm font-semibold text-zinc-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15"
+              aria-label={t("nav.settings")}
+            >
+              <Settings size={16} />
+              <span className="ml-2 hidden sm:inline">{t("nav.settings")}</span>
+            </a>
             <button
               type="button"
               onClick={() => void i18n.changeLanguage(isChinese ? "en" : "zh")}

@@ -12,7 +12,8 @@ import {
   type LoadedAlgorithmDraft,
 } from "../core/createAlgorithm";
 import type { AlgorithmCategory } from "../core/types";
-import { DEFAULT_ARRAY } from "../core/visualizer";
+import { datasetArray } from "../core/visualizer";
+import { useSettings } from "../hooks/useSettings";
 import { ToolsModeSection } from "./CreatePage";
 
 type CreateToolsPageProps = {
@@ -22,6 +23,7 @@ type CreateToolsPageProps = {
 
 export function CreateToolsPage({ dark, onToggleDark }: CreateToolsPageProps) {
   const { t } = useTranslation();
+  const { settings } = useSettings();
   const [loadedAlgorithm, setLoadedAlgorithm] = useState<LoadedAlgorithmDraft | null>(null);
   const [loadResult, setLoadResult] = useState<{ kind: "success" | "error"; title: string; body: string } | null>(null);
   const [isLoadingAlgorithm, setIsLoadingAlgorithm] = useState(false);
@@ -34,7 +36,7 @@ export function CreateToolsPage({ dark, onToggleDark }: CreateToolsPageProps) {
   const [slugEdited, setSlugEdited] = useState(false);
   const [category, setCategory] = useState<AlgorithmCategory>("classic");
   const [description, setDescription] = useState("");
-  const [sampleArray, setSampleArray] = useState(DEFAULT_ARRAY);
+  const [sampleArray, setSampleArray] = useState(() => datasetArray(settings.defaultDataset, 10));
 
   function updateName(nextName: string) {
     setName(nextName);

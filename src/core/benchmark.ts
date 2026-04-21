@@ -5,6 +5,7 @@ import type {
   BenchmarkSize,
   BenchmarkWorkloadProfile,
 } from "./types";
+import type { Settings } from "../hooks/useSettings";
 
 export const benchmarkLanguages: BenchmarkLanguage[] = ["python", "rust", "c"];
 export const benchmarkSizes: BenchmarkSize[] = ["small", "medium", "large"];
@@ -16,6 +17,47 @@ export const benchmarkProfiles: BenchmarkWorkloadProfile[] = [
   "low-value-range",
   "adversarial-pivot",
 ];
+
+export type BenchmarkScoreDisplayMode = Settings["scoreDisplay"];
+
+export function getDisplayedBenchmarkScore(value?: number, mode: BenchmarkScoreDisplayMode = "processed") {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return undefined;
+  }
+
+  if (value <= 0 || !Number.isFinite(value)) {
+    return undefined;
+  }
+
+  return mode === "raw" ? value / 100 : value;
+}
+
+export function formatBenchmarkScore(value?: number, digits = 1, mode: BenchmarkScoreDisplayMode = "processed") {
+  const displayed = getDisplayedBenchmarkScore(value, mode);
+
+  if (typeof displayed !== "number") {
+    return "-";
+  }
+
+  return displayed.toFixed(digits);
+}
+
+export function displayProfileScores(
+  scores: BenchmarkProfileScores,
+  mode: BenchmarkScoreDisplayMode = "processed",
+): BenchmarkProfileScores {
+  const displayed: BenchmarkProfileScores = {};
+
+  for (const profile of benchmarkProfiles) {
+    const value = getDisplayedBenchmarkScore(scores[profile], mode);
+
+    if (typeof value === "number") {
+      displayed[profile] = value;
+    }
+  }
+
+  return displayed;
+}
 
 export function formatBenchmarkMetric(value?: number, unit = "ms") {
   if (typeof value !== "number") {
@@ -30,11 +72,19 @@ export function clampScore(value?: number) {
     return 0;
   }
 
-  return Math.max(0, Math.min(100, value));
+  return value;
+}
+
+function normalizeBenchmarkVisualScore(value?: number) {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return 0;
+  }
+
+  return 1 / (1 + Math.exp(-((value - 100) / 24)));
 }
 
 export function getPerformanceColors(score?: number) {
-  const normalized = clampScore(score) / 100;
+  const normalized = normalizeBenchmarkVisualScore(score);
   const hue = 204 - normalized * 46;
   const saturation = 28 + normalized * 22;
   const lightness = 22 + normalized * 52;
@@ -113,7 +163,7 @@ export function radarPoints(scores: BenchmarkProfileScores, radius: number, cent
   return benchmarkProfiles
     .map((profile, index) => {
       const angle = (-Math.PI / 2) + (index * (Math.PI * 2)) / benchmarkProfiles.length;
-      const value = clampScore(scores[profile]) / 100;
+      const value = normalizeBenchmarkVisualScore(scores[profile]);
       const x = center + Math.cos(angle) * radius * value;
       const y = center + Math.sin(angle) * radius * value;
       return `${x.toFixed(2)},${y.toFixed(2)}`;

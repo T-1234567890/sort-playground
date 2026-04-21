@@ -1,8 +1,9 @@
 import { Pause, Play, RotateCcw, Shuffle, TriangleAlert } from "lucide-react";
 import { startTransition, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { DEFAULT_ARRAY, parseArrayInput, randomArray } from "../core/visualizer";
+import { DEFAULT_ARRAY, datasetArray, parseArrayInput } from "../core/visualizer";
 import { stripPreviewOnlyImports } from "../core/createAlgorithm";
+import { useSettings } from "../hooks/useSettings";
 import type { Step } from "../core/types";
 
 type CreateAlgorithmPreviewProps = {
@@ -51,6 +52,7 @@ export function CreateAlgorithmPreview({
   onSampleArrayChange,
 }: CreateAlgorithmPreviewProps) {
   const { t } = useTranslation();
+  const { settings } = useSettings();
   const resolvedEyebrow = eyebrow ?? t("create.preview.liveEyebrow");
   const resolvedTitle = title ?? t("create.preview.defaultTitle");
   const resolvedDescription = description ?? t("create.preview.defaultDescription");
@@ -198,7 +200,7 @@ export function CreateAlgorithmPreview({
   }
 
   function randomizeSample() {
-    const next = randomArray(10);
+    const next = datasetArray(settings.defaultDataset, 10);
     setSampleArray(next);
     setSampleInput(next.join(", "));
     onSampleArrayChange?.(next);

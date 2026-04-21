@@ -146,6 +146,41 @@ jobs:
           name: benchmark-ranking
           path: public/data/benchmark-ranking.json
 
+  recalculate-scores:
+    needs: merge-results
+    if: always() && needs.merge-results.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Download benchmark artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: benchmark-ranking
+          path: benchmark-main
+
+      - name: Restore benchmark file
+        run: cp benchmark-main/benchmark-ranking.json public/data/benchmark-ranking.json
+
+      - name: Recalculate score snapshots
+        run: node scripts/benchmark/recalculate-scores.js
+
+      - name: Upload recalculated benchmark artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-ranking-scored
+          path: public/data/benchmark-ranking.json
+
   benchmark-languages:
     needs: generate-language-matrix
     if: needs.generate-language-matrix.outputs.count != '0'
@@ -216,8 +251,8 @@ jobs:
           path: community-language-${{ matrix.target.slug }}-${{ matrix.target.languageCode }}.json
 
   merge-language-results:
-    needs: [generate-language-matrix, benchmark-languages, merge-results]
-    if: always() && needs.merge-results.result == 'success' && needs.generate-language-matrix.result == 'success' && (needs.benchmark-languages.result == 'success' || needs.benchmark-languages.result == 'skipped')
+    needs: [generate-language-matrix, benchmark-languages, recalculate-scores]
+    if: always() && needs.recalculate-scores.result == 'success' && needs.generate-language-matrix.result == 'success' && (needs.benchmark-languages.result == 'success' || needs.benchmark-languages.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 65
 
@@ -235,7 +270,7 @@ jobs:
       - name: Download main benchmark artifact
         uses: actions/download-artifact@v4
         with:
-          name: benchmark-ranking
+          name: benchmark-ranking-scored
           path: benchmark-main
 
       - name: Download experimental benchmark artifacts

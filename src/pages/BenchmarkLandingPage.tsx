@@ -60,6 +60,12 @@ export function BenchmarkLandingPage({ dark, onToggleDark }: BenchmarkLandingPag
       primary: true,
     },
     {
+      title: t("benchmark.navigation.secondary.scale.title"),
+      description: t("benchmark.navigation.secondary.scale.description"),
+      href: "/benchmark/scale",
+      route: true,
+    },
+    {
       title: t("benchmark.navigation.secondary.languages.title"),
       description: t("benchmark.navigation.secondary.languages.description"),
       href: "/labs/benchmark/languages",

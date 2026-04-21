@@ -11,6 +11,12 @@ on:
       - ".github/workflows/benchmark.yml"
       - ".github/workflows/benchmark-direct-push.yml"
   workflow_dispatch:
+    inputs:
+      scores_only:
+        description: "Recalculate score fields from existing benchmark timing data without rerunning raw benchmarks"
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: benchmark-direct-push
@@ -21,6 +27,7 @@ permissions:
 
 jobs:
   generate-matrix:
+    if: github.event_name != 'workflow_dispatch' || inputs.scores_only != true
     runs-on: ubuntu-latest
     timeout-minutes: 65
     outputs:
@@ -47,6 +54,7 @@ jobs:
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
 
   generate-language-matrix:
+    if: github.event_name != 'workflow_dispatch' || inputs.scores_only != true
     runs-on: ubuntu-latest
     timeout-minutes: 65
     outputs:
@@ -74,7 +82,7 @@ jobs:
 
   benchmark:
     needs: generate-matrix
-    if: needs.generate-matrix.outputs.count != '0'
+    if: (github.event_name != 'workflow_dispatch' || inputs.scores_only != true) && needs.generate-matrix.outputs.count != '0'
     runs-on: ubuntu-latest
     timeout-minutes: 65
     strategy:
@@ -118,7 +126,7 @@ jobs:
 
   merge-results:
     needs: [generate-matrix, benchmark]
-    if: always() && needs.generate-matrix.result == 'success' && (needs.benchmark.result == 'success' || needs.benchmark.result == 'skipped')
+    if: (github.event_name != 'workflow_dispatch' || inputs.scores_only != true) && always() && needs.generate-matrix.result == 'success' && (needs.benchmark.result == 'success' || needs.benchmark.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 65
 
@@ -153,9 +161,63 @@ jobs:
           name: benchmark-ranking
           path: public/data/benchmark-ranking.json
 
+  recalculate-scores:
+    needs: merge-results
+    if: |
+      always() && (
+        needs.merge-results.result == 'success' ||
+        (github.event_name == 'workflow_dispatch' && inputs.scores_only == true)
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Download benchmark artifact
+        if: github.event_name != 'workflow_dispatch' || inputs.scores_only != true
+        uses: actions/download-artifact@v4
+        with:
+          name: benchmark-ranking
+          path: benchmark-main
+
+      - name: Restore benchmark file from merged artifact
+        if: github.event_name != 'workflow_dispatch' || inputs.scores_only != true
+        run: cp benchmark-main/benchmark-ranking.json public/data/benchmark-ranking.json
+
+      - name: Recalculate score snapshots
+        run: node scripts/benchmark/recalculate-scores.js
+
+      - name: Upload recalculated benchmark artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-ranking-scored
+          path: public/data/benchmark-ranking.json
+
+      - name: Commit recalculated benchmark scores
+        if: github.event_name == 'workflow_dispatch' && inputs.scores_only == true
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/benchmark-ranking.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "chore: recalculate benchmark scores"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
   benchmark-languages:
     needs: generate-language-matrix
-    if: needs.generate-language-matrix.outputs.count != '0'
+    if: (github.event_name != 'workflow_dispatch' || inputs.scores_only != true) && needs.generate-language-matrix.outputs.count != '0'
     runs-on: ubuntu-latest
     timeout-minutes: 65
     strategy:
@@ -223,8 +285,8 @@ jobs:
           path: community-language-${{ matrix.target.slug }}-${{ matrix.target.languageCode }}.json
 
   merge-language-results:
-    needs: [generate-language-matrix, benchmark-languages, merge-results]
-    if: always() && needs.merge-results.result == 'success' && needs.generate-language-matrix.result == 'success' && (needs.benchmark-languages.result == 'success' || needs.benchmark-languages.result == 'skipped')
+    needs: [generate-language-matrix, benchmark-languages, recalculate-scores]
+    if: (github.event_name != 'workflow_dispatch' || inputs.scores_only != true) && always() && needs.recalculate-scores.result == 'success' && needs.generate-language-matrix.result == 'success' && (needs.benchmark-languages.result == 'success' || needs.benchmark-languages.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 65
 
@@ -242,7 +304,7 @@ jobs:
       - name: Download main benchmark artifact
         uses: actions/download-artifact@v4
         with:
-          name: benchmark-ranking
+          name: benchmark-ranking-scored
           path: benchmark-main
 
       - name: Restore main benchmark file

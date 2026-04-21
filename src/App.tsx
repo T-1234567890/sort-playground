@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { algorithms } from "./core/algorithms";
+import { SettingsProvider, useSettings } from "./hooks/useSettings";
 import { AlgorithmPage } from "./pages/AlgorithmPage";
 import { AboutPage } from "./pages/AboutPage";
 import { AllAlgorithmsPage } from "./pages/AllAlgorithmsPage";
@@ -10,6 +11,7 @@ import { HomePage } from "./pages/HomePage";
 import { BenchmarkDetailPage } from "./pages/BenchmarkDetailPage";
 import { BenchmarkComparePage } from "./pages/BenchmarkComparePage";
 import { BenchmarkLandingPage } from "./pages/BenchmarkLandingPage";
+import { BenchmarkScalePage } from "./pages/BenchmarkScalePage";
 import { LanguageBenchmarkComparePage } from "./pages/LanguageBenchmarkComparePage";
 import { LanguageBenchmarkDetailPage } from "./pages/LanguageBenchmarkDetailPage";
 import { LanguageBenchmarkPage } from "./pages/LanguageBenchmarkPage";
@@ -19,6 +21,7 @@ import { RacePage } from "./pages/RacePage";
 import { CreatePage } from "./pages/CreatePage";
 import { CreatePreviewPage } from "./pages/CreatePreviewPage";
 import { CreateToolsPage } from "./pages/CreateToolsPage";
+import { SettingsPage } from "./pages/SettingsPage";
 
 function getRoute() {
   const path = window.location.pathname;
@@ -47,12 +50,20 @@ function getRoute() {
     return { name: null, page: "create-preview" };
   }
 
+  if (path === "/settings") {
+    return { name: null, page: "settings" };
+  }
+
   if (path === "/compare") {
     return { name: null, page: "compare" };
   }
 
   if (path === "/benchmark") {
     return { name: null, page: "benchmark" };
+  }
+
+  if (path === "/benchmark/scale") {
+    return { name: null, page: "benchmark-scale" };
   }
 
   if (path === "/labs/benchmark/languages/compare") {
@@ -102,25 +113,32 @@ function getRoute() {
   return { name: null, page: "home" };
 }
 
-export default function App() {
+function AppContent() {
   const [route, setRoute] = useState(getRoute);
-  const [dark, setDark] = useState(() => {
-    const theme = new URLSearchParams(window.location.search).get("theme");
-
-    if (theme === "dark") {
-      return true;
-    }
-
-    if (theme === "light") {
-      return false;
-    }
-
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  });
+  const { settings, updateSetting } = useSettings();
+  const [systemDark, setSystemDark] = useState(() => window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const themeOverride = new URLSearchParams(window.location.search).get("theme");
+  const dark = themeOverride === "dark"
+    ? true
+    : themeOverride === "light"
+      ? false
+      : settings.theme === "system"
+        ? systemDark
+        : settings.theme === "dark";
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
   }, [dark]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = (event: MediaQueryListEvent) => setSystemDark(event.matches);
+
+    setSystemDark(mediaQuery.matches);
+    mediaQuery.addEventListener("change", onChange);
+
+    return () => mediaQuery.removeEventListener("change", onChange);
+  }, []);
 
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
@@ -152,48 +170,61 @@ export default function App() {
     () => algorithms.find((algorithm) => algorithm.slug === route.name),
     [route.name],
   );
+  const toggleTheme = () => updateSetting("theme", dark ? "light" : "dark");
 
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-950 transition-colors dark:bg-zinc-950 dark:text-zinc-50">
       {selectedAlgorithm && route.page === "embed" ? (
         <EmbedPage algorithm={selectedAlgorithm} />
       ) : route.page === "language-benchmark-compare" ? (
-        <LanguageBenchmarkComparePage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <LanguageBenchmarkComparePage dark={dark} onToggleDark={toggleTheme} />
       ) : route.page === "language-benchmark-detail" ? (
-        <LanguageBenchmarkDetailPage slug={route.name ?? ""} dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <LanguageBenchmarkDetailPage slug={route.name ?? ""} dark={dark} onToggleDark={toggleTheme} />
       ) : route.page === "language-benchmark" ? (
-        <LanguageBenchmarkPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <LanguageBenchmarkPage dark={dark} onToggleDark={toggleTheme} />
       ) : route.page === "benchmark-compare" ? (
-        <BenchmarkComparePage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <BenchmarkComparePage dark={dark} onToggleDark={toggleTheme} />
       ) : route.page === "benchmark-detail" ? (
-        <BenchmarkDetailPage slug={route.name ?? ""} dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <BenchmarkDetailPage slug={route.name ?? ""} dark={dark} onToggleDark={toggleTheme} />
       ) : selectedAlgorithm ? (
-        <AlgorithmPage algorithm={selectedAlgorithm} dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <AlgorithmPage algorithm={selectedAlgorithm} dark={dark} onToggleDark={toggleTheme} />
       ) : route.page === "allalgo" ? (
-        <AllAlgorithmsPage algorithms={algorithms} dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <AllAlgorithmsPage algorithms={algorithms} dark={dark} onToggleDark={toggleTheme} />
       ) : route.page === "about" ? (
-        <AboutPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <AboutPage dark={dark} onToggleDark={toggleTheme} />
       ) : route.page === "contribute" ? (
-        <ContributePage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <ContributePage dark={dark} onToggleDark={toggleTheme} />
       ) : route.page === "create" ? (
-        <CreatePage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <CreatePage dark={dark} onToggleDark={toggleTheme} />
       ) : route.page === "create-tools" ? (
-        <CreateToolsPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <CreateToolsPage dark={dark} onToggleDark={toggleTheme} />
       ) : route.page === "create-preview" ? (
-        <CreatePreviewPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <CreatePreviewPage dark={dark} onToggleDark={toggleTheme} />
+      ) : route.page === "settings" ? (
+        <SettingsPage dark={dark} onToggleDark={toggleTheme} />
       ) : route.page === "compare" ? (
-        <ComparePage algorithms={algorithms} dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <ComparePage algorithms={algorithms} dark={dark} onToggleDark={toggleTheme} />
       ) : route.page === "benchmark" ? (
-        <BenchmarkLandingPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <BenchmarkLandingPage dark={dark} onToggleDark={toggleTheme} />
+      ) : route.page === "benchmark-scale" ? (
+        <BenchmarkScalePage dark={dark} onToggleDark={toggleTheme} />
       ) : route.page === "race" ? (
-        <RacePage algorithms={algorithms} dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <RacePage algorithms={algorithms} dark={dark} onToggleDark={toggleTheme} />
       ) : route.page === "labs" ? (
-        <LabsPage dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <LabsPage dark={dark} onToggleDark={toggleTheme} />
       ) : route.page === "privacy" || route.page === "terms" ? (
-        <LegalPage type={route.page} dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <LegalPage type={route.page} dark={dark} onToggleDark={toggleTheme} />
       ) : (
-        <HomePage algorithms={algorithms} dark={dark} onToggleDark={() => setDark((value) => !value)} />
+        <HomePage algorithms={algorithms} dark={dark} onToggleDark={toggleTheme} />
       )}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <SettingsProvider>
+      <AppContent />
+    </SettingsProvider>
   );
 }

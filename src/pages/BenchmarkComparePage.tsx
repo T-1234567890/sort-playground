@@ -8,6 +8,7 @@ import {
   benchmarkLanguages,
   benchmarkProfiles,
   benchmarkSizes,
+  formatBenchmarkScore,
   formatBenchmarkMetric,
   getBenchmarkSizeStatus,
   getCompositeScore,
@@ -15,6 +16,7 @@ import {
   getSizeScore,
   isBenchmarkSizeCanceled,
 } from "../core/benchmark";
+import { useSettings } from "../hooks/useSettings";
 import type { BenchmarkLanguage, BenchmarkRankingEntry, BenchmarkSize } from "../core/types";
 
 type BenchmarkComparePageProps = {
@@ -43,6 +45,7 @@ function selectedSlugsFromUrl() {
 
 export function BenchmarkComparePage({ dark, onToggleDark }: BenchmarkComparePageProps) {
   const { t } = useTranslation();
+  const { settings } = useSettings();
   const [entries, setEntries] = useState<BenchmarkRankingEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState<BenchmarkLanguage>("python");
@@ -186,7 +189,7 @@ export function BenchmarkComparePage({ dark, onToggleDark }: BenchmarkComparePag
                       </div>
                       <span className="rounded-full border border-zinc-950/10 bg-zinc-50 px-3 py-1 text-xs font-semibold dark:border-white/10 dark:bg-white/10">
                         {t("benchmarkCompare.selectedMetric", { defaultValue: "Selected metric" })}:{" "}
-                        {typeof sizeScore === "number" ? sizeScore.toFixed(1) : "-"}
+                        {formatBenchmarkScore(sizeScore, 1, settings.scoreDisplay)}
                       </span>
                     </div>
 
@@ -195,7 +198,7 @@ export function BenchmarkComparePage({ dark, onToggleDark }: BenchmarkComparePag
                         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
                           {t("benchmarkDetail.fields.composite", { defaultValue: "Composite" })}
                         </p>
-                        <p className="mt-2 text-3xl font-semibold">{typeof compositeScore === "number" ? compositeScore.toFixed(1) : "-"}</p>
+                        <p className="mt-2 text-3xl font-semibold">{formatBenchmarkScore(compositeScore, 1, settings.scoreDisplay)}</p>
                       </div>
                       <div className="rounded-lg bg-zinc-950/[0.04] p-4 dark:bg-white/[0.06]">
                         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
@@ -254,7 +257,7 @@ export function BenchmarkComparePage({ dark, onToggleDark }: BenchmarkComparePag
                     <tr>
                       <td className="px-4 py-3 font-semibold">{t("benchmarkDetail.fields.composite", { defaultValue: "Composite" })}</td>
                       {selectedEntries.map((entry) => (
-                        <td key={entry.slug} className="px-4 py-3 font-mono">{typeof getCompositeScore(entry) === "number" ? getCompositeScore(entry)?.toFixed(1) : "-"}</td>
+                        <td key={entry.slug} className="px-4 py-3 font-mono">{formatBenchmarkScore(getCompositeScore(entry), 1, settings.scoreDisplay)}</td>
                       ))}
                     </tr>
                     <tr>
@@ -278,9 +281,7 @@ export function BenchmarkComparePage({ dark, onToggleDark }: BenchmarkComparePag
                         <td className="px-4 py-3 font-semibold">{profileLabels[profile]}</td>
                         {selectedEntries.map((entry) => (
                           <td key={entry.slug} className="px-4 py-3 font-mono">
-                            {typeof getDimensionScore(entry, language, profile) === "number"
-                              ? getDimensionScore(entry, language, profile)?.toFixed(1)
-                              : "-"}
+                            {formatBenchmarkScore(getDimensionScore(entry, language, profile), 1, settings.scoreDisplay)}
                           </td>
                         ))}
                       </tr>

@@ -5,6 +5,7 @@ import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
 import {
   benchmarkProfiles,
+  formatBenchmarkScore,
   formatBenchmarkMetric,
   getBenchmarkProfileMetric,
   getBenchmarkProfileStatus,
@@ -12,6 +13,7 @@ import {
   getSizeScore,
   isBenchmarkSizeCanceled,
 } from "../core/benchmark";
+import { useSettings } from "../hooks/useSettings";
 import type { BenchmarkLanguage, BenchmarkRankingEntry, BenchmarkSize, BenchmarkWorkloadProfile, CommunityRankingEntry, SortLabsEvent } from "../core/types";
 import events from "../data/events.json";
 
@@ -192,6 +194,7 @@ function SectionDocButton({ link }: { link: ResourceLink }) {
 
 export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
   const { t } = useTranslation();
+  const { settings } = useSettings();
   const section = currentSection();
   const allEvents = events as SortLabsEvent[];
   const activeEvent = allEvents.find((event) => event.status === "active") ?? allEvents[0];
@@ -771,14 +774,14 @@ export function LabsPage({ dark, onToggleDark }: LabsPageProps) {
                         </p>
                         {typeof getCompositeScore(entry) === "number" ? (
                           <p className="text-zinc-500 dark:text-zinc-400">
-                            {t("benchmarkDetail.fields.composite")}: {getCompositeScore(entry)?.toFixed(1)}
+                            {t("benchmarkDetail.fields.composite")}: {formatBenchmarkScore(getCompositeScore(entry), 1, settings.scoreDisplay)}
                           </p>
                         ) : (
                           <p className="text-zinc-500 dark:text-zinc-400">{t("labs.section.benchmarkNoPoints")}</p>
                         )}
                         {benchmarkProfile === "random-uniform" && typeof getSizeScore(entry, benchmarkLanguage, benchmarkSize) === "number" ? (
                           <p className="text-zinc-500 dark:text-zinc-400">
-                            {t("benchmarkDetail.sizeScore")} {getSizeScore(entry, benchmarkLanguage, benchmarkSize)?.toFixed(1)}
+                            {t("benchmarkDetail.sizeScore")} {formatBenchmarkScore(getSizeScore(entry, benchmarkLanguage, benchmarkSize), 1, settings.scoreDisplay)}
                           </p>
                         ) : null}
                         <p className="text-zinc-500 dark:text-zinc-400">

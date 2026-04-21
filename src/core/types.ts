@@ -147,7 +147,7 @@ export type BenchmarkRankingEntry = {
   complexity?: string;
   relativeRank?: "high" | "medium" | "low";
   unit?: string;
-  status: "benchmarked" | "exempt" | "estimated";
+  status: "benchmarked" | "partial" | "skipped" | "exempt" | "estimated";
   reason?: string;
   metadata?: {
     source?: string;

@@ -10,6 +10,7 @@ import {
   benchmarkLanguages,
   benchmarkProfiles,
   benchmarkSizes,
+  formatBenchmarkScore,
   formatBenchmarkMetric,
   getBenchmarkSizeStatus,
   getCompositeScore,
@@ -18,6 +19,7 @@ import {
   getSizeScore,
   isBenchmarkSizeCanceled,
 } from "../core/benchmark";
+import { useSettings } from "../hooks/useSettings";
 import type { BenchmarkLanguage, BenchmarkRankingEntry, BenchmarkSize } from "../core/types";
 
 type BenchmarkDetailPageProps = {
@@ -87,6 +89,7 @@ function getCompositeVerdict(score?: number) {
 
 export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetailPageProps) {
   const { t, i18n } = useTranslation();
+  const { settings } = useSettings();
   const [entries, setEntries] = useState<BenchmarkRankingEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState<BenchmarkLanguage>("python");
@@ -183,9 +186,9 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
   const generatedSummary = strength && weakness && fastestLanguageForSize
     ? t("benchmarkDetail.generatedSummary", {
         bestProfile: profileLabels[strength.profile],
-        bestScore: strength.score.toFixed(1),
+        bestScore: formatBenchmarkScore(strength.score, 1, settings.scoreDisplay),
         weakestProfile: profileLabels[weakness.profile],
-        weakestScore: weakness.score.toFixed(1),
+        weakestScore: formatBenchmarkScore(weakness.score, 1, settings.scoreDisplay),
         fastestLanguage: languageLabels[fastestLanguageForSize.language],
         fastestTime: formatBenchmarkMetric(fastestLanguageForSize.value, entry?.unit ?? "ms"),
         size: t(`labs.benchmarkSizes.${size}`),
@@ -234,8 +237,8 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
   const scoreFields = entry
     ? [
         { label: t("benchmarkDetail.fields.rawAverageMs"), value: typeof entry.snapshot?.score?.rawAverageMs === "number" ? formatBenchmarkMetric(entry.snapshot?.score?.rawAverageMs, entry.unit ?? "ms") : t("benchmarkDetail.none") },
-        { label: t("benchmarkDetail.fields.normalized"), value: typeof entry.snapshot?.score?.normalized === "number" ? entry.snapshot.score.normalized.toFixed(1) : t("benchmarkDetail.none") },
-        { label: t("benchmarkDetail.fields.composite"), value: typeof entry.snapshot?.score?.composite === "number" ? entry.snapshot.score.composite.toFixed(1) : t("benchmarkDetail.none") },
+        { label: t("benchmarkDetail.fields.normalized"), value: typeof entry.snapshot?.score?.normalized === "number" ? formatBenchmarkScore(entry.snapshot.score.normalized, 1, settings.scoreDisplay) : t("benchmarkDetail.none") },
+        { label: t("benchmarkDetail.fields.composite"), value: typeof entry.snapshot?.score?.composite === "number" ? formatBenchmarkScore(entry.snapshot.score.composite, 1, settings.scoreDisplay) : t("benchmarkDetail.none") },
         { label: t("benchmarkDetail.fields.percentile"), value: typeof entry.snapshot?.score?.percentile === "number" ? entry.snapshot.score.percentile.toFixed(1) : t("benchmarkDetail.none") },
       ]
     : [];
@@ -302,7 +305,7 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                   }}
                 >
                   <p className="text-xs font-semibold uppercase tracking-[0.14em]">{t("benchmarkDetail.compositeTitle", { defaultValue: "Composite Score" })}</p>
-                  <p className="mt-2 text-4xl font-semibold">{typeof compositeScore === "number" ? compositeScore.toFixed(1) : "-"}</p>
+                  <p className="mt-2 text-4xl font-semibold">{formatBenchmarkScore(compositeScore, 1, settings.scoreDisplay)}</p>
                   <p className="mt-2 text-sm opacity-80">{t("benchmarkDetail.compositeDescription")}</p>
                 </div>
               </div>
@@ -317,7 +320,7 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                     {strength
                       ? t("benchmarkDetail.insightStrengthDescription", {
                           language: languageLabels[language],
-                          score: strength.score.toFixed(1),
+                          score: formatBenchmarkScore(strength.score, 1, settings.scoreDisplay),
                         })
                       : t("benchmarkDetail.none")}
                   </p>
@@ -332,7 +335,7 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                     {weakness
                       ? t("benchmarkDetail.insightWeaknessDescription", {
                           language: languageLabels[language],
-                          score: weakness.score.toFixed(1),
+                          score: formatBenchmarkScore(weakness.score, 1, settings.scoreDisplay),
                         })
                       : t("benchmarkDetail.none")}
                   </p>
@@ -372,7 +375,7 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                         color: selectedColors.foreground,
                       }}
                     >
-                      {typeof selectedSizeScore === "number" ? selectedSizeScore.toFixed(1) : t("benchmarkDetail.none")}
+                      {typeof selectedSizeScore === "number" ? formatBenchmarkScore(selectedSizeScore, 1, settings.scoreDisplay) : t("benchmarkDetail.none")}
                     </div>
                   </div>
                   <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
@@ -441,7 +444,7 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                       <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
                         {t("benchmarkDetail.sizeScore")} {getBenchmarkSizeStatus(entry, language, size) === "canceled"
                           ? t("benchmark.status.canceled")
-                          : typeof selectedSizeScore === "number" ? selectedSizeScore.toFixed(1) : t("benchmarkDetail.none")}
+                          : formatBenchmarkScore(selectedSizeScore, 1, settings.scoreDisplay)}
                       </p>
                       <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">{t("benchmarkDetail.compositeExplanation")}</p>
                     </div>
@@ -511,18 +514,25 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                       >
                         <div className="flex items-center justify-between gap-3">
                           <p className="text-sm font-semibold">{t(`labs.benchmarkLanguages.${languageKey}`)}</p>
+                          {(() => {
+                            const languageScore = getSizeScore(entry, languageKey, size) ?? compositeScore;
+                            const languageColors = getPerformanceColors(languageScore);
+
+                            return (
                           <span
                             className="rounded-full border px-2.5 py-0.5 text-xs font-semibold"
                             style={{
-                              backgroundColor: getPerformanceColors(getSizeScore(entry, languageKey, size) ?? compositeScore).background,
-                              borderColor: getPerformanceColors(getSizeScore(entry, languageKey, size) ?? compositeScore).border,
-                              color: getPerformanceColors(getSizeScore(entry, languageKey, size) ?? compositeScore).foreground,
+                              backgroundColor: languageColors.background,
+                              borderColor: languageColors.border,
+                              color: languageColors.foreground,
                             }}
                           >
                             {getBenchmarkSizeStatus(entry, languageKey, size) === "canceled"
                               ? t("benchmark.status.canceled")
-                              : typeof getSizeScore(entry, languageKey, size) === "number" ? getSizeScore(entry, languageKey, size)?.toFixed(1) : t("benchmarkDetail.none")}
+                              : formatBenchmarkScore(getSizeScore(entry, languageKey, size), 1, settings.scoreDisplay)}
                           </span>
+                            );
+                          })()}
                         </div>
                         <div className="mt-4 space-y-3">
                           {benchmarkSizes.map((sizeKey) => (
@@ -583,7 +593,7 @@ export function BenchmarkDetailPage({ slug, dark, onToggleDark }: BenchmarkDetai
                                 className="rounded-full border px-2.5 py-1 text-xs font-semibold"
                                 style={{ backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }}
                               >
-                                {typeof profileScore === "number" ? profileScore.toFixed(1) : t("benchmarkDetail.none")}
+                                {typeof profileScore === "number" ? formatBenchmarkScore(profileScore, 1, settings.scoreDisplay) : t("benchmarkDetail.none")}
                               </span>
                             </div>
                             {benchmarkSizes.map((sizeKey) => (

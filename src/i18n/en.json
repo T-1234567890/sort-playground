@@ -2,6 +2,7 @@
   "nav": {
     "home": "Sort Playground",
     "labs": "Sort Labs",
+    "settings": "Settings",
     "language": "Language",
     "toggleTheme": "Toggle dark mode"
   },
@@ -655,6 +656,8 @@
   "benchmark": {
     "status": {
       "canceled": "Canceled",
+      "partial": "Partial",
+      "skipped": "Skipped",
       "pythonLargeCanceled": "Python large-size benchmark is intentionally unavailable."
     },
     "back": "Sort Playground",
@@ -737,6 +740,10 @@
         "description": "Open the Labs benchmark view to inspect the current published benchmark data."
       },
       "secondary": {
+        "scale": {
+          "title": "View Benchmark Scale →",
+          "description": "See the current score distribution on a continuous benchmark scale."
+        },
         "languages": {
           "title": "View More Language Benchmark →",
           "description": "Open the experimental benchmark for supported community language implementations."
@@ -763,6 +770,123 @@
         "approximate": "Results are approximate and environment-dependent.",
         "ci": "Benchmarks are run in a controlled CI environment.",
         "variance": "Performance may vary across systems and implementations."
+      }
+    }
+  },
+  "benchmarkScale": {
+    "back": "Back to Benchmark",
+    "eyebrow": "SCALE",
+    "title": "Benchmark Score Scale",
+    "description": "A continuous view of the current benchmark score distribution, derived directly from the published composite scores.",
+    "loadingTitle": "Loading score distribution",
+    "loadingDescription": "Fetching the current benchmark ranking data.",
+    "emptyTitle": "No benchmark scale available",
+    "emptyDescription": "There is not enough benchmark score data to draw the scale yet.",
+    "scale": {
+      "label": "Continuous scale",
+      "title": "Current distribution",
+      "description": "This range bar expands to the full layout width and uses the current benchmark dataset to show slower, steady, and faster score ranges."
+    },
+    "meaning": {
+      "label": "What the score means",
+      "title": "How to read it",
+      "line1": "Score is a relative performance index.",
+      "line2": "A score of {{baseline}} represents the reference performance.",
+      "line3": "Higher scores indicate faster performance."
+    },
+    "formula": {
+      "label": "How it is calculated",
+      "title": "Score formula",
+      "expression": "score = (reference / measured_time) * 100"
+    },
+    "notes": {
+      "label": "Important notes",
+      "title": "What to keep in mind",
+      "items": {
+        "uncapped": "Scores are not capped.",
+        "measuredTime": "Scores depend on measured time.",
+        "distribution": "The distribution may change as new data is added."
+      }
+    },
+    "stats": {
+      "min": "Minimum",
+      "baseline": "Baseline",
+      "median": "Median",
+      "max": "Top score",
+      "entries": "Benchmarked entries"
+    },
+    "ranges": {
+      "slower": {
+        "title": "Slower range",
+        "description": "Scores in this range are slower than most current benchmarked entries."
+      },
+      "steady": {
+        "title": "Steady range",
+        "description": "Scores in this range sit near the middle of the current benchmark spread."
+      },
+      "faster": {
+        "title": "Faster range",
+        "description": "Scores in this range are faster than most current benchmarked entries."
+      }
+    }
+  },
+  "settings": {
+    "back": "Back to home",
+    "eyebrow": "Settings",
+    "title": "Settings",
+    "description": "Change app-wide defaults for benchmark score display, theme behavior, and dataset generation.",
+    "sections": {
+      "general": {
+        "title": "General",
+        "description": "Set the default dataset shape used when the app generates new sample arrays."
+      },
+      "benchmark": {
+        "title": "Benchmark",
+        "description": "Choose how benchmark score fields are displayed across Labs and detail views."
+      },
+      "ui": {
+        "title": "UI",
+        "description": "Control the app theme and whether it follows the system appearance."
+      }
+    },
+    "options": {
+      "scoreDisplay": {
+        "processed": {
+          "label": "Processed Score",
+          "description": "Show the benchmark score in the current `×100` display format."
+        },
+        "raw": {
+          "label": "Raw Score",
+          "description": "Show the underlying ratio before the `×100` display scaling."
+        }
+      },
+      "theme": {
+        "light": {
+          "label": "Light",
+          "description": "Always use the light theme."
+        },
+        "dark": {
+          "label": "Dark",
+          "description": "Always use the dark theme."
+        },
+        "system": {
+          "label": "System",
+          "description": "Follow your current system appearance."
+        }
+      },
+      "defaultDataset": {
+        "random": {
+          "label": "Random",
+          "description": "Generate fresh random values."
+        },
+        "nearlySorted": {
+          "label": "Nearly Sorted",
+          "description": "Generate arrays that are almost in order."
+        },
+        "reverse": {
+          "label": "Reverse Sorted",
+          "description": "Generate arrays in descending order."
+        }
       }
     }
   },

@@ -10,7 +10,8 @@ import {
   REQUIRED_ALGORITHM_FILENAMES,
   type LoadedAlgorithmDraft,
 } from "../core/createAlgorithm";
-import { DEFAULT_ARRAY } from "../core/visualizer";
+import { datasetArray } from "../core/visualizer";
+import { useSettings } from "../hooks/useSettings";
 
 type CreatePreviewPageProps = {
   dark: boolean;
@@ -25,10 +26,11 @@ type Notice = {
 
 export function CreatePreviewPage({ dark, onToggleDark }: CreatePreviewPageProps) {
   const { t } = useTranslation();
+  const { settings } = useSettings();
   const [loadedAlgorithm, setLoadedAlgorithm] = useState<LoadedAlgorithmDraft | null>(null);
   const [loadResult, setLoadResult] = useState<Notice | null>(null);
   const [isLoadingAlgorithm, setIsLoadingAlgorithm] = useState(false);
-  const [sampleArray, setSampleArray] = useState(DEFAULT_ARRAY);
+  const [sampleArray, setSampleArray] = useState(() => datasetArray(settings.defaultDataset, 10));
   const [showFullSource, setShowFullSource] = useState(false);
 
   const truncatedSource = loadedAlgorithm

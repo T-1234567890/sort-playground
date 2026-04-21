@@ -1,4 +1,14 @@
-import { benchmarkProfiles, clampScore, getPerformanceColors, radarAxisPoint, radarGridPoints, radarPoints } from "../core/benchmark";
+import {
+  benchmarkProfiles,
+  clampScore,
+  displayProfileScores,
+  formatBenchmarkScore,
+  getPerformanceColors,
+  radarAxisPoint,
+  radarGridPoints,
+  radarPoints,
+} from "../core/benchmark";
+import { useSettings } from "../hooks/useSettings";
 import type { BenchmarkLanguage, BenchmarkProfileScores } from "../core/types";
 
 type BenchmarkRadarSeries = {
@@ -37,9 +47,21 @@ function compositeFor(scores: BenchmarkProfileScores) {
   return benchmarkProfiles.reduce((sum, profile) => sum + clampScore(scores[profile]), 0) / benchmarkProfiles.length;
 }
 
-export function BenchmarkRadarChart({ scores, language, series, unitLabel, labels, profileDescriptions }: BenchmarkRadarChartProps) {
+export function BenchmarkRadarChart({
+  scores,
+  language,
+  series,
+  unitLabel,
+  labels,
+  profileDescriptions,
+}: BenchmarkRadarChartProps) {
+  const { settings } = useSettings();
   const activeSeries = series ?? (scores && language ? [{ language, scores }] : []);
-  const leadingSeries = activeSeries[0];
+  const displayedSeries = activeSeries.map((item) => ({
+    language: item.language,
+    scores: displayProfileScores(item.scores, settings.scoreDisplay),
+  }));
+  const leadingSeries = displayedSeries[0];
   const leadingComposite = leadingSeries ? compositeFor(leadingSeries.scores) : 0;
   const leadingColors = getPerformanceColors(leadingComposite);
   const center = 110;
@@ -52,27 +74,27 @@ export function BenchmarkRadarChart({ scores, language, series, unitLabel, label
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">{unitLabel}</p>
           <p className="mt-2 text-lg font-semibold">
-            {activeSeries.length > 1 ? activeSeries.map((item) => labels[item.language]).join(" · ") : leadingSeries ? labels[leadingSeries.language] : "-"}
+            {displayedSeries.length > 1 ? displayedSeries.map((item) => labels[item.language]).join(" · ") : leadingSeries ? labels[leadingSeries.language] : "-"}
           </p>
         </div>
         <div
           className="rounded-full border px-3 py-1 text-sm font-semibold"
           style={{ backgroundColor: leadingColors.background, borderColor: leadingColors.border, color: leadingColors.foreground }}
         >
-          {leadingComposite.toFixed(1)}
+          {formatBenchmarkScore(leadingComposite, 1, settings.scoreDisplay)}
         </div>
       </div>
 
       {activeSeries.length > 1 ? (
         <div className="mt-4 flex flex-wrap gap-2">
-          {activeSeries.map((item) => (
+          {displayedSeries.map((item) => (
             <div key={item.language} className="inline-flex items-center gap-2 rounded-full border border-zinc-950/8 bg-white/80 px-3 py-1 text-xs font-semibold dark:border-white/10 dark:bg-white/10">
               <span
                 className="inline-flex h-2.5 w-2.5 rounded-full"
                 style={{ backgroundColor: SERIES_COLORS[item.language].stroke }}
               />
               <span>{labels[item.language]}</span>
-              <span className="text-zinc-500 dark:text-zinc-400">{compositeFor(item.scores).toFixed(1)}</span>
+              <span className="text-zinc-500 dark:text-zinc-400">{formatBenchmarkScore(compositeFor(item.scores), 1, settings.scoreDisplay)}</span>
             </div>
           ))}
         </div>
@@ -110,7 +132,7 @@ export function BenchmarkRadarChart({ scores, language, series, unitLabel, label
             );
           })}
 
-          {activeSeries.map((item) => {
+          {displayedSeries.map((item) => {
             const radarColor = SERIES_COLORS[item.language];
             const points = radarPoints(item.scores, radius, center).split(" ");
 
@@ -122,14 +144,14 @@ export function BenchmarkRadarChart({ scores, language, series, unitLabel, label
                   stroke={radarColor.stroke}
                   strokeWidth="2"
                 >
-                  <title>{`${labels[item.language]}: ${compositeFor(item.scores).toFixed(1)}`}</title>
+                  <title>{`${labels[item.language]}: ${formatBenchmarkScore(compositeFor(item.scores), 1, settings.scoreDisplay)}`}</title>
                 </polygon>
                 {benchmarkProfiles.map((profile, index) => {
                   const [x, y] = points[index].split(",").map(Number);
 
                   return (
                     <circle key={`${item.language}-${profile}-dot`} cx={x} cy={y} r="3.5" fill={radarColor.dot}>
-                      <title>{`${labels[item.language]} • ${labels[profile]}: ${clampScore(item.scores[profile]).toFixed(1)}. ${profileDescriptions?.[profile] ?? ""}`.trim()}</title>
+                      <title>{`${labels[item.language]} • ${labels[profile]}: ${formatBenchmarkScore(clampScore(item.scores[profile]), 1, settings.scoreDisplay)}. ${profileDescriptions?.[profile] ?? ""}`.trim()}</title>
                     </circle>
                   );
                 })}

@@ -1,5 +1,5 @@
 import { average, roundMetric } from "./benchmark.js";
-import { benchmarkLanguages, benchmarkProfileWeights, benchmarkProfiles, benchmarkSizes } from "./dataset.js";
+import { benchmarkLanguages, benchmarkProfiles, benchmarkReferenceTimesMs, benchmarkSizes } from "./dataset.js";
 
 function flattenWorkloadResults(workloadProfiles) {
   return benchmarkProfiles.flatMap((profile) =>
@@ -9,15 +9,35 @@ function flattenWorkloadResults(workloadProfiles) {
   );
 }
 
+function isExcludedSize(entry, language, size) {
+  return Boolean(entry?.snapshot?.harness?.languageSizeExclusions?.[language]?.[size]);
+}
+
+function requiredSizesForEntry(entry, language) {
+  return benchmarkSizes.filter((size) => !isExcludedSize(entry, language, size));
+}
+
 function averageProfileResult(entry, profile, language) {
   return average(
-    benchmarkSizes.map((size) => entry.snapshot?.workloadProfiles?.[profile]?.[language]?.[size]).filter((value) => typeof value === "number"),
+    requiredSizesForEntry(entry, language)
+      .map((size) => entry.snapshot?.workloadProfiles?.[profile]?.[language]?.[size])
+      .filter((value) => typeof value === "number"),
   );
 }
 
-function averageSpreadRatio(results) {
+function averageReferenceForLanguage(entry, language) {
+  return average(requiredSizesForEntry(entry, language).map((size) => benchmarkReferenceTimesMs[size]));
+}
+
+function averageSpreadRatio(entry) {
   const values = benchmarkLanguages
-    .map((language) => average(benchmarkSizes.map((size) => results?.[language]?.[size]).filter((value) => typeof value === "number")))
+    .map((language) =>
+      average(
+        requiredSizesForEntry(entry, language)
+          .map((size) => entry?.results?.[language]?.[size])
+          .filter((value) => typeof value === "number"),
+      ),
+    )
     .filter((value) => typeof value === "number");
 
   if (values.length < 2) {
@@ -43,15 +63,15 @@ function addDimensionBadges(dimensionScores, composite, spreadRatio) {
     ]),
   );
 
-  if ((averageProfileScores["random-uniform"] ?? 0) >= 92) {
+  if ((averageProfileScores["random-uniform"] ?? 0) >= 2000) {
     badges.push("Fast Random");
   }
 
-  if ((averageProfileScores["many-duplicates"] ?? 0) >= 92) {
+  if ((averageProfileScores["many-duplicates"] ?? 0) >= 2500) {
     badges.push("Handles Duplicates Well");
   }
 
-  if ((averageProfileScores["adversarial-pivot"] ?? 0) >= 92) {
+  if ((averageProfileScores["adversarial-pivot"] ?? 0) >= 2000) {
     badges.push("Adversarial Ready");
   }
 
@@ -59,51 +79,52 @@ function addDimensionBadges(dimensionScores, composite, spreadRatio) {
     badges.push("Cross-Language Balanced");
   }
 
-  if (composite >= 95) {
+  if ((composite ?? 0) >= 2500) {
     badges.push("Top Overall");
   }
 
   return badges;
 }
 
+function classifyAutomatedStatus(entry) {
+  const hasAnyTiming = benchmarkProfiles.some((profile) =>
+    benchmarkLanguages.some((language) =>
+      benchmarkSizes.some((size) => typeof entry?.snapshot?.workloadProfiles?.[profile]?.[language]?.[size] === "number"),
+    ),
+  ) || benchmarkLanguages.some((language) =>
+    benchmarkSizes.some((size) => typeof entry?.results?.[language]?.[size] === "number"),
+  );
+
+  if (!hasAnyTiming) {
+    return "skipped";
+  }
+
+  const hasAllResults = benchmarkLanguages.every((language) =>
+    requiredSizesForEntry(entry, language).every((size) => typeof entry?.results?.[language]?.[size] === "number"),
+  );
+  const hasAllProfiles = benchmarkProfiles.every((profile) =>
+    benchmarkLanguages.every((language) =>
+      requiredSizesForEntry(entry, language).every((size) => typeof entry?.snapshot?.workloadProfiles?.[profile]?.[language]?.[size] === "number"),
+    ),
+  );
+
+  return hasAllResults && hasAllProfiles ? "benchmarked" : "partial";
+}
+
+function fixedReferenceScore(reference, measuredValue) {
+  if (typeof reference !== "number" || typeof measuredValue !== "number" || measuredValue <= 0) {
+    return undefined;
+  }
+
+  return roundMetric((reference / measuredValue) * 100, 3);
+}
+
 export function computeScoreSnapshots(ranking) {
-  const automatedEntries = ranking.filter((entry) => entry.mode === "automated" && entry.results && entry.snapshot?.workloadProfiles);
+  const automatedEntries = ranking.filter((entry) => entry.mode === "automated" && (entry.results || entry.snapshot?.workloadProfiles));
 
   if (!automatedEntries.length) {
     return;
   }
-
-  const profileBaselines = Object.fromEntries(
-    benchmarkLanguages.map((language) => [
-      language,
-      Object.fromEntries(
-        benchmarkProfiles.map((profile) => [
-          profile,
-          Math.min(
-            ...automatedEntries
-              .map((entry) => averageProfileResult(entry, profile, language))
-              .filter((value) => typeof value === "number"),
-          ),
-        ]),
-      ),
-    ]),
-  );
-
-  const sizeBaselines = Object.fromEntries(
-    benchmarkLanguages.map((language) => [
-      language,
-      Object.fromEntries(
-        benchmarkSizes.map((size) => [
-          size,
-          Math.min(
-            ...automatedEntries
-              .map((entry) => entry.results?.[language]?.[size])
-              .filter((value) => typeof value === "number"),
-          ),
-        ]),
-      ),
-    ]),
-  );
 
   for (const entry of automatedEntries) {
     const dimensionScores = Object.fromEntries(
@@ -112,11 +133,8 @@ export function computeScoreSnapshots(ranking) {
         Object.fromEntries(
           benchmarkProfiles.map((profile) => {
             const profileAverage = averageProfileResult(entry, profile, language);
-            const baseline = profileBaselines[language][profile];
-            const score = typeof profileAverage === "number" && Number.isFinite(baseline)
-              ? Math.max(0, Math.min(100, roundMetric((baseline / profileAverage) * 100, 1)))
-              : undefined;
-            return [profile, score];
+            const referenceAverage = averageReferenceForLanguage(entry, language);
+            return [profile, fixedReferenceScore(referenceAverage, profileAverage)];
           }),
         ),
       ]),
@@ -128,51 +146,58 @@ export function computeScoreSnapshots(ranking) {
         Object.fromEntries(
           benchmarkSizes.map((size) => {
             const value = entry.results?.[language]?.[size];
-            const baseline = sizeBaselines[language][size];
-            const score = typeof value === "number" && Number.isFinite(baseline)
-              ? Math.max(0, Math.min(100, roundMetric((baseline / value) * 100, 1)))
-              : undefined;
-            return [size, score];
+            return [size, fixedReferenceScore(benchmarkReferenceTimesMs[size], value)];
           }),
         ),
       ]),
     );
 
-    const composite = benchmarkProfiles.reduce((sum, profile) => {
-      const profileAverageScore = average(
-        benchmarkLanguages.map((language) => dimensionScores?.[language]?.[profile]).filter((value) => typeof value === "number"),
-      ) ?? 0;
-
-      return sum + (profileAverageScore * benchmarkProfileWeights[profile]);
-    }, 0) / benchmarkProfiles.reduce((sum, profile) => sum + benchmarkProfileWeights[profile], 0);
-
+    const composite = average(
+      benchmarkLanguages.flatMap((language) =>
+        benchmarkProfiles.map((profile) => dimensionScores?.[language]?.[profile]).filter((value) => typeof value === "number"),
+      ),
+    );
     const normalized = average(
       benchmarkLanguages.flatMap((language) =>
         benchmarkSizes.map((size) => sizeScores?.[language]?.[size]).filter((value) => typeof value === "number"),
       ),
-    ) ?? composite;
+    );
     const rawAverage = average(flattenWorkloadResults(entry.snapshot?.workloadProfiles));
+    const status = classifyAutomatedStatus(entry);
 
+    entry.status = status;
     entry.snapshot = {
       ...entry.snapshot,
       score: {
         rawAverageMs: typeof rawAverage === "number" ? roundMetric(rawAverage) : undefined,
-        normalized: roundMetric(normalized, 1),
-        composite: roundMetric(composite, 1),
-        percentile: 0,
-        badges: addDimensionBadges(dimensionScores, composite, averageSpreadRatio(entry.results)),
+        normalized: typeof normalized === "number" ? roundMetric(normalized, 3) : undefined,
+        composite: typeof composite === "number" ? roundMetric(composite, 3) : undefined,
+        percentile: undefined,
+        badges: addDimensionBadges(dimensionScores, composite, averageSpreadRatio(entry)),
         dimensionScores,
         sizeScores,
       },
     };
   }
 
-  const rankedByComposite = [...automatedEntries].sort(
-    (left, right) =>
-      (right.snapshot?.score?.composite ?? Number.NEGATIVE_INFINITY) -
-        (left.snapshot?.score?.composite ?? Number.NEGATIVE_INFINITY) ||
-      left.name.localeCompare(right.name),
-  );
+  const rankedByComposite = [...automatedEntries]
+    .filter((entry) => typeof entry.snapshot?.score?.composite === "number")
+    .sort(
+      (left, right) =>
+        (right.snapshot?.score?.composite ?? Number.NEGATIVE_INFINITY) -
+          (left.snapshot?.score?.composite ?? Number.NEGATIVE_INFINITY) ||
+        left.name.localeCompare(right.name),
+    );
+
+  for (const entry of automatedEntries) {
+    entry.snapshot = {
+      ...entry.snapshot,
+      score: {
+        ...entry.snapshot?.score,
+        percentile: undefined,
+      },
+    };
+  }
 
   for (const [index, entry] of rankedByComposite.entries()) {
     const percentile = rankedByComposite.length === 1 ? 100 : ((rankedByComposite.length - index - 1) / (rankedByComposite.length - 1)) * 100;
