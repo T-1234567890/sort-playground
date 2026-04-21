@@ -202,24 +202,14 @@ export function HomePage({ algorithms, dark, onToggleDark }: HomePageProps) {
             </div>
 
             <div className="mt-6">
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <a
-                  data-route
-                  href="/labs"
-                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-950 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-zinc-950"
-                >
-                  {t("homeLabs.explore")}
-                  <ArrowUpRight size={16} />
-                </a>
-                <a
-                  data-route
-                  href="/create"
-                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-zinc-950/10 bg-white/70 px-5 py-3 text-sm font-semibold transition hover:-translate-y-0.5 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15"
-                >
-                  {t("homeLabs.create")}
-                  <ArrowUpRight size={16} />
-                </a>
-              </div>
+              <a
+                data-route
+                href="/labs"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-950 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-zinc-950"
+              >
+                {t("homeLabs.explore")}
+                <ArrowUpRight size={16} />
+              </a>
             </div>
           </div>
         </section>
