@@ -314,8 +314,10 @@
       }
     },
     "metadata": {
-      "lastUpdatedAt": "2026-04-21T09:27:39.714Z",
-      "mainBenchmarkCompositeScore": 1049.056
+      "lastUpdatedAt": "2026-04-21T09:39:53.619Z",
+      "mainBenchmarkCompositeScore": 1049.056,
+      "experimentalCompositeScore": 796.5627712685695,
+      "experimentalNormalizedScore": 820.0354304096181
     }
   },
   {
@@ -633,8 +635,10 @@
       }
     },
     "metadata": {
-      "lastUpdatedAt": "2026-04-21T09:27:39.720Z",
-      "mainBenchmarkCompositeScore": 14.575
+      "lastUpdatedAt": "2026-04-21T09:39:53.625Z",
+      "mainBenchmarkCompositeScore": 14.575,
+      "experimentalCompositeScore": 14.91431660017785,
+      "experimentalNormalizedScore": 159.9877389208503
     }
   },
   {
@@ -952,8 +956,10 @@
       }
     },
     "metadata": {
-      "lastUpdatedAt": "2026-04-21T09:27:39.712Z",
-      "mainBenchmarkCompositeScore": 1111.293
+      "lastUpdatedAt": "2026-04-21T09:39:53.617Z",
+      "mainBenchmarkCompositeScore": 1111.293,
+      "experimentalCompositeScore": 1134.6320789223548,
+      "experimentalNormalizedScore": 1490.9814454717684
     }
   },
   {
@@ -1271,8 +1277,10 @@
       }
     },
     "metadata": {
-      "lastUpdatedAt": "2026-04-21T09:27:39.716Z",
-      "mainBenchmarkCompositeScore": 660.893
+      "lastUpdatedAt": "2026-04-21T09:39:53.620Z",
+      "mainBenchmarkCompositeScore": 660.893,
+      "experimentalCompositeScore": 705.3409682931516,
+      "experimentalNormalizedScore": 1223.6520872755834
     }
   },
   {
@@ -1628,8 +1636,10 @@
       }
     },
     "metadata": {
-      "lastUpdatedAt": "2026-04-21T09:27:39.717Z",
-      "mainBenchmarkCompositeScore": 614.515
+      "lastUpdatedAt": "2026-04-21T09:39:53.622Z",
+      "mainBenchmarkCompositeScore": 614.515,
+      "experimentalCompositeScore": 417.5688976721812,
+      "experimentalNormalizedScore": 528.5184891190673
     }
   },
   {
@@ -1979,8 +1989,10 @@
       }
     },
     "metadata": {
-      "lastUpdatedAt": "2026-04-21T09:27:39.713Z",
-      "mainBenchmarkCompositeScore": 1101.335
+      "lastUpdatedAt": "2026-04-21T09:39:53.618Z",
+      "mainBenchmarkCompositeScore": 1101.335,
+      "experimentalCompositeScore": 679.3811457954387,
+      "experimentalNormalizedScore": 1013.1155154144823
     }
   },
   {
@@ -2298,8 +2310,10 @@
       }
     },
     "metadata": {
-      "lastUpdatedAt": "2026-04-21T09:27:39.719Z",
-      "mainBenchmarkCompositeScore": 14.977
+      "lastUpdatedAt": "2026-04-21T09:39:53.624Z",
+      "mainBenchmarkCompositeScore": 14.977,
+      "experimentalCompositeScore": 18.177795070031245,
+      "experimentalNormalizedScore": 489.34998737618776
     }
   }
 ]
