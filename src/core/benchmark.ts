@@ -17,6 +17,11 @@ export const benchmarkProfiles: BenchmarkWorkloadProfile[] = [
   "low-value-range",
   "adversarial-pivot",
 ];
+export const benchmarkReferenceTimesMs: Record<BenchmarkSize, number> = {
+  small: 0.1,
+  medium: 1,
+  large: 5,
+};
 
 export type BenchmarkScoreDisplayMode = Settings["scoreDisplay"];
 

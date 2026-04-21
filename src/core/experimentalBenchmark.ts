@@ -1,4 +1,5 @@
-import type { BenchmarkSize, ExperimentalLanguageBenchmarkEntry } from "./types";
+import { benchmarkProfiles, benchmarkReferenceTimesMs, benchmarkSizes, isBenchmarkSizeCanceled, type BenchmarkScoreDisplayMode } from "./benchmark";
+import type { BenchmarkSize, BenchmarkWorkloadProfile, ExperimentalBenchmarkLanguageEntry, ExperimentalLanguageBenchmarkEntry } from "./types";
 
 const experimentalLargeEnabledLanguages = new Set(["go", "java", "cpp", "swift", "zig"]);
 
@@ -10,7 +11,136 @@ export function formatExperimentalMetric(value?: number, unit = "ms") {
   return `${value.toFixed(3)} ${unit}`;
 }
 
-export function formatExperimentalScore(value?: number) {
+function average(values: number[]) {
+  if (!values.length) {
+    return undefined;
+  }
+
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function fixedReferenceScore(reference: number | undefined, measuredValue?: number) {
+  if (typeof reference !== "number" || typeof measuredValue !== "number" || measuredValue <= 0 || !Number.isFinite(measuredValue)) {
+    return undefined;
+  }
+
+  return (reference / measuredValue) * 100;
+}
+
+function experimentalLanguageStatusAllowsScores(language?: ExperimentalBenchmarkLanguageEntry) {
+  return language?.status === "benchmarked";
+}
+
+function isLanguageSizeCanceled(languageKey: string, language: ExperimentalBenchmarkLanguageEntry, size: BenchmarkSize) {
+  if (!language.experimental && (languageKey === "python" || languageKey === "rust" || languageKey === "c")) {
+    return isBenchmarkSizeCanceled(languageKey, size);
+  }
+
+  if (language.experimental) {
+    return isExperimentalSizeCanceled(languageKey, size);
+  }
+
+  return false;
+}
+
+export function getDisplayedExperimentalScore(value?: number, mode: BenchmarkScoreDisplayMode = "processed") {
+  if (typeof value !== "number" || Number.isNaN(value) || !Number.isFinite(value) || value <= 0) {
+    return undefined;
+  }
+
+  return mode === "raw" ? value / 100 : value;
+}
+
+export function formatExperimentalScore(value?: number, mode: BenchmarkScoreDisplayMode = "processed") {
+  const displayed = getDisplayedExperimentalScore(value, mode);
+
+  if (typeof displayed !== "number") {
+    return "-";
+  }
+
+  return displayed.toFixed(1);
+}
+
+export function getExperimentalSizeScore(entry: ExperimentalLanguageBenchmarkEntry, languageKey: string, size: BenchmarkSize) {
+  const language = entry.languages[languageKey];
+
+  if (!experimentalLanguageStatusAllowsScores(language) || isLanguageSizeCanceled(languageKey, language, size)) {
+    return undefined;
+  }
+
+  return fixedReferenceScore(benchmarkReferenceTimesMs[size], language.results?.[size]);
+}
+
+export function getExperimentalDimensionScore(entry: ExperimentalLanguageBenchmarkEntry, languageKey: string, profile: BenchmarkWorkloadProfile) {
+  const language = entry.languages[languageKey];
+
+  if (!experimentalLanguageStatusAllowsScores(language)) {
+    return undefined;
+  }
+
+  const includedSizes = benchmarkSizes.filter((size) => !isLanguageSizeCanceled(languageKey, language, size));
+  const values = includedSizes
+    .map((size) => {
+      const profileValue = language.workloadProfiles?.[profile]?.[size];
+
+      if (typeof profileValue === "number") {
+        return { size, value: profileValue };
+      }
+
+      if (profile === "random-uniform") {
+        const resultValue = language.results?.[size];
+        return typeof resultValue === "number" ? { size, value: resultValue } : undefined;
+      }
+
+      return undefined;
+    })
+    .filter((item): item is { size: BenchmarkSize; value: number } => Boolean(item));
+
+  if (!values.length) {
+    return undefined;
+  }
+
+  const profileAverage = average(values.map((item) => item.value));
+  const referenceAverage = average(values.map((item) => benchmarkReferenceTimesMs[item.size]));
+  return fixedReferenceScore(referenceAverage, profileAverage);
+}
+
+export function getExperimentalNormalizedScore(entry: ExperimentalLanguageBenchmarkEntry) {
+  const sizeScores = Object.keys(entry.languages).flatMap((languageKey) =>
+    benchmarkSizes
+      .map((size) => getExperimentalSizeScore(entry, languageKey, size))
+      .filter((value): value is number => typeof value === "number"),
+  );
+
+  return average(sizeScores);
+}
+
+export function getExperimentalCompositeScore(entry: ExperimentalLanguageBenchmarkEntry) {
+  const dimensionScores = Object.keys(entry.languages).flatMap((languageKey) =>
+    benchmarkProfiles
+      .map((profile) => getExperimentalDimensionScore(entry, languageKey, profile))
+      .filter((value): value is number => typeof value === "number"),
+  );
+
+  return average(dimensionScores);
+}
+
+export function formatExperimentalScoreWithFallback(
+  entry: ExperimentalLanguageBenchmarkEntry,
+  mode: BenchmarkScoreDisplayMode = "processed",
+) {
+  return formatExperimentalScore(getExperimentalOverviewScore(entry), mode);
+}
+
+export function getExperimentalOverviewScore(entry: ExperimentalLanguageBenchmarkEntry) {
+  return entry.metadata?.experimentalCompositeScore ?? getExperimentalCompositeScore(entry) ?? entry.metadata?.mainBenchmarkCompositeScore;
+}
+
+export function getExperimentalReferenceBaseline(mode: BenchmarkScoreDisplayMode = "processed") {
+  return mode === "raw" ? 1 : 100;
+}
+
+export function formatExperimentalScoreValue(value?: number) {
   if (typeof value !== "number") {
     return "-";
   }
@@ -55,39 +185,4 @@ export function getExperimentalCompositeTiming(entry: ExperimentalLanguageBenchm
   }
 
   return values.reduce((total, value) => total + value, 0) / values.length;
-}
-
-export function getExperimentalCompositeScore(
-  entry: ExperimentalLanguageBenchmarkEntry,
-  entries: ExperimentalLanguageBenchmarkEntry[],
-  size: BenchmarkSize,
-) {
-  const timing = getExperimentalCompositeTiming(entry, size);
-
-  if (typeof timing !== "number") {
-    return entry.metadata?.mainBenchmarkCompositeScore;
-  }
-
-  const timings = entries
-    .map((item) => getExperimentalCompositeTiming(item, size))
-    .filter((value): value is number => typeof value === "number")
-    .sort((left, right) => left - right);
-
-  if (timings.length < 2) {
-    return entry.metadata?.mainBenchmarkCompositeScore;
-  }
-
-  const best = timings[0];
-  const worst = timings[timings.length - 1];
-
-  if (best === worst) {
-    return entry.metadata?.mainBenchmarkCompositeScore ?? 100;
-  }
-
-  return ((worst - timing) / (worst - best)) * 100;
-}
-
-export function getExperimentalOverviewScore(entry: ExperimentalLanguageBenchmarkEntry, entries: ExperimentalLanguageBenchmarkEntry[]) {
-  void entries;
-  return entry.metadata?.mainBenchmarkCompositeScore;
 }

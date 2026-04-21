@@ -5,6 +5,7 @@ import { Footer } from "../components/Footer";
 import { Shell } from "../components/Shell";
 import { benchmarkSizes } from "../core/benchmark";
 import { formatExperimentalMetric, formatExperimentalScore, getExperimentalOverviewScore, hasExperimentalBenchmarkData, isExperimentalSizeCanceled } from "../core/experimentalBenchmark";
+import { useSettings } from "../hooks/useSettings";
 import type { BenchmarkRankingEntry, BenchmarkSize, ExperimentalLanguageBenchmarkEntry } from "../core/types";
 
 type LanguageBenchmarkComparePageProps = {
@@ -45,6 +46,7 @@ function formatShortLanguageLabel(languageKey: string, label: string) {
 
 export function LanguageBenchmarkComparePage({ dark, onToggleDark }: LanguageBenchmarkComparePageProps) {
   const { t } = useTranslation();
+  const { settings } = useSettings();
   const [entries, setEntries] = useState<ExperimentalLanguageBenchmarkEntry[]>([]);
   const [mainEntries, setMainEntries] = useState<BenchmarkRankingEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -110,7 +112,7 @@ export function LanguageBenchmarkComparePage({ dark, onToggleDark }: LanguageBen
   );
 
   function getOverviewScore(entry: ExperimentalLanguageBenchmarkEntry) {
-    const score = getExperimentalOverviewScore(entry, entries);
+    const score = getExperimentalOverviewScore(entry);
 
     if (typeof score === "number") {
       return score;
@@ -206,7 +208,7 @@ export function LanguageBenchmarkComparePage({ dark, onToggleDark }: LanguageBen
                       {t("languageBenchmark.overallScore", { defaultValue: "Overall score" })}
                     </p>
                     <p className="mt-2 text-3xl font-semibold">
-                      {typeof getOverviewScore(entry) === "number" ? formatExperimentalScore(getOverviewScore(entry)) : "-"}
+                      {typeof getOverviewScore(entry) === "number" ? formatExperimentalScore(getOverviewScore(entry), settings.scoreDisplay) : "-"}
                     </p>
                   </div>
 
@@ -247,7 +249,7 @@ export function LanguageBenchmarkComparePage({ dark, onToggleDark }: LanguageBen
                       <td className="px-4 py-3 font-semibold">{t("languageBenchmark.overallScore", { defaultValue: "Overall score" })}</td>
                       {selectedEntries.map((entry) => (
                         <td key={entry.slug} className="px-4 py-3 font-mono">
-                          {typeof getOverviewScore(entry) === "number" ? formatExperimentalScore(getOverviewScore(entry)) : "-"}
+                          {typeof getOverviewScore(entry) === "number" ? formatExperimentalScore(getOverviewScore(entry), settings.scoreDisplay) : "-"}
                         </td>
                       ))}
                     </tr>

@@ -7,6 +7,7 @@ import { Shell } from "../components/Shell";
 import { buildBenchmarkExplainPrompt, getPublicPageUrl } from "../core/aiBridge";
 import { getCompositeScore } from "../core/benchmark";
 import { formatExperimentalScore, getExperimentalOverviewScore, hasExperimentalBenchmarkData } from "../core/experimentalBenchmark";
+import { useSettings } from "../hooks/useSettings";
 import type { BenchmarkRankingEntry, ExperimentalLanguageBenchmarkEntry } from "../core/types";
 
 type LanguageBenchmarkPageProps = {
@@ -30,6 +31,7 @@ async function readJson<T>(path: string): Promise<T> {
 
 export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkPageProps) {
   const { t } = useTranslation();
+  const { settings } = useSettings();
   const [entries, setEntries] = useState<ExperimentalLanguageBenchmarkEntry[]>([]);
   const [mainEntries, setMainEntries] = useState<BenchmarkRankingEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,7 +80,7 @@ export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkP
   );
 
   function getOverviewScore(entry: ExperimentalLanguageBenchmarkEntry) {
-    const experimentalScore = getExperimentalOverviewScore(entry, entries);
+    const experimentalScore = getExperimentalOverviewScore(entry);
 
     if (typeof experimentalScore === "number") {
       return experimentalScore;
@@ -347,7 +349,7 @@ export function LanguageBenchmarkPage({ dark, onToggleDark }: LanguageBenchmarkP
                       </p>
                       <p className="mt-1 font-mono text-lg font-semibold">
                         {typeof overallScore === "number"
-                          ? formatExperimentalScore(overallScore)
+                          ? formatExperimentalScore(overallScore, settings.scoreDisplay)
                           : t("languageBenchmark.notBenchmarked")}
                       </p>
                     </div>

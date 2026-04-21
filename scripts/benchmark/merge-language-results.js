@@ -148,6 +148,94 @@ function hasSuccessfulExperimentalLanguage(languages) {
   return Object.values(languages).some((language) => language.experimental && language.status === "benchmarked");
 }
 
+const benchmarkReferenceTimesMs = {
+  small: 0.1,
+  medium: 1,
+  large: 5,
+};
+
+const benchmarkSizes = ["small", "medium", "large"];
+
+function average(values) {
+  if (!values.length) {
+    return undefined;
+  }
+
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function fixedReferenceScore(reference, measuredValue) {
+  if (typeof reference !== "number" || typeof measuredValue !== "number" || measuredValue <= 0 || !Number.isFinite(measuredValue)) {
+    return undefined;
+  }
+
+  return (reference / measuredValue) * 100;
+}
+
+function isLanguageSizeCanceled(languageKey, language, size) {
+  if (!language.experimental && languageKey === "python" && size === "large") {
+    return true;
+  }
+
+  return Boolean(language.experimental && size === "large" && !experimentalBenchmarkSizesForLanguageCode(languageKey).includes("large"));
+}
+
+function experimentalSizeScore(languageKey, language, size) {
+  if (language.status !== "benchmarked" || isLanguageSizeCanceled(languageKey, language, size)) {
+    return undefined;
+  }
+
+  return fixedReferenceScore(benchmarkReferenceTimesMs[size], language.results?.[size]);
+}
+
+function experimentalDimensionScore(languageKey, language, profile) {
+  if (language.status !== "benchmarked") {
+    return undefined;
+  }
+
+  const values = benchmarkSizes
+    .filter((size) => !isLanguageSizeCanceled(languageKey, language, size))
+    .map((size) => {
+      const profileValue = language.workloadProfiles?.[profile]?.[size];
+
+      if (typeof profileValue === "number") {
+        return { size, value: profileValue };
+      }
+
+      if (profile === "random-uniform") {
+        const resultValue = language.results?.[size];
+        return typeof resultValue === "number" ? { size, value: resultValue } : undefined;
+      }
+
+      return undefined;
+    })
+    .filter((item) => Boolean(item));
+
+  if (!values.length) {
+    return undefined;
+  }
+
+  return fixedReferenceScore(
+    average(values.map((item) => benchmarkReferenceTimesMs[item.size])),
+    average(values.map((item) => item.value)),
+  );
+}
+
+function experimentalOverviewScores(languages) {
+  const normalized = average(
+    Object.entries(languages).flatMap(([languageKey, language]) =>
+      benchmarkSizes.map((size) => experimentalSizeScore(languageKey, language, size)).filter((value) => typeof value === "number"),
+    ),
+  );
+  const composite = average(
+    Object.entries(languages).flatMap(([languageKey, language]) =>
+      benchmarkProfiles.map((profile) => experimentalDimensionScore(languageKey, language, profile)).filter((value) => typeof value === "number"),
+    ),
+  );
+
+  return { normalized, composite };
+}
+
 async function main() {
   const algorithms = await loadAlgorithms();
   const algorithmBySlug = new Map(algorithms.map((algorithm) => [algorithm.slug, algorithm]));
@@ -225,6 +313,8 @@ async function main() {
       continue;
     }
 
+    const scoreSnapshot = experimentalOverviewScores(languages);
+
     ranking.push({
       name: mainEntry.name,
       slug: mainEntry.slug,
@@ -238,6 +328,8 @@ async function main() {
       metadata: {
         lastUpdatedAt: new Date().toISOString(),
         mainBenchmarkCompositeScore: mainEntry.snapshot?.score?.composite,
+        experimentalCompositeScore: scoreSnapshot.composite,
+        experimentalNormalizedScore: scoreSnapshot.normalized,
       },
     });
   }

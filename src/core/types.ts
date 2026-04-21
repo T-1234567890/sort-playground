@@ -191,5 +191,7 @@ export type ExperimentalLanguageBenchmarkEntry = {
   metadata?: {
     lastUpdatedAt?: string;
     mainBenchmarkCompositeScore?: number;
+    experimentalCompositeScore?: number;
+    experimentalNormalizedScore?: number;
   };
 };
