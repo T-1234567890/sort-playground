@@ -383,7 +383,7 @@
         "rawAverageMs": 0.157,
         "normalized": 2358.519,
         "composite": 1628.84,
-        "percentile": 93.8,
+        "percentile": 94.1,
         "badges": [],
         "dimensionScores": {
           "python": {
@@ -596,7 +596,7 @@
         "rawAverageMs": 0.253,
         "normalized": 1651.104,
         "composite": 1595.368,
-        "percentile": 87.5,
+        "percentile": 88.2,
         "badges": [
           "Adversarial Ready"
         ],
@@ -811,7 +811,7 @@
         "rawAverageMs": 0.267,
         "normalized": 1163.948,
         "composite": 1264.834,
-        "percentile": 81.3,
+        "percentile": 82.4,
         "badges": [
           "Adversarial Ready"
         ],
@@ -1026,7 +1026,7 @@
         "rawAverageMs": 0.282,
         "normalized": 1449.237,
         "composite": 1111.293,
-        "percentile": 75,
+        "percentile": 76.5,
         "badges": [],
         "dimensionScores": {
           "python": {
@@ -1241,7 +1241,7 @@
         "rawAverageMs": 10.506,
         "normalized": 1340.817,
         "composite": 1101.335,
-        "percentile": 68.8,
+        "percentile": 70.6,
         "badges": [
           "Adversarial Ready"
         ],
@@ -1457,7 +1457,7 @@
         "rawAverageMs": 3.95,
         "normalized": 1119.547,
         "composite": 1049.056,
-        "percentile": 62.5,
+        "percentile": 64.7,
         "badges": [],
         "dimensionScores": {
           "python": {
@@ -1670,7 +1670,7 @@
         "rawAverageMs": 0.458,
         "normalized": 1867.2,
         "composite": 792.998,
-        "percentile": 56.3,
+        "percentile": 58.8,
         "badges": [],
         "dimensionScores": {
           "python": {
@@ -1883,7 +1883,7 @@
         "rawAverageMs": 0.397,
         "normalized": 1247.198,
         "composite": 660.893,
-        "percentile": 50,
+        "percentile": 52.9,
         "badges": [],
         "dimensionScores": {
           "python": {
@@ -2098,7 +2098,7 @@
         "rawAverageMs": 3.761,
         "normalized": 1036.938,
         "composite": 622.508,
-        "percentile": 43.8,
+        "percentile": 47.1,
         "badges": [],
         "dimensionScores": {
           "python": {
@@ -2314,7 +2314,7 @@
         "rawAverageMs": 2.72,
         "normalized": 677.316,
         "composite": 614.515,
-        "percentile": 37.5,
+        "percentile": 41.2,
         "badges": [],
         "dimensionScores": {
           "python": {
@@ -2357,6 +2357,219 @@
             "small": 1428.571,
             "medium": 1204.819,
             "large": 551.876
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "Strand Sort",
+    "slug": "strand-sort",
+    "mode": "automated",
+    "results": {
+      "python": {
+        "small": 0.12,
+        "medium": 3.015
+      },
+      "rust": {
+        "small": 0.013,
+        "medium": 0.136,
+        "large": 2.145
+      },
+      "c": {
+        "small": 0.003,
+        "medium": 0.056,
+        "large": 1.234
+      }
+    },
+    "unit": "ms",
+    "status": "benchmarked",
+    "metadata": {
+      "source": "github-actions",
+      "benchmarkMode": "automated",
+      "algorithmHash": "e8f3530eb8a3bbd624f733fa75f5b4de643e19d43f4d93207a898297d54dfa79",
+      "lastRunAt": "2026-05-04T04:57:02.158Z",
+      "lastRunMode": "small"
+    },
+    "snapshot": {
+      "workloadProfiles": {
+        "random-uniform": {
+          "python": {
+            "small": 0.12,
+            "medium": 3.015
+          },
+          "rust": {
+            "small": 0.013,
+            "medium": 0.136,
+            "large": 2.145
+          },
+          "c": {
+            "small": 0.003,
+            "medium": 0.056,
+            "large": 1.234
+          }
+        },
+        "nearly-sorted": {
+          "python": {
+            "small": 0.062,
+            "medium": 1.078
+          },
+          "rust": {
+            "small": 0.006,
+            "medium": 0.055,
+            "large": 0.72
+          },
+          "c": {
+            "small": 0.002,
+            "medium": 0.023,
+            "large": 0.462
+          }
+        },
+        "reverse-sorted": {
+          "python": {
+            "small": 0.368,
+            "medium": 27.21
+          },
+          "rust": {
+            "small": 0.041,
+            "medium": 1.015,
+            "large": 72.381
+          },
+          "c": {
+            "small": 0.006,
+            "medium": 0.467,
+            "large": 44.729
+          }
+        },
+        "many-duplicates": {
+          "python": {
+            "small": 0.07,
+            "medium": 0.523
+          },
+          "rust": {
+            "small": 0.01,
+            "medium": 0.052,
+            "large": 0.35
+          },
+          "c": {
+            "small": 0.003,
+            "medium": 0.022,
+            "large": 0.215
+          }
+        },
+        "low-value-range": {
+          "python": {
+            "small": 0.089,
+            "medium": 1.702
+          },
+          "rust": {
+            "small": 0.012,
+            "medium": 0.107,
+            "large": 0.672
+          },
+          "c": {
+            "small": 0.003,
+            "medium": 0.047,
+            "large": 0.385
+          }
+        },
+        "adversarial-pivot": {
+          "python": {
+            "small": 0.362,
+            "medium": 35.644
+          },
+          "rust": {
+            "small": 0.021,
+            "medium": 0.616,
+            "large": 45.782
+          },
+          "c": {
+            "small": 0.005,
+            "medium": 0.322,
+            "large": 30.838
+          }
+        }
+      },
+      "tiers": {},
+      "environment": {
+        "benchmarkSpecVersion": "draft-v2",
+        "runnerOs": "Linux",
+        "cpu": "AMD EPYC 7763 64-Core Processor",
+        "nodeVersion": "v22.22.2",
+        "pythonVersion": "Python 3.12.13",
+        "rustVersion": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "compilerVersion": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "workflowRunId": "25301804325"
+      },
+      "harness": {
+        "datasetGenerator": "deterministic-seeded",
+        "datasetProfile": "small=100, medium=1000, large=10000",
+        "languageSizeExclusions": {
+          "python": {
+            "large": "Canceled due to Python runtime and technical constraints."
+          }
+        },
+        "warmupPolicy": "5 warm-up runs",
+        "runCountPolicy": "30 measured runs",
+        "timeoutPolicy": "CI-managed",
+        "memoryConstraints": "runner-default",
+        "correctnessValidation": "sorted-output and cross-language identity",
+        "languageRunnerContract": "python.py, rust.rs, c.c",
+        "dimensionWeights": {
+          "random-uniform": 1,
+          "nearly-sorted": 1,
+          "reverse-sorted": 1,
+          "many-duplicates": 1,
+          "low-value-range": 1,
+          "adversarial-pivot": 1
+        }
+      },
+      "score": {
+        "rawAverageMs": 5.692,
+        "normalized": 922.295,
+        "composite": 522.615,
+        "percentile": 35.3,
+        "badges": [],
+        "dimensionScores": {
+          "python": {
+            "random-uniform": 35.088,
+            "nearly-sorted": 96.491,
+            "reverse-sorted": 3.989,
+            "many-duplicates": 185.497,
+            "low-value-range": 61.418,
+            "adversarial-pivot": 3.055
+          },
+          "rust": {
+            "random-uniform": 265.911,
+            "nearly-sorted": 781.05,
+            "reverse-sorted": 8.306,
+            "many-duplicates": 1480.583,
+            "low-value-range": 771.176,
+            "adversarial-pivot": 13.141
+          },
+          "c": {
+            "random-uniform": 471.771,
+            "nearly-sorted": 1252.567,
+            "reverse-sorted": 13.495,
+            "many-duplicates": 2541.667,
+            "low-value-range": 1402.299,
+            "adversarial-pivot": 19.573
+          }
+        },
+        "sizeScores": {
+          "python": {
+            "small": 83.333,
+            "medium": 33.167
+          },
+          "rust": {
+            "small": 769.231,
+            "medium": 735.294,
+            "large": 233.1
+          },
+          "c": {
+            "small": 3333.333,
+            "medium": 1785.714,
+            "large": 405.186
           }
         }
       }
@@ -2530,7 +2743,7 @@
         "rawAverageMs": 600.883,
         "normalized": 56.058,
         "composite": 442.353,
-        "percentile": 31.3,
+        "percentile": 29.4,
         "badges": [],
         "dimensionScores": {
           "python": {
@@ -2746,7 +2959,7 @@
         "rawAverageMs": 13.779,
         "normalized": 556.895,
         "composite": 266.562,
-        "percentile": 25,
+        "percentile": 23.5,
         "badges": [],
         "dimensionScores": {
           "python": {
@@ -2962,7 +3175,7 @@
         "rawAverageMs": 14.858,
         "normalized": 396.093,
         "composite": 220.364,
-        "percentile": 18.8,
+        "percentile": 17.6,
         "badges": [],
         "dimensionScores": {
           "python": {
@@ -3176,7 +3389,7 @@
         "rawAverageMs": 10.218,
         "normalized": 413.593,
         "composite": 14.977,
-        "percentile": 12.5,
+        "percentile": 11.8,
         "badges": [
           "Cross-Language Balanced"
         ],
@@ -3391,7 +3604,7 @@
         "rawAverageMs": 38.085,
         "normalized": 213.863,
         "composite": 14.575,
-        "percentile": 6.3,
+        "percentile": 5.9,
         "badges": [],
         "dimensionScores": {
           "python": {
