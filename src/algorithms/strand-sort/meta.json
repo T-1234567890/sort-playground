@@ -1,0 +1,13 @@
+{
+  "name": "Strand Sort",
+  "category": "classic",
+  "complexity": "O(n^2)",
+  "space": "O(n)",
+  "stability": "Stable",
+  "description": "Repeatedly pulls sorted strands from the unsorted values and merges each strand into the result.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-05-04",
+  "visualization": "default",
+  "keywords": ["merge", "stable", "list"]
+}

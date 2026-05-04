@@ -1,0 +1,15 @@
+{
+  "name": "Spaghetti Sort",
+  "category": "weird",
+  "complexity": "O(n)",
+  "space": "O(n)",
+  "stability": "Unstable",
+  "description": "Models each value as a spaghetti length, then repeatedly finds the longest strand to build the sorted order.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-05-04",
+  "visualization": "default",
+  "keywords": ["physical", "custom", "theoretical"],
+  "benchmark": false,
+  "special": "no-benchmark"
+}

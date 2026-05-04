@@ -384,7 +384,7 @@ export function Visualizer({ algorithm }: VisualizerProps) {
                   ? "bg-rose-500"
                   : isActive && activeStep.action === "overwrite"
                     ? "bg-sky-500"
-                  : "bg-zinc-400 dark:bg-zinc-600";
+                    : "bg-zinc-400 dark:bg-zinc-600";
 
             return (
               <div

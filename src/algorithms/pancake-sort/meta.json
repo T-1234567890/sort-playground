@@ -1,0 +1,15 @@
+{
+  "name": "Pancake Sort",
+  "category": "weird",
+  "complexity": "O(n^2)",
+  "space": "O(1)",
+  "stability": "Unstable",
+  "description": "Sorts by repeatedly reversing prefixes, like flipping a stack of pancakes until larger values sink to the bottom.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-05-04",
+  "visualization": "default",
+  "keywords": ["prefix", "reverse", "flip"],
+  "benchmark": false,
+  "special": "no-benchmark"
+}

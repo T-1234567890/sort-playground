@@ -1,0 +1,15 @@
+{
+  "name": "Wandersort",
+  "category": "meme",
+  "complexity": "Randomized",
+  "space": "O(1)",
+  "stability": "Unstable",
+  "description": "Randomly picks two elements and swaps them only when the earlier one is larger than the later one.",
+  "author": "T-1234567890",
+  "contributors": ["T-1234567890"],
+  "added": "2026-05-04",
+  "visualization": "default",
+  "keywords": ["random", "chaos", "bozo"],
+  "benchmark": false,
+  "special": "no-benchmark"
+}
