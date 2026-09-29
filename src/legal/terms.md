@@ -1,6 +1,6 @@
 # Terms of Service
 
-Last updated: April 2026
+Last updated: September 29, 2026
 
 By accessing or using Sort Playground, you agree to these terms.
 
@@ -63,4 +63,4 @@ Continued use of the site implies acceptance of updated terms.
 
 ## Contact
 
-https://1234567890.dev
+For terms or support questions, contact [support@1234567890.dev](mailto:support@1234567890.dev).

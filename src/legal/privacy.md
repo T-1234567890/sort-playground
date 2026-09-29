@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Last updated: April 2026
+Last updated: September 29, 2026
 
 Sort Playground is a static web application for visualizing sorting algorithms.
 
@@ -65,6 +65,4 @@ The updated version will be posted on this page with a new "Last updated" date.
 
 ## Contact
 
-For questions, visit:
-
-https://1234567890.dev
+For privacy questions, contact [hello@1234567890.dev](mailto:hello@1234567890.dev).
