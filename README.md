@@ -9,6 +9,10 @@ Explore real, weird, and absurd sorting algorithms. Watch every step, copy real 
 
 Sort Playground is a static React + Vite sorting algorithms playground built for people who learn by watching code move. It mixes classic algorithms, weird experiments, and meme sorts into one developer-friendly interface.
 
+>[!IMPORTANT]
+>**Project Archived** <br>
+>Sorting Playground is no longer actively maintained. The website remains available for exploration, but no further updates are planned.
+
 ## Get Started
 
 ### Visit our site and see it live at [Sort Playground](https://sorting.1234567890.dev/)
